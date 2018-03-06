@@ -75,8 +75,9 @@ var regionesLyr = L.geoJSON([regiones], {
         fillOpacity: 0.3
     },
     onEachFeature: function(feature, layer){
-        // assign BBox to features
+        // assign bounding box to each feature
         feature.properties.bounds_calculated = layer.getBounds();
+        // assign a property to each feature to check if it's clicked
         feature.properties.is_clicked = false;
         layer.on({
             click: function(e){
