@@ -246,8 +246,8 @@ $("#restart").on('click', function(){
         regionesLyr.resetStyle(lastClickedLayer);
         $(lastClickedLayer.getElement()).removeClass("regionZoomed");
         $(lastClickedLayer.getElement()).addClass("regionStyle");
+        lastClickedLayer.feature.properties.is_clicked = false;
     }
-    lastClickedLayer.feature.properties.is_clicked = false;
     lastClickedLayer = null;
     $("#title").html('<h1>México</h1>');
     map.flyTo([23.8, -80.9], 5) 
