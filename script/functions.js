@@ -1,5 +1,4 @@
 
-
 // Set basic functions for styling the map
 var rateById = d3.map(); // will hold the map from ids to property values
 var colors5 = ['#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026']; // 5 color scheme
@@ -29,7 +28,6 @@ q.defer(d3.json, "data/regiones.geojson")
             makeMap(regiones, ciudades)
         }
     });
-
 
 var currentRegion = 0,
     lastClickedLayer = null,
@@ -70,6 +68,8 @@ function onEachFeatureRegiones(feature, layer){
     feature.properties.bounds_calculated = layer.getBounds();
     // assign a property to each feature to check if it's clicked
     feature.properties.is_clicked = false;
+    // assign each layer an id that makes sense
+    layer._leaflet_id = feature.properties.id;
     layer.on('click', layerClick);
 }
 
@@ -80,7 +80,7 @@ function layerClick(event){
     //console.log('last clicked: '+lastClickedLayer.feature.properties.region);
     //console.log('is clicked: '+feature.properties.is_clicked);
     if (feature.properties.is_clicked == false){ // feature not clicked, so zoom in
-        if(lastClickedLayer){ // when a region is clicked and you click another, reset previous one
+        if (lastClickedLayer){ // when a region is clicked and you click another, reset previous one
             //console.log('last clicked: '+lastClickedLayer.feature.properties.region);
             regionesLyr.resetStyle(lastClickedLayer);
             lastClickedLayer.feature.properties.is_clicked = false;
@@ -89,6 +89,26 @@ function layerClick(event){
         }
         lastClickedLayer = layer;
         currentRegion = feature.properties.id;
+        if (currentRegion == 1){ // if first region, change button icon
+            $(".icon-previous .fas").removeClass("fa-chevron-left");
+            $(".icon-previous .fas").addClass("fa-reply");
+            $(".icon-next .fas").removeClass("fa-reply");
+            $(".icon-next .fas").addClass("fa-chevron-right");
+        } else if (currentRegion == regionesLyr.getLayers().length){ // if last region, change button icon
+            $(".icon-next .fas").removeClass("fa-chevron-right");
+            $(".icon-next .fas").addClass("fa-reply");
+            $(".icon-previous .fas").removeClass("fa-reply");
+            $(".icon-previous .fas").addClass("fa-chevron-left");
+        } else {
+            $(".icon-previous .fas").removeClass("fa-reply");
+            $(".icon-previous .fas").addClass("fa-chevron-left");
+            $(".icon-next .fas").removeClass("fa-reply");
+            $(".icon-next .fas").addClass("fa-chevron-right");
+        }
+        if (currentRegion > 0){ // if first region, show back button
+            $(".icon-previous").css( "display", "block" );
+        }
+        
         //console.log('current: '+currentRegion, feature.properties.region);
         $("#title").html('<h1>' + feature.properties.region + '</h1>');
         var featBounds = feature.properties.bounds_calculated;
@@ -109,11 +129,14 @@ function layerClick(event){
         $("#title").html('<h1>México</h1>');
         feature.properties.is_clicked = false;
         currentRegion = 0;
+        $(".icon-next .fas").removeClass("fa-reply");
+        $(".icon-next .fas").addClass("fa-chevron-right");
+        $(".icon-previous").css( "display", "none" );
     }
 }
 
 $("#restart").on('click', function(){ 
-    if(lastClickedLayer){
+    if (lastClickedLayer){
         regionesLyr.resetStyle(lastClickedLayer);
         $(lastClickedLayer.getElement()).removeClass("regionZoomed");
         $(lastClickedLayer.getElement()).addClass("regionStyle");
@@ -121,5 +144,69 @@ $("#restart").on('click', function(){
     }
     lastClickedLayer = null;
     $("#title").html('<h1>México</h1>');
-    map.flyTo([23.8, -80.9], 5) 
+    map.flyTo([23.8, -80.9], 5);
+    $(".icon-next .fas").removeClass("fa-reply");
+    $(".icon-next .fas").addClass("fa-chevron-right");
+});
+
+$(".icon-next").on('click', function(){
+    if (lastClickedLayer){ // if something is clicked, reset style
+            regionesLyr.resetStyle(lastClickedLayer);
+            lastClickedLayer.feature.properties.is_clicked = false;
+            $(lastClickedLayer.getElement()).removeClass("regionZoomed");
+            $(lastClickedLayer.getElement()).addClass("regionStyle");
+    }
+    currentRegion++;
+    if (currentRegion > 0 && currentRegion < regionesLyr.getLayers().length){ // cycle to next region
+        console.log('next');
+        if (currentRegion > 1) {
+            $(".icon-previous .fas").removeClass("fa-reply");
+            $(".icon-previous .fas").addClass("fa-chevron-left");   
+        }
+        regionesLyr._layers[currentRegion].fire('click');
+    } else if (currentRegion == regionesLyr.getLayers().length){ // if last region
+        console.log('last');
+        regionesLyr._layers[currentRegion].fire('click');
+        $(".icon-next .fas").removeClass("fa-chevron-right");
+        $(".icon-next .fas").addClass("fa-reply");
+        $(".icon-previous .fas").removeClass("fa-reply");
+        $(".icon-previous .fas").addClass("fa-chevron-left");
+    } else { // return to overview
+        console.log('restart');
+        map.flyTo([23.8, -80.9], 5);
+        $(".icon-next .fas").removeClass("fa-reply");
+        $(".icon-next .fas").addClass("fa-chevron-right");
+        $(".icon-previous").css( "display", "none" );
+        currentRegion = 0;
+    }
+});
+
+$(".icon-previous").on('click', function(){
+    if (lastClickedLayer){ // if something is clicked, reset style
+            regionesLyr.resetStyle(lastClickedLayer);
+            lastClickedLayer.feature.properties.is_clicked = false;
+            $(lastClickedLayer.getElement()).removeClass("regionZoomed");
+            $(lastClickedLayer.getElement()).addClass("regionStyle");
+    }
+    currentRegion--;
+    if (currentRegion > 1 && currentRegion < regionesLyr.getLayers().length){ // cycle to previous region
+        regionesLyr._layers[currentRegion].fire('click');
+        console.log('pa tras');
+        $(".icon-next .fas").removeClass("fa-reply");
+        $(".icon-next .fas").addClass("fa-chevron-right");
+    } else if (currentRegion == 1){ // if first region
+        regionesLyr._layers[currentRegion].fire('click');
+        console.log('primera');
+        $(".icon-next .fas").removeClass("fa-reply");
+        $(".icon-next .fas").addClass("fa-chevron-right");
+        $(".icon-previous .fas").removeClass("fa-chevron-left");
+        $(".icon-previous .fas").addClass("fa-reply");
+    } else { // return to overview
+        console.log('inicio');
+        map.flyTo([23.8, -80.9], 5);
+        $(".icon-previous .fas").removeClass("fa-reply");
+        $(".icon-previous .fas").addClass("fa-chevron-left");
+        $(".icon-previous").css( "display", "none" );
+        currentRegion = 0;
+    }
 });
