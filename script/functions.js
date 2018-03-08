@@ -158,21 +158,18 @@ $(".icon-next").on('click', function(){
     }
     currentRegion++;
     if (currentRegion > 0 && currentRegion < regionesLyr.getLayers().length){ // cycle to next region
-        console.log('next');
         if (currentRegion > 1) {
             $(".icon-previous .fas").removeClass("fa-reply");
             $(".icon-previous .fas").addClass("fa-chevron-left");   
         }
         regionesLyr._layers[currentRegion].fire('click');
     } else if (currentRegion == regionesLyr.getLayers().length){ // if last region
-        console.log('last');
         regionesLyr._layers[currentRegion].fire('click');
         $(".icon-next .fas").removeClass("fa-chevron-right");
         $(".icon-next .fas").addClass("fa-reply");
         $(".icon-previous .fas").removeClass("fa-reply");
         $(".icon-previous .fas").addClass("fa-chevron-left");
     } else { // return to overview
-        console.log('restart');
         map.flyTo([23.8, -80.9], 5);
         $(".icon-next .fas").removeClass("fa-reply");
         $(".icon-next .fas").addClass("fa-chevron-right");
@@ -191,18 +188,15 @@ $(".icon-previous").on('click', function(){
     currentRegion--;
     if (currentRegion > 1 && currentRegion < regionesLyr.getLayers().length){ // cycle to previous region
         regionesLyr._layers[currentRegion].fire('click');
-        console.log('pa tras');
         $(".icon-next .fas").removeClass("fa-reply");
         $(".icon-next .fas").addClass("fa-chevron-right");
     } else if (currentRegion == 1){ // if first region
         regionesLyr._layers[currentRegion].fire('click');
-        console.log('primera');
         $(".icon-next .fas").removeClass("fa-reply");
         $(".icon-next .fas").addClass("fa-chevron-right");
         $(".icon-previous .fas").removeClass("fa-chevron-left");
         $(".icon-previous .fas").addClass("fa-reply");
     } else { // return to overview
-        console.log('inicio');
         map.flyTo([23.8, -80.9], 5);
         $(".icon-previous .fas").removeClass("fa-reply");
         $(".icon-previous .fas").addClass("fa-chevron-left");
