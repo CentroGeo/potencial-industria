@@ -290,10 +290,10 @@ function makeChart(data){
         .attr("dy", "0.35em")
         .attr("text-anchor", "start")
         .attr("fill", "#000")
-        .text("Population");
+        .text("Degree");
     
     var legend = g.selectAll(".legend")
-        .data(variables.reverse)
+        .data(variables.reverse())
         .enter().append("g")
         .attr("class", "legend")
         .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
