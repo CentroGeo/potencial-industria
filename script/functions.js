@@ -1,8 +1,21 @@
+// Setup stuff for the bar chart
+var svg = d3.select("svg"),
+    margin = {top: 100, right: 30, bottom: 30, left: 45},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom;
+
+
+ var x = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1),
+     y = d3.scaleLinear().rangeRound([height, 0]);
+
+var g = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 
 // Set basic functions for styling the map
 var rateById = d3.map(); // will hold the map from ids to property values
 var colors5 = ['#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026']; // 5 color scheme
-var quantile = d3.scale.quantile() 
+var quantile = d3.scaleQuantile() 
     .range(d3.range(5).map(function(i) { return colors5[i]; })); // quantile scale with 5 classes
 
 // map and base layer
@@ -25,7 +38,8 @@ q.defer(d3.json, "data/regiones.geojson")
                 // Populate the map
                 rateById.set(e.properties.id, +e.properties.grado_total);
             });
-            makeMap(regiones, ciudades)
+            makeMap(regiones, ciudades);
+            makeChart(ciudades);
         }
     });
 
@@ -204,3 +218,40 @@ $(".icon-previous").on('click', function(){
         currentRegion = 0;
     }
 });
+
+function makeChart(data){
+    var properties = []
+    data.features.forEach(function(e) {
+        // Populate the map
+        var dict = {};
+        dict.id = e.properties.id;
+        dict.grado_total = e.properties.grado_total;
+        properties.push(dict)
+    });
+    x.domain(properties.map(function(d) { return d.id; }));
+    y.domain([0, d3.max(properties, function(d) { return d.grado_total })]);
+
+    g.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+
+    g.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y).ticks(10, "%"))
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "0.71em")
+        .attr("text-anchor", "end")
+        .text("Frequency");
+
+    g.selectAll(".bar")
+        .data(properties)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) { return x(d.id); })
+        .attr("y", function(d) { return y(d.grado_total); })
+        .attr("width", x.bandwidth())
+        .attr("height", function(d) { return height - y(d.grado_total); });
+}

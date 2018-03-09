@@ -114,3 +114,14 @@ body {
     stroke: red;
     fill-opacity: 0.0;
 }
+.bar {
+  fill: steelblue;
+}
+
+.bar:hover {
+  fill: brown;
+}
+
+.axis--x path {
+  display: none;
+}
