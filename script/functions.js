@@ -83,7 +83,7 @@ function onEachFeatureRegiones(feature, layer){
     // assign a property to each feature to check if it's clicked
     feature.properties.is_clicked = false;
     // assign each layer an id that makes sense
-    layer._leaflet_id = feature.properties.id;
+    layer._leaflet_id = feature.properties.id_0;
     layer.on('click', layerClick);
 }
 
@@ -102,7 +102,7 @@ function layerClick(event){
             $(lastClickedLayer.getElement()).addClass("regionStyle");
         }
         lastClickedLayer = layer;
-        currentRegion = feature.properties.id;
+        currentRegion = feature.properties.id_0;
         if (currentRegion == 1){ // if first region, change button icon
             $(".icon-previous .fas").removeClass("fa-chevron-left");
             $(".icon-previous .fas").addClass("fa-reply");
@@ -124,7 +124,7 @@ function layerClick(event){
         }
         
         //console.log('current: '+currentRegion, feature.properties.region);
-        $("#title").html('<h1>' + feature.properties.region + '</h1>');
+        $("#title").html('<h1>' + feature.properties.zona + '</h1>');
         var featBounds = feature.properties.bounds_calculated;
         var diff = featBounds._southWest.lng - featBounds._northEast.lng
         var newSW = L.latLng(featBounds.getSouth(), featBounds.getWest() - diff);
