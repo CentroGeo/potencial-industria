@@ -6,7 +6,7 @@ var svg = d3.select("svg"),
 
 
  var x = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1),
-     y = d3.scaleLinear().rangeRound([height, 0]);
+     y = d3.scaleLinear().rangeRound([height - margin.top, 0]);
 
 var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -219,39 +219,96 @@ $(".icon-previous").on('click', function(){
     }
 });
 
+var transposed;
+var stacked;
+var top25;
 function makeChart(data){
+    // list of data objetcts (rows)
     var properties = []
     data.features.forEach(function(e) {
         // Populate the map
         var dict = {};
         dict.id = e.properties.id;
+        dict.nombre = e.properties.nom_ciudad;
+        dict.grado_carretera = e.properties.grado_carretera;
+        dict.grado_ferrocarril = e.properties.grado_ferrocarril;
         dict.grado_total = e.properties.grado_total;
         properties.push(dict)
     });
-    x.domain(properties.map(function(d) { return d.id; }));
-    y.domain([0, d3.max(properties, function(d) { return d.grado_total })]);
+    // 100 is too much, so lets get the top 25, this is not necessary for the regions view
+    top25 = properties.sort(function(x,y){
+        return d3.descending(x.grado_total, y.grado_total)
+    }).slice(0, 25);
+    // To make stacked bars we need to transpose our data
+    // transposed = d3.stack()(["grado_carretera", "grado_ferrocarril",
+    //                          "grado_total"].map(function(grado) {
+    //                              console.log(grado)
+    //                              return top25.map(function(d) {
+    //                                  console.log({x: d.id, y: +d[grado]})
+    //                                  return {x: d.id, y: +d[grado]};
+    //                              });
+    //                          }));
+
+    var stackColors = ["b33040", "#d25c4d", "#f2b447", "#d9d574"];
+    var variables = ["grado_carretera", "grado_ferrocarril"]
+    var stack = d3.stack();
+    var z = d3.scaleOrdinal(d3.schemeCategory20);
+    //stack.keys(data.columns.slice(1))(data)
+    stacked = stack.keys(variables)(top25)
+    x.domain(top25.map(function(d) { return d.nombre; }));
+    y.domain([0, d3.max(top25, function(d) { return d.grado_total })]);
+    z.domain(variables);
+    g.selectAll(".serie")
+        .data(stacked)
+        .enter().append("g")
+        .attr("class", "serie")
+        .attr("fill", function(d) { return z(d.key); })
+        .selectAll("rect")
+        .data(function(d) { return d; })
+        .enter().append("rect")
+        .attr("x", function(d) { return x(d.data.nombre); })
+        .attr("y", function(d) { return y(d[1]); })
+        .attr("height", function(d) { return y(d[0]) - y(d[1]); })
+        .attr("width", x.bandwidth());
 
     g.append("g")
         .attr("class", "axis axis--x")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
+        .attr("transform", "translate(0," + (height - margin.top) + ")")
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .style("text-anchor", "start")
+        .attr("dx", "0.6em")
+        .attr("dy", "1.05em")
+        .attr("transform", "rotate(45)");
 
     g.append("g")
         .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y).ticks(10, "%"))
+        .call(d3.axisLeft(y).ticks(10, "s"))
         .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", "0.71em")
-        .attr("text-anchor", "end")
-        .text("Frequency");
+        .attr("x", 2)
+        .attr("y", y(y.ticks(10).pop()))
+        .attr("dy", "0.35em")
+        .attr("text-anchor", "start")
+        .attr("fill", "#000")
+        .text("Population");
+    
+    var legend = g.selectAll(".legend")
+        .data(variables.reverse)
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
+        .style("font", "10px sans-serif");
 
-    g.selectAll(".bar")
-        .data(properties)
-        .enter().append("rect")
-        .attr("class", "bar")
-        .attr("x", function(d) { return x(d.id); })
-        .attr("y", function(d) { return y(d.grado_total); })
-        .attr("width", x.bandwidth())
-        .attr("height", function(d) { return height - y(d.grado_total); });
+    legend.append("rect")
+        .attr("x", width - 95)
+        .attr("width", 18)
+        .attr("height", 18)
+        .attr("fill", z);
+
+    legend.append("text")
+        .attr("x", width - 70)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .attr("text-anchor", "start")
+        .text(function(d) { return d; });
 }
