@@ -26,6 +26,7 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 // Load json data
+var properties; // properties for each city
 var q = d3.queue();
 q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.json, "data/ciudades.geojson")
@@ -38,8 +39,21 @@ q.defer(d3.json, "data/regiones.geojson")
                 // Populate the map
                 rateById.set(e.properties.id, +e.properties.grado_total);
             });
+            properties = []
+            ciudades.features.forEach(function(e) {
+                // Populate the map
+                var dict = {};
+                dict.id = e.properties.id;
+                dict.nombre = e.properties.nom_ciudad;
+                dict.grado_carretera = e.properties.grado_carretera;
+                dict.grado_ferrocarril = e.properties.grado_ferrocarril;
+                dict.grado_total = e.properties.grado_total;
+                dict.zona = e.properties.zona;
+                properties.push(dict)
+            });
+
             makeMap(regiones, ciudades);
-            makeChart(ciudades);
+            makeChart();
         }
     });
 
@@ -90,6 +104,7 @@ function onEachFeatureRegiones(feature, layer){
 function layerClick(event){
     layer = event.target;
     feature = layer.feature;
+    makeChart()
     //console.log(feature, layer, event);
     //console.log('last clicked: '+lastClickedLayer.feature.properties.region);
     //console.log('is clicked: '+feature.properties.is_clicked);
@@ -147,6 +162,7 @@ function layerClick(event){
         $(".icon-next .fas").addClass("fa-chevron-right");
         $(".icon-previous").css( "display", "none" );
     }
+    makeChart()
 }
 
 $("#restart").on('click', function(){ 
@@ -219,63 +235,188 @@ $(".icon-previous").on('click', function(){
     }
 });
 
-var transposed;
-var stacked;
-var top25;
-function makeChart(data){
-    // list of data objetcts (rows)
-    var properties = []
-    data.features.forEach(function(e) {
-        // Populate the map
-        var dict = {};
-        dict.id = e.properties.id;
-        dict.nombre = e.properties.nom_ciudad;
-        dict.grado_carretera = e.properties.grado_carretera;
-        dict.grado_ferrocarril = e.properties.grado_ferrocarril;
-        dict.grado_total = e.properties.grado_total;
-        properties.push(dict)
-    });
-    // 100 is too much, so lets get the top 25, this is not necessary for the regions view
-    top25 = properties.sort(function(x,y){
+// function makeChart(){
+//     // list of data objetcts (rows)
+//     var idToName = {
+//         1 : "Noreste",
+//         2 : "Centro-Occidente",
+//         3 : "Megalopolis",
+//         4 : "Noroeste",
+//         5 : "Golfo Oriente",
+//         6 : "Centro Norte",
+//         7 : "Peninsula"
+//     };
+//     var chartData;
+//     if(currentRegion == 0){
+//         // at the national extent, display only top 15 values
+//         chartData = properties.sort(function(x,y){
+//             return d3.descending(x.grado_total, y.grado_total)
+//         }).slice(0, 15);
+        
+//     }else{
+//         var filtered = properties.filter(function(el){
+//             //console.log(idToName[currentRegion])
+//             return el.zona == idToName[currentRegion]
+//         });
+//         chartData = filtered.sort(function(x,y){
+//             return d3.descending(x.grado_total, y.grado_total)
+//         });   
+//     };
+//     var stackColors = ["b33040", "#d25c4d", "#f2b447", "#d9d574"];
+//     var variables = ["grado_carretera", "grado_ferrocarril"]
+//     var stack = d3.stack();
+//     var z = d3.scaleOrdinal(d3.schemeCategory20);
+//     //stack.keys(data.columns.slice(1))(data)
+//     stacked = stack.keys(variables)(chartData)
+//     x.domain(chartData.map(function(d) { return d.nombre; }));
+//     y.domain([0, d3.max(chartData, function(d) { return d.grado_total })]);
+//     z.domain(variables);
+//     //console.log(stacked)
+//     g.selectAll(".serie")
+//         .data(stacked)
+//         .enter().append("g")
+//         .attr("class", "serie")
+//         .attr("fill", function(d) {
+//             //console.log(d.key)
+//             return z(d.key);
+//         })
+//         .selectAll("rect")
+//         .data(function(d) {
+//             console.log(d)
+//             return d;
+//         })
+//         .enter().append("rect")
+//         .attr("x", function(d) {
+//             console.log(d.data.nombre)
+//             return x(d.data.nombre);
+//         })
+//         .attr("y", function(d) { return y(d[1]); })
+//         .attr("height", function(d) {
+//             //console.log(d[0]) - y(d[1])
+//             return y(d[0]) - y(d[1]);
+//         })
+//         .attr("width", x.bandwidth());
+
+//     g.append("g")
+//         .attr("class", "axis axis--x")
+//         .attr("transform", "translate(0," + (height - margin.top) + ")")
+//         .call(d3.axisBottom(x))
+//         .selectAll("text")
+//         .style("text-anchor", "start")
+//         .attr("dx", "0.6em")
+//         .attr("dy", "1.05em")
+//         .attr("transform", "rotate(45)");
+
+//     g.append("g")
+//         .attr("class", "axis axis--y")
+//         .call(d3.axisLeft(y).ticks(10, "s"))
+//         .append("text")
+//         .attr("x", 2)
+//         .attr("y", y(y.ticks(10).pop()))
+//         .attr("dy", "0.35em")
+//         .attr("text-anchor", "start")
+//         .attr("fill", "#000")
+//         .text("Degree");
+    
+//     var legend = g.selectAll(".legend")
+//         .data(variables.reverse())
+//         .enter().append("g")
+//         .attr("class", "legend")
+//         .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
+//         .style("font", "10px sans-serif");
+
+//     legend.append("rect")
+//         .attr("x", width - 95)
+//         .attr("width", 18)
+//         .attr("height", 18)
+//         .attr("fill", z);
+
+//     legend.append("text")
+//         .attr("x", width - 70)
+//         .attr("y", 9)
+//         .attr("dy", ".35em")
+//         .attr("text-anchor", "start")
+//         .text(function(d) { return d; });
+// }
+
+function makeChart(){
+    chartData = properties.sort(function(x,y){
         return d3.descending(x.grado_total, y.grado_total)
-    }).slice(0, 25);
-    // To make stacked bars we need to transpose our data
-    // transposed = d3.stack()(["grado_carretera", "grado_ferrocarril",
-    //                          "grado_total"].map(function(grado) {
-    //                              console.log(grado)
-    //                              return top25.map(function(d) {
-    //                                  console.log({x: d.id, y: +d[grado]})
-    //                                  return {x: d.id, y: +d[grado]};
-    //                              });
-    //                          }));
-
-    var stackColors = ["b33040", "#d25c4d", "#f2b447", "#d9d574"];
-    var variables = ["grado_carretera", "grado_ferrocarril"]
-    var stack = d3.stack();
+    }).slice(0, 15);
+    var stackedData = [];
+    chartData.forEach(function(e){stackedData.push({"id":e.id,
+                                                    "data":[{"id": e.id,
+                                                             "nombre": e.nombre,
+                                                             "g0": e.grado_carretera,
+                                                             "g1": e.grado_ferrocarril},
+                                                            {"id": e.id,
+                                                             "nombre": e.nombre,
+                                                             "g0": e.grado_carretera,
+                                                             "g1": e.grado_ferrocarril}]
+                                                   })
+                                 });
+    x.domain(chartData.map(function(d) { return d.nombre; }));
+    y.domain([0, d3.max(chartData, function(d) { return d.grado_total })]);
     var z = d3.scaleOrdinal(d3.schemeCategory20);
-    //stack.keys(data.columns.slice(1))(data)
-    stacked = stack.keys(variables)(top25)
-    x.domain(top25.map(function(d) { return d.nombre; }));
-    y.domain([0, d3.max(top25, function(d) { return d.grado_total })]);
-    z.domain(variables);
-    g.selectAll(".serie")
-        .data(stacked)
-        .enter().append("g")
-        .attr("class", "serie")
-        .attr("fill", function(d) { return z(d.key); })
-        .selectAll("rect")
-        .data(function(d) { return d; })
-        .enter().append("rect")
-        .attr("x", function(d) { return x(d.data.nombre); })
-        .attr("y", function(d) { return y(d[1]); })
-        .attr("height", function(d) { return y(d[0]) - y(d[1]); })
-        .attr("width", x.bandwidth());
+    var variables = ["grado_carretera", "grado_ferrocarril"]
+    z.domain(variables);    
+    // g.append("g")
+    //     .attr("class", "axis axis--y")
+    //     .call(d3.axisLeft(y).ticks())
+    //     .append("text")
+    //     .attr("transform", "rotate(-90)")
+    //     .attr("y", 6)
+    //     .attr("dy", "0.71em")
+    //     .attr("text-anchor", "end")
+    //     .text("Frequency");
 
+    g.selectAll(".bar")
+        .data(stackedData, function(d){return d.id;})
+        .enter().append("g")
+        .attr("id", function(d){return d.id;})
+        .selectAll("rect")
+        .data(function(d){
+            //console.log(d.data)
+            return d.data;
+        })
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) {
+            //console.log(i)
+            return x(d.nombre);
+        })
+        .attr("y", function(d, i) {
+            if(i == 0){
+                //console.log(d.g0)
+                return y(d.g0);
+            }else{
+                console.log(d.g1)
+                return y(d.g1);
+            }
+        })
+        .attr("val", function(d,i){
+            if(i == 0){
+                return d.g0;
+            }else{
+                return d.g1;
+            }
+        })
+        .attr("fill", function(d,i) {return z(i);})
+        .attr("width", x.bandwidth())
+        .attr("height", function(d,i) {
+            if(i == 0){
+                return  y(d.g0);
+            }else{
+                return y(d.g1);
+            }            
+        });
+    
     g.append("g")
         .attr("class", "axis axis--x")
-        .attr("transform", "translate(0," + (height - margin.top) + ")")
+        .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x))
-        .selectAll("text")
+        .selectAll("text")    
         .style("text-anchor", "start")
         .attr("dx", "0.6em")
         .attr("dy", "1.05em")
@@ -283,32 +424,13 @@ function makeChart(data){
 
     g.append("g")
         .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y).ticks(10, "s"))
+        .call(d3.axisLeft(y)        )
         .append("text")
-        .attr("x", 2)
-        .attr("y", y(y.ticks(10).pop()))
+        //ttr("x", 2)
+        //ttr("y", y(y.ticks().pop()))
         .attr("dy", "0.35em")
         .attr("text-anchor", "start")
         .attr("fill", "#000")
         .text("Degree");
-    
-    var legend = g.selectAll(".legend")
-        .data(variables.reverse())
-        .enter().append("g")
-        .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
-        .style("font", "10px sans-serif");
 
-    legend.append("rect")
-        .attr("x", width - 95)
-        .attr("width", 18)
-        .attr("height", 18)
-        .attr("fill", z);
-
-    legend.append("text")
-        .attr("x", width - 70)
-        .attr("y", 9)
-        .attr("dy", ".35em")
-        .attr("text-anchor", "start")
-        .text(function(d) { return d; });
 }
