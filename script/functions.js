@@ -26,6 +26,7 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 // Load json data
+var properties; // properties for each city
 var q = d3.queue();
 q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.json, "data/ciudades.geojson")
@@ -38,8 +39,21 @@ q.defer(d3.json, "data/regiones.geojson")
                 // Populate the map
                 rateById.set(e.properties.id, +e.properties.grado_total);
             });
+            properties = []
+            ciudades.features.forEach(function(e) {
+                // Populate the map
+                var dict = {};
+                dict.id = e.properties.id;
+                dict.nombre = e.properties.nom_ciudad;
+                dict.grado_carretera = e.properties.grado_carretera;
+                dict.grado_ferrocarril = e.properties.grado_ferrocarril;
+                dict.grado_total = e.properties.grado_total;
+                dict.zona = e.properties.zona;
+                properties.push(dict)
+            });
+
             makeMap(regiones, ciudades);
-            makeChart(ciudades);
+            makeChart();
         }
     });
 
@@ -90,6 +104,7 @@ function onEachFeatureRegiones(feature, layer){
 function layerClick(event){
     layer = event.target;
     feature = layer.feature;
+    makeChart()
     //console.log(feature, layer, event);
     //console.log('last clicked: '+lastClickedLayer.feature.properties.region);
     //console.log('is clicked: '+feature.properties.is_clicked);
@@ -147,6 +162,7 @@ function layerClick(event){
         $(".icon-next .fas").addClass("fa-chevron-right");
         $(".icon-previous").css( "display", "none" );
     }
+    makeChart()
 }
 
 $("#restart").on('click', function(){ 
@@ -219,63 +235,49 @@ $(".icon-previous").on('click', function(){
     }
 });
 
-var transposed;
-var stacked;
-var top25;
-function makeChart(data){
-    // list of data objetcts (rows)
-    var properties = []
-    data.features.forEach(function(e) {
-        // Populate the map
-        var dict = {};
-        dict.id = e.properties.id;
-        dict.nombre = e.properties.nom_ciudad;
-        dict.grado_carretera = e.properties.grado_carretera;
-        dict.grado_ferrocarril = e.properties.grado_ferrocarril;
-        dict.grado_total = e.properties.grado_total;
-        properties.push(dict)
-    });
-    // 100 is too much, so lets get the top 25, this is not necessary for the regions view
-    top25 = properties.sort(function(x,y){
+function makeChart(){
+    chartData = properties.sort(function(x,y){
         return d3.descending(x.grado_total, y.grado_total)
-    }).slice(0, 25);
-    // To make stacked bars we need to transpose our data
-    // transposed = d3.stack()(["grado_carretera", "grado_ferrocarril",
-    //                          "grado_total"].map(function(grado) {
-    //                              console.log(grado)
-    //                              return top25.map(function(d) {
-    //                                  console.log({x: d.id, y: +d[grado]})
-    //                                  return {x: d.id, y: +d[grado]};
-    //                              });
-    //                          }));
-
-    var stackColors = ["b33040", "#d25c4d", "#f2b447", "#d9d574"];
-    var variables = ["grado_carretera", "grado_ferrocarril"]
+    }).slice(0, 15);
+    var stackColors = ['#d8b365','#5ab4ac'];
     var stack = d3.stack();
-    var z = d3.scaleOrdinal(d3.schemeCategory20);
-    //stack.keys(data.columns.slice(1))(data)
-    stacked = stack.keys(variables)(top25)
-    x.domain(top25.map(function(d) { return d.nombre; }));
-    y.domain([0, d3.max(top25, function(d) { return d.grado_total })]);
-    z.domain(variables);
-    g.selectAll(".serie")
-        .data(stacked)
+    var variables = ["grado_carretera", "grado_ferrocarril"]
+    var stackedData = [];
+    chartData.forEach(function(e){
+        stackedData.push({"id":e.id,
+                          "data":[{"id": e.id,
+                                   "nombre": e.nombre,
+                                   "start": 0,
+                                   "end": e.grado_carretera},
+                                  {"id": e.id,
+                                   "nombre": e.nombre,
+                                   "start": e.grado_carretera,
+                                   "end": e.grado_ferrocarril + e.grado_carretera}]
+                         })
+        var lastValue = e.grado_ferrocarril
+    });
+    x.domain(chartData.map(function(d) { return d.nombre; }));
+    y.domain([0, d3.max(chartData, function(d) { return d.grado_total })]);
+    g.selectAll(".bar")
+        .data(stackedData, function(d){return d.id;})
         .enter().append("g")
-        .attr("class", "serie")
-        .attr("fill", function(d) { return z(d.key); })
+        .attr("id", function(d){return d.id;})
         .selectAll("rect")
-        .data(function(d) { return d; })
-        .enter().append("rect")
-        .attr("x", function(d) { return x(d.data.nombre); })
-        .attr("y", function(d) { return y(d[1]); })
-        .attr("height", function(d) { return y(d[0]) - y(d[1]); })
-        .attr("width", x.bandwidth());
-
+        .data(function(d){return d.data;})
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) {return x(d.nombre);})
+        .attr("y", function(d, i) {return y(d.end);})
+        .attr("fill", function(d,i) {return stackColors[i];})
+        .attr("width", x.bandwidth())
+        .attr("height", function(d,i) {return y(d.start) - y(d.end);});
+    
     g.append("g")
         .attr("class", "axis axis--x")
-        .attr("transform", "translate(0," + (height - margin.top) + ")")
+        .attr("transform", "translate(0," +  (height - margin.top) + ")")
         .call(d3.axisBottom(x))
-        .selectAll("text")
+        .selectAll("text")    
         .style("text-anchor", "start")
         .attr("dx", "0.6em")
         .attr("dy", "1.05em")
@@ -283,15 +285,16 @@ function makeChart(data){
 
     g.append("g")
         .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y).ticks(10, "s"))
+        .call(d3.axisLeft(y))
         .append("text")
         .attr("x", 2)
-        .attr("y", y(y.ticks(10).pop()))
+        .attr("y", y(y.ticks().pop()))
         .attr("dy", "0.35em")
         .attr("text-anchor", "start")
         .attr("fill", "#000")
         .text("Degree");
-    
+
+        
     var legend = g.selectAll(".legend")
         .data(variables.reverse())
         .enter().append("g")
@@ -303,7 +306,7 @@ function makeChart(data){
         .attr("x", width - 95)
         .attr("width", 18)
         .attr("height", 18)
-        .attr("fill", z);
+        .attr("fill", function(d,i){ return stackColors[i];});
 
     legend.append("text")
         .attr("x", width - 70)
@@ -311,4 +314,6 @@ function makeChart(data){
         .attr("dy", ".35em")
         .attr("text-anchor", "start")
         .text(function(d) { return d; });
+
+    
 }
