@@ -344,17 +344,18 @@ function makeChart(){
         return d3.descending(x.grado_total, y.grado_total)
     }).slice(0, 15);
     var stackedData = [];
-    chartData.forEach(function(e){stackedData.push({"id":e.id,
-                                                    "data":[{"id": e.id,
-                                                             "nombre": e.nombre,
-                                                             "g0": e.grado_carretera,
-                                                             "g1": e.grado_ferrocarril},
-                                                            {"id": e.id,
-                                                             "nombre": e.nombre,
-                                                             "g0": e.grado_carretera,
-                                                             "g1": e.grado_ferrocarril}]
-                                                   })
-                                 });
+    chartData.forEach(function(e){
+        stackedData.push({"id":e.id,
+                          "data":[{"id": e.id,
+                                   "nombre": e.nombre,
+                                   "g0": e.grado_carretera,
+                                   "g1": e.grado_ferrocarril},
+                                  {"id": e.id,
+                                   "nombre": e.nombre,
+                                   "g0": e.grado_carretera,
+                                   "g1": e.grado_ferrocarril}]
+                         })
+    });
     x.domain(chartData.map(function(d) { return d.nombre; }));
     y.domain([0, d3.max(chartData, function(d) { return d.grado_total })]);
     var z = d3.scaleOrdinal(d3.schemeCategory20);
@@ -388,33 +389,28 @@ function makeChart(){
         })
         .attr("y", function(d, i) {
             if(i == 0){
-                //console.log(d.g0)
+                //console.log("y g1 " + y(d.g1) + " tipo " + i)
+                console.log("g1 " + d.g1 + " tipo " + i)
                 return y(d.g0);
             }else{
-                console.log(d.g1)
-                return y(d.g1);
-            }
-        })
-        .attr("val", function(d,i){
-            if(i == 0){
-                return d.g0;
-            }else{
-                return d.g1;
+                //console.log("y g0 " + y(d.g0)+ " tipo " + i)
+                console.log("g0 " + d.g0 + " tipo " + i)
+                return y(d.g0 + d.g1);
             }
         })
         .attr("fill", function(d,i) {return z(i);})
         .attr("width", x.bandwidth())
         .attr("height", function(d,i) {
             if(i == 0){
-                return  y(d.g0);
+                return  y(d.g1);
             }else{
-                return y(d.g1);
+                return y(d.g0);
             }            
         });
     
     g.append("g")
         .attr("class", "axis axis--x")
-        .attr("transform", "translate(0," + height + ")")
+        .attr("transform", "translate(0," +  (height - margin.top) + ")")
         .call(d3.axisBottom(x))
         .selectAll("text")    
         .style("text-anchor", "start")
@@ -424,10 +420,10 @@ function makeChart(){
 
     g.append("g")
         .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y)        )
+        .call(d3.axisLeft(y))
         .append("text")
-        //ttr("x", 2)
-        //ttr("y", y(y.ticks().pop()))
+        .attr("x", 2)
+        .attr("y", y(y.ticks().pop()))
         .attr("dy", "0.35em")
         .attr("text-anchor", "start")
         .attr("fill", "#000")
