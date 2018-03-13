@@ -104,7 +104,6 @@ function onEachFeatureRegiones(feature, layer){
 function layerClick(event){
     layer = event.target;
     feature = layer.feature;
-    makeChart()
     //console.log(feature, layer, event);
     //console.log('last clicked: '+lastClickedLayer.feature.properties.region);
     //console.log('is clicked: '+feature.properties.is_clicked);
@@ -162,7 +161,7 @@ function layerClick(event){
         $(".icon-next .fas").addClass("fa-chevron-right");
         $(".icon-previous").css( "display", "none" );
     }
-    makeChart()
+    makeChart();
 }
 
 $("#restart").on('click', function(){ 
@@ -177,6 +176,8 @@ $("#restart").on('click', function(){
     map.flyTo([23.8, -80.9], 5);
     $(".icon-next .fas").removeClass("fa-reply");
     $(".icon-next .fas").addClass("fa-chevron-right");
+    currentRegion = 0;
+    makeChart();
 });
 
 $(".icon-next").on('click', function(){
@@ -236,9 +237,32 @@ $(".icon-previous").on('click', function(){
 });
 
 function makeChart(){
-    chartData = properties.sort(function(x,y){
-        return d3.descending(x.grado_total, y.grado_total)
-    }).slice(0, 15);
+
+    var idToName = {
+        1 : "Noreste",
+        2 : "Centro-Occidente",
+        3 : "Megalopolis",
+        4 : "Noroeste",
+        5 : "Golfo Oriente",
+        6 : "Centro Norte",
+        7 : "Peninsula"
+    };
+    console.log(currentRegion)
+    if(currentRegion == 0){
+        // at the national extent, display only top 15 values
+        chartData = properties.sort(function(x,y){
+            return d3.descending(x.grado_total, y.grado_total)
+        }).slice(0, 15);
+        
+    }else{
+        var filtered = properties.filter(function(el){
+            //console.log(idToName[currentRegion])
+            return el.zona == idToName[currentRegion]
+        });
+        chartData = filtered.sort(function(x,y){
+            return d3.descending(x.grado_total, y.grado_total)
+        });   
+    };
     var stackColors = ['#d8b365','#5ab4ac'];
     var stack = d3.stack();
     var variables = ["grado_carretera", "grado_ferrocarril"]
@@ -258,9 +282,13 @@ function makeChart(){
     });
     x.domain(chartData.map(function(d) { return d.nombre; }));
     y.domain([0, d3.max(chartData, function(d) { return d.grado_total })]);
-    g.selectAll(".bar")
-        .data(stackedData, function(d){return d.id;})
-        .enter().append("g")
+
+    // join data
+    var bars = g.selectAll(".bar")
+        .data(stackedData, function(d){return d.id;});
+
+    // enter selection
+    var barsEnter = bars.enter().append("g")
         .attr("id", function(d){return d.id;})
         .selectAll("rect")
         .data(function(d){return d.data;})
@@ -272,20 +300,25 @@ function makeChart(){
         .attr("fill", function(d,i) {return stackColors[i];})
         .attr("width", x.bandwidth())
         .attr("height", function(d,i) {return y(d.start) - y(d.end);});
+
+    bars.exit().remove()
     
-    g.append("g")
+    var xAxis = g.append("g")
         .attr("class", "axis axis--x")
-        .attr("transform", "translate(0," +  (height - margin.top) + ")")
-        .call(d3.axisBottom(x))
+        .attr("transform", "translate(0," +  (height - margin.top) + ")");
+    
+    var xEnter = xAxis.call(d3.axisBottom(x))
         .selectAll("text")    
         .style("text-anchor", "start")
         .attr("dx", "0.6em")
         .attr("dy", "1.05em")
         .attr("transform", "rotate(45)");
 
-    g.append("g")
-        .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y))
+    xAxis.exit().remove()
+    var yAxis = g.append("g")
+        .attr("class", "axis axis--y");
+    
+    var yEnter = yAxis.call(d3.axisLeft(y))
         .append("text")
         .attr("x", 2)
         .attr("y", y(y.ticks().pop()))
