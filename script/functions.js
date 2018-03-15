@@ -5,8 +5,13 @@ var svg = d3.select("svg"),
     height = +svg.attr("height") - margin.top - margin.bottom;
 
 
- var x = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1),
-     y = d3.scaleLinear().rangeRound([height - margin.top, 0]);
+var x = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1),
+    y = d3.scaleLinear().rangeRound([height - margin.top, 0]);
+
+var xAxis = d3.axisTop()
+    .scale(x);
+var yAxis = d3.axisLeft()
+    .scale(y);
 
 var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -161,7 +166,7 @@ function layerClick(event){
         $(".icon-next .fas").addClass("fa-chevron-right");
         $(".icon-previous").css( "display", "none" );
     }
-    //makeChart();
+    updateChart();
 }
 
 $("#restart").on('click', function(){ 
@@ -177,7 +182,7 @@ $("#restart").on('click', function(){
     $(".icon-next .fas").removeClass("fa-reply");
     $(".icon-next .fas").addClass("fa-chevron-right");
     currentRegion = 0;
-    //makeChart();
+    updateChart()
 });
 
 $(".icon-next").on('click', function(){
@@ -206,6 +211,7 @@ $(".icon-next").on('click', function(){
         $(".icon-next .fas").addClass("fa-chevron-right");
         $(".icon-previous").css( "display", "none" );
         currentRegion = 0;
+        updateChart();
     }
 });
 
@@ -233,6 +239,7 @@ $(".icon-previous").on('click', function(){
         $(".icon-previous .fas").addClass("fa-chevron-left");
         $(".icon-previous").css( "display", "none" );
         currentRegion = 0;
+        updateChart();
     }
 });
 
@@ -246,7 +253,7 @@ function updateChart(){
         6 : "Centro Norte",
         7 : "Peninsula"
     };
-    console.log(currentRegion)
+    //console.log(currentRegion)
     if(currentRegion == 0){
         // at the national extent, display only top 15 values
         var chartData = properties.sort(function(x,y){
@@ -280,11 +287,58 @@ function updateChart(){
         var lastValue = e.grado_ferrocarril
     });
 
-    x.domain(chartData.map(function(d) { return d.nombre; }));
+    x.domain(chartData.map(function(d) {
+        //console.log(d.nombre)
+        return d.nombre;
+    }));
     y.domain([0, d3.max(chartData, function(d) { return d.grado_total })]);
-    var bars = g.selectAll(".bar")
+    //console.log(stackedData)
+    
+    var barsUpdate = g.selectAll(".ciudad")
+        .data(stackedData, function(d){return d.id;});
+    
+    //console.log(barsUpdate.exit())
+    var t = barsUpdate.transition()
+        .duration(500);
+    
+    barsUpdate.exit().style('opacity', 1)
+        .transition(t)
+        .style('opacity', 0)
+        .remove();
+    
+    var barsEnter= barsUpdate.enter()
+        .append("g")
+        .attr("id", function(d){return d.id;})
+        .attr("class", "ciudad")
+        .selectAll("rect")
+        .data(function(d){return d.data;}, function(d){return d.id;})
+        .enter()
+        .append("rect")
+        .transition(t)
+        .attr("class", "bar")
+        .attr("x", function(d) {
+            return x(d.nombre);
+        })
+        .attr("y", function(d, i) {return y(d.end);})
+        .attr("fill", function(d,i) {return stackColors[i];})
+        .attr("width", x.bandwidth())
+        .attr("height", function(d,i) {return y(d.start) - y(d.end);});
 
-}
+    barsUpdate.selectAll("rect")
+        .attr("x", function(d) {
+            return x(d.nombre);
+        })
+        .attr("y", function(d, i) {
+            return y(d.end);
+        })
+        .attr("fill", function(d,i) {return stackColors[i];})
+        .attr("width", x.bandwidth())
+        .attr("height", function(d,i) {return y(d.start) - y(d.end);});
+
+
+    g.select(".axis--y").transition(t).call(yAxis);
+    g.select(".axis--x").transition(t).call(xAxis);
+};
 
 function initChart(){
     var chartData = properties.sort(function(x,y){
@@ -313,8 +367,9 @@ function initChart(){
         .data(stackedData, function(d){return d.id;})
         .enter().append("g")
         .attr("id", function(d){return d.id;})
+        .attr("class", "ciudad")
         .selectAll("rect")
-        .data(function(d){return d.data;})
+        .data(function(d){return d.data;}, function(d){return d.id;})
         .enter()
         .append("rect")
         .attr("class", "bar")
@@ -327,7 +382,7 @@ function initChart(){
     g.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," +  (height - margin.top) + ")")
-        .call(d3.axisBottom(x))
+        .call(xAxis)
         .selectAll("text")    
         .style("text-anchor", "start")
         .attr("dx", "0.6em")
@@ -336,7 +391,7 @@ function initChart(){
 
     g.append("g")
         .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y))
+        .call(yAxis)
         .append("text")
         .attr("x", 2)
         .attr("y", y(y.ticks().pop()))
