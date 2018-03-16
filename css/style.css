@@ -115,7 +115,13 @@ body {
     fill-opacity: 0.0;
 }
 .bar {
-  fill: steelblue;
+}
+
+.bar-avg{
+    stroke: blue;
+}
+.bar-avg:hover{
+    fill: brown;
 }
 
 .bar:hover {
