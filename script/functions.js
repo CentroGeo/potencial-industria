@@ -358,7 +358,14 @@ function updateChart(){
 
 
     g.select(".axis--y").transition(t).call(yAxis);
-    g.select(".axis--x").transition(t).call(xAxis);
+    
+    g.select(".axis--x").transition(t).call(xAxis)
+        .selectAll("text")    
+        .style("text-anchor", "start")
+        .attr("dx", "0.6em")
+        .attr("dy", "1.05em")
+        .attr("transform", "rotate(45)");
+
 };
 
 function initChart(){
