@@ -124,7 +124,7 @@ function onEachFeatureRegiones(feature, layer){
 function layerClick(event){
     layer = event.target;
     feature = layer.feature;
-    makeChart()
+    updateChart()
     //console.log(feature, layer, event);
     //console.log('last clicked: '+lastClickedLayer.feature.properties.region);
     //console.log('is clicked: '+feature.properties.is_clicked);
@@ -269,7 +269,6 @@ function updateChart(){
         6 : "Centro Norte",
         7 : "Peninsula"
     };
-    //console.log(currentRegion)
     if(currentRegion == 0){
         // at the national extent, display only top 15 values
         var chartData = properties.sort(function(x,y){
@@ -283,7 +282,6 @@ function updateChart(){
         
     }else{
         var filtered = properties.filter(function(el){
-            //console.log(idToName[currentRegion])
             return el.zona == idToName[currentRegion]
         });
         filtered.push(averages)
@@ -309,17 +307,12 @@ function updateChart(){
         var lastValue = e.grado_ferrocarril
     });
 
-    x.domain(chartData.map(function(d) {
-        //console.log(d.nombre)
-        return d.nombre;
-    }));
+    x.domain(chartData.map(function(d) {return d.nombre;}));
     y.domain([0, d3.max(chartData, function(d) { return d.grado_total })]);
-    //console.log(stackedData)
     
     var barsUpdate = g.selectAll(".ciudad")
         .data(stackedData, function(d){return d.id;});
     
-    //console.log(barsUpdate.exit())
     var t = barsUpdate.transition()
         .duration(500);
     
@@ -338,21 +331,16 @@ function updateChart(){
         .append("rect")
         .transition(t)
         .attr("class", "bar")
-        .attr("x", function(d) {
-            return x(d.nombre);
-        })
+        .attr("x", function(d) {return x(d.nombre);})
         .attr("y", function(d, i) {return y(d.end);})
         .attr("fill", function(d,i) {return stackColors[i];})
         .attr("width", x.bandwidth())
         .attr("height", function(d,i) {return y(d.start) - y(d.end);});
 
     barsUpdate.selectAll("rect")
-        .attr("x", function(d) {
-            return x(d.nombre);
-        })
-        .attr("y", function(d, i) {
-            return y(d.end);
-        })
+        .transition(t)
+        .attr("x", function(d) {return x(d.nombre);})
+        .attr("y", function(d, i) {return y(d.end);})
         .attr("fill", function(d,i) {return stackColors[i];})
         .attr("width", x.bandwidth())
         .attr("height", function(d,i) {return y(d.start) - y(d.end);});
