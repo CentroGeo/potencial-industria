@@ -9,9 +9,14 @@ var x = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1),
     y = d3.scaleLinear().rangeRound([height - margin.top, 0]);
 
 var xAxis = d3.axisTop()
+    .tickSizeInner(0) // the inner ticks will be of size 0
+    .tickSizeOuter(0)
     .scale(x);
+
 var yAxis = d3.axisLeft()
+    .tickSizeOuter(0)
     .scale(y);
+
 
 var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -26,9 +31,15 @@ var quantile = d3.scaleQuantile()
 // map and base layer
 var map = L.map('mapdiv').setView([23.8, -80.9], 5);
 
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+	subdomains: 'abcd',
+	maxZoom: 19
 }).addTo(map);
+
+// L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+//     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+// }).addTo(map);
 
 // Load json data
 var properties; // properties for each city
@@ -165,8 +176,6 @@ function layerClick(event){
         var newSW = L.latLng(featBounds.getSouth(), featBounds.getWest() - diff);
         var newNE = L.latLng(featBounds.getNorth(), featBounds.getEast() - diff);
         map.flyToBounds(L.latLngBounds(newSW, newNE));
-        //console.log(event);
-        //layer.setStyle({color: 'red', fillOpacity: 0.0});
         $(layer.getElement()).removeClass("regionStyle");
         $(layer.getElement()).addClass("regionZoomed");
         feature.properties.is_clicked = true;
@@ -185,7 +194,7 @@ function layerClick(event){
     updateChart();
 }
 
-$("#restart").on('click', function(){ 
+$("#restart, .fas.fa-reply").on('click', function(){ 
     if (lastClickedLayer){
         regionesLyr.resetStyle(lastClickedLayer);
         $(lastClickedLayer.getElement()).removeClass("regionZoomed");
@@ -412,8 +421,8 @@ function initChart(){
         .call(xAxis)
         .selectAll("text")    
         .style("text-anchor", "start")
-        .attr("dx", "0.6em")
-        .attr("dy", "1.05em")
+        .attr("dx", "0em")
+        .attr("dy", "2em")
         .attr("transform", "rotate(45)");
 
     g.append("g")
@@ -422,7 +431,8 @@ function initChart(){
         .append("text")
         .attr("x", 2)
         .attr("y", y(y.ticks().pop()))
-        .attr("dy", "0.35em")
+        .attr("dy", "-2em")
+        .attr("dx", "-2em")
         .attr("text-anchor", "start")
         .attr("fill", "#000")
         .text("Degree");
