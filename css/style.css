@@ -117,6 +117,13 @@ body {
 .bar {
 }
 
+.bar-avg{
+    stroke: blue;
+}
+.bar-avg:hover{
+    fill: brown;
+}
+
 .bar:hover {
   fill: brown;
 }
