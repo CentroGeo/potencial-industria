@@ -16,10 +16,22 @@ body {
     box-shadow: -5px 0px 5px 0px rgba(128,121,128,1);
 }
 #mapdiv {
-    width: 100%;
+    width: 50%;
     height: 600px;
     z-index:1;
 }
+
+
+#overlay {
+    top: 8px;
+    left: 50%;
+    width: 50%;
+    height: 600px;
+    z-index: 1;
+    float: right;
+    position: absolute;
+}
+
 
 #title {
     position: absolute;

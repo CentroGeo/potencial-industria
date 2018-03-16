@@ -29,13 +29,65 @@ var quantile = d3.scaleQuantile()
     .range(d3.range(5).map(function(i) { return colors5[i]; })); // quantile scale with 5 classes
 
 // map and base layer
-var map = L.map('mapdiv').setView([23.8, -80.9], 5);
+var map = L.map('mapdiv').setView([23.7, -101.9], 5);
+var overlay = new L.map('overlay', {
+    zoomControl: false,
+    inertia: false,
+    keyboard: false,
+//    dragging: false,
+    scrollWheelZoom: false,
+    attributionControl:false,
+    zoomAnimation:false
+}).setView([23.8, -80.9], 5);
 
-L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+var mapBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
 	subdomains: 'abcd',
 	maxZoom: 19
 }).addTo(map);
+
+var overlayBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+	subdomains: 'abcd',
+	maxZoom: 19
+}).addTo(overlay);
+
+map.sync(overlay, {offsetFn: offsetGlobal});
+
+function offsetGlobal (center, zoom, refMap, tgtMap) {
+    var refC = refMap.getContainer();
+    var tgtC = tgtMap.getContainer();
+    var pt = refMap.project(center, zoom)
+                   .subtract([refC.offsetLeft, refC.offsetTop])
+                   .subtract(refMap.getSize().divideBy(2))
+                   .add([tgtC.offsetLeft, tgtC.offsetTop])
+                   .add(tgtMap.getSize().divideBy(2));
+    return refMap.unproject(pt, zoom);
+}
+
+//control both maps
+//map.on('move', function (e) {
+//    console.log(map.getBounds().getNorthEast())
+//     var offset = overlay.
+//         _getNewTopLeftPoint(map.getCenter())
+//         .subtract(overlay._getTopLeftPoint())
+//         .subtract([-205,100]);
+//     overlay.fire('movestart');
+//     overlay._rawPanBy(offset);
+//     overlay.fire('move');
+//     overlay.fire('moveend');
+// }).on('zoomend', function () {
+//     overlay.setView(map.getCenter(), map.getZoom(), true);
+//     map.fire('move');
+// });
+
+// $(window).resize(function () {
+//     overlay.setView(map.getCenter(), map.getZoom());
+//     map.fire('move');
+//});
+//map.fire('move');
+
+
 
 // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 //     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -175,7 +227,8 @@ function layerClick(event){
         var diff = featBounds._southWest.lng - featBounds._northEast.lng
         var newSW = L.latLng(featBounds.getSouth(), featBounds.getWest() - diff);
         var newNE = L.latLng(featBounds.getNorth(), featBounds.getEast() - diff);
-        map.flyToBounds(L.latLngBounds(newSW, newNE));
+        // map.flyToBounds(L.latLngBounds(newSW, newNE));
+        map.flyToBounds(featBounds);
         $(layer.getElement()).removeClass("regionStyle");
         $(layer.getElement()).addClass("regionZoomed");
         feature.properties.is_clicked = true;
