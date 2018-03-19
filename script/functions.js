@@ -32,7 +32,7 @@ var quantile = d3.scaleQuantile()
 var map = L.map('mapdiv').setView([23.7, -101.9], 5);
 var overlay = new L.map('overlay', {
     zoomControl: false,
-    inertia: false,
+   // inertia: false,
     keyboard: false,
 //    dragging: false,
     scrollWheelZoom: false,
@@ -411,12 +411,11 @@ function updateChart(){
     g.select(".axis--y").transition(t).call(yAxis);
     
     g.select(".axis--x").transition(t).call(xAxis)
-        .selectAll("text")    
+        .selectAll("text")
         .style("text-anchor", "start")
         .attr("dx", "0.6em")
         .attr("dy", "1.05em")
         .attr("transform", "rotate(45)");
-
 };
 
 function initChart(){
@@ -487,7 +486,6 @@ function initChart(){
         .attr("dy", "-2em")
         .attr("dx", "-2em")
         .attr("text-anchor", "start")
-        .attr("fill", "#000")
         .text("Degree");
 
         
