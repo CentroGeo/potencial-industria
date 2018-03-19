@@ -391,8 +391,8 @@ function updateChart(){
     g.select(".axis--x").transition(t).call(xAxis)
         .selectAll("text")
         .style("text-anchor", "start")
-        .attr("dx", "0.6em")
-        .attr("dy", "1.05em")
+        .attr("dx", "0em")
+        .attr("dy", "2em")
         .attr("transform", "rotate(45)");
 };
 
