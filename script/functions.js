@@ -1,4 +1,15 @@
 // Setup stuff for the bar chart
+
+var idToName = {
+    1 : "Noreste",
+    2 : "Centro-Occidente",
+    3 : "Megalopolis",
+    4 : "Noroeste",
+    5 : "Golfo Oriente",
+    6 : "Centro Norte",
+    7 : "Peninsula"
+};
+
 var svg = d3.select("svg"),
     margin = {top: 100, right: 30, bottom: 30, left: 45},
     width = +svg.attr("width") - margin.left - margin.right,
@@ -298,15 +309,6 @@ $(".icon-previous").on('click', function(){
 });
 
 function updateChart(){
-    var idToName = {
-        1 : "Noreste",
-        2 : "Centro-Occidente",
-        3 : "Megalopolis",
-        4 : "Noroeste",
-        5 : "Golfo Oriente",
-        6 : "Centro Norte",
-        7 : "Peninsula"
-    };
     if(currentRegion == 0){
         // at the national extent, display only top 15 values
         var chartData = properties.sort(function(x,y){
