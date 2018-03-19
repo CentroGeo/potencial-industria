@@ -1,32 +1,67 @@
+<!doctype html>
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" />
     <link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
     <link href="css/style.css" rel="stylesheet">
   </head>
   <body>
 
-    <div class="menu">
-      <span class="menu-button" id="restart">Restart</span> <i class="fas fa-reply"></i>
-    </div>
-      <div id="story">
-        <span id="title">
-          <h1>México</h1>
-        </span>
-        <svg id="chart" width="900" height="550"></svg>
+    <div class="container-fluid">
+      <div class="row" id="header">
+        <div class="col">
+          <h1>Industrial potential in selected Mexican urban regions</h1>
+        </div>
       </div>
-      <div class="icon-previous"><i class="fas fa-chevron-left"></i></div>
-      <div class="icon-next"><i class="fas fa-chevron-right"></i></div>
-      <div id="mapdiv"></div>
-      <div id="overlay"></div>
+      <div class="row" id="middle">
+        <div class="col">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col" id="mapdiv"></div>        
+              <div class="col" id="overlaydiv"> </div>
+              <div clas="container-fluid" id="story">
+                <span id="title">
+                  <h1>México</h1>
+                </span>
+                <svg id="chart" width="900" height="550"></svg>
+              </div>
+              <div class="menu">
+                <span class="menu-button" id="restart">Restart</span> <i class="fas fa-reply"></i>
+              </div>
 
-      <script src="https://d3js.org/d3.v4.min.js"></script>
-      <script src="https://d3js.org/d3-queue.v3.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-      <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
-      <script src="script/sync.js"></script>
-      <script src="script/functions.js"></script>
+              <div class="icon-previous"><i class="fas fa-chevron-left"></i></div>
+              <div class="icon-next"><i class="fas fa-chevron-right"></i></div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row align-items-center" id="footer">
+      <div class="col">
+        <span id="logo-conacyt"><img src="img/conacyt2.png" height="70"></span>
+      </div>
+      <div class="col">
+        <span id="logo-cg"><img src="img/centrogeo.png" height="70"></span>
+      </div>
+      <div class="col">
+        <span id="logo-geoint"><img src="img/geoint.png" height="70"></span>
+      </div>
+    </div>
+
+</div>
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-queue.v3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+    <script src="script/sync.js"></script>
+    <script src="script/functions.js"></script>
 
   </body>
 </html>

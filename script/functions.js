@@ -29,8 +29,10 @@ var quantile = d3.scaleQuantile()
     .range(d3.range(5).map(function(i) { return colors5[i]; })); // quantile scale with 5 classes
 
 // map and base layer
-var map = L.map('mapdiv').setView([23.7, -101.9], 5);
-var overlay = new L.map('overlay', {
+var map = L.map('mapdiv', {attributionControl: false}).setView([23.75, -101.9], 5);
+L.control.attribution({position: 'bottomleft'}).addTo(map);
+
+var overlay = new L.map('overlaydiv', {
     zoomControl: false,
    // inertia: false,
     keyboard: false,
@@ -38,7 +40,7 @@ var overlay = new L.map('overlay', {
     scrollWheelZoom: false,
     attributionControl:false,
     zoomAnimation:false
-}).setView([23.8, -80.9], 5);
+}).setView([23.75, -101.9], 5);
 
 var mapBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
@@ -57,41 +59,15 @@ map.sync(overlay, {offsetFn: offsetGlobal});
 function offsetGlobal (center, zoom, refMap, tgtMap) {
     var refC = refMap.getContainer();
     var tgtC = tgtMap.getContainer();
+    //console.log(refC.offsetLeft, refC.offsetTop)
     var pt = refMap.project(center, zoom)
                    .subtract([refC.offsetLeft, refC.offsetTop])
                    .subtract(refMap.getSize().divideBy(2))
                    .add([tgtC.offsetLeft, tgtC.offsetTop])
-                   .add(tgtMap.getSize().divideBy(2));
+        .add(tgtMap.getSize().divideBy(2));
+    console.log(refMap.unproject(pt))
     return refMap.unproject(pt, zoom);
 }
-
-//control both maps
-//map.on('move', function (e) {
-//    console.log(map.getBounds().getNorthEast())
-//     var offset = overlay.
-//         _getNewTopLeftPoint(map.getCenter())
-//         .subtract(overlay._getTopLeftPoint())
-//         .subtract([-205,100]);
-//     overlay.fire('movestart');
-//     overlay._rawPanBy(offset);
-//     overlay.fire('move');
-//     overlay.fire('moveend');
-// }).on('zoomend', function () {
-//     overlay.setView(map.getCenter(), map.getZoom(), true);
-//     map.fire('move');
-// });
-
-// $(window).resize(function () {
-//     overlay.setView(map.getCenter(), map.getZoom());
-//     map.fire('move');
-//});
-//map.fire('move');
-
-
-
-// L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-//     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-// }).addTo(map);
 
 // Load json data
 var properties; // properties for each city
@@ -233,7 +209,7 @@ function layerClick(event){
         $(layer.getElement()).addClass("regionZoomed");
         feature.properties.is_clicked = true;
     } else if (feature.properties.is_clicked == true){ // feature already clicked, so zoom out
-        map.flyTo([23.8, -80.9], 5);
+        map.flyTo([23.75, -101.9], 5);
         regionesLyr.resetStyle(layer);
         $(layer.getElement()).removeClass("regionZoomed");
         $(layer.getElement()).addClass("regionStyle");
@@ -256,7 +232,7 @@ $("#restart, .fas.fa-reply").on('click', function(){
     }
     lastClickedLayer = null;
     $("#title").html('<h1>México</h1>');
-    map.flyTo([23.8, -80.9], 5);
+    map.flyTo([23.75, -101.9], 5);
     $(".icon-next .fas").removeClass("fa-reply");
     $(".icon-next .fas").addClass("fa-chevron-right");
     currentRegion = 0;
@@ -284,7 +260,7 @@ $(".icon-next").on('click', function(){
         $(".icon-previous .fas").removeClass("fa-reply");
         $(".icon-previous .fas").addClass("fa-chevron-left");
     } else { // return to overview
-        map.flyTo([23.8, -80.9], 5);
+        map.flyTo([23.75, -101.9], 5);
         $(".icon-next .fas").removeClass("fa-reply");
         $(".icon-next .fas").addClass("fa-chevron-right");
         $(".icon-previous").css( "display", "none" );
@@ -312,7 +288,7 @@ $(".icon-previous").on('click', function(){
         $(".icon-previous .fas").removeClass("fa-chevron-left");
         $(".icon-previous .fas").addClass("fa-reply");
     } else { // return to overview
-        map.flyTo([23.8, -80.9], 5);
+        map.flyTo([23.75, -101.9], 5);
         $(".icon-previous .fas").removeClass("fa-reply");
         $(".icon-previous .fas").addClass("fa-chevron-left");
         $(".icon-previous").css( "display", "none" );
