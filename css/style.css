@@ -96,6 +96,11 @@ h1 {
     right: 0px;
     z-index: 2;
 }
+
+.icon-next:hover, .icon-previous:hover{
+    //color: #737373;
+    background-color: #f4f4f4;
+}
 .menu{
     border-left: 1px solid #e6e6e6;
     font-size: 14px;
