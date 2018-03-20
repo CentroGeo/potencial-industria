@@ -28,24 +28,16 @@ body {
     position: absolute;
     background-color:#262626;
     z-index: 2 !important;
-    // -webkit-box-shadow: -5px 0px 5px 0px rgba(128,121,128,1); 
-    // -moz-box-shadow: -5px 0px 5px 0px rgba(128,121,128,1); 
-    // box-shadow: -5px 0px 5px 0px rgba(128,121,128,1); 
+    -webkit-box-shadow: -15px 0px 5px -5px rgba(128,121,128,1); 
+    -moz-box-shadow: -15px 0px 5px -5px rgba(128,121,128,1); 
+    box-shadow: -15px 0px 5px -5px rgba(128,121,128,1); 
     left: 50%;
+    width: 50%
 }
-#mapdiv {
-    width: 50%;
+#mapdiv, #overlaydiv {
     height: 854px;
     z-index:1;
 }
-
-
-#overlaydiv {
-    z-index: 1;
-    margin-left: -15px;
-    height: 854px;
-}
-
 
 h1 {
     position: absolute;
