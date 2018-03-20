@@ -1,17 +1,22 @@
-body {
-    font-family: 'proxima-nova', sans-serif;
-    background-color: #262626;
+:root {
+    --main-bg-color: #262626;
+    --main-text-color: #fff;
 }
 
-#header{
+body {
+    font-family: 'proxima-nova', sans-serif;
+    background-color: var(--main-bg-color);
+}
+
+#header {
     font-size: 2em;
-    color: #fff;
+    color: var(--main-text-color);
     height: 100px;
 }
 
-#middle{
+#middle {
     height: 854px;
-    color: #fff;
+    color: var(--main-text-color);
 }
 
 #footer {
@@ -24,9 +29,9 @@ body {
 
 #story {
     height: 854px; 
-    opacity:0.75;
+    opacity: 0.75;
     position: absolute;
-    background-color:#262626;
+    background-color: var(--main-bg-color);
     z-index: 2 !important;
     -webkit-box-shadow: -15px 0px 5px -5px rgba(128,121,128,1); 
     -moz-box-shadow: -15px 0px 5px -5px rgba(128,121,128,1); 
@@ -42,9 +47,7 @@ body {
 h1 {
     position: absolute;
     top: 30px;
-    left: 30px;
-    color: #fff;
-    
+    left: 30px;    
 }
 .icon-previous{
     color: #333;
@@ -60,7 +63,7 @@ h1 {
     border-bottom-right-radius: 7px;
     border-top-right-radius: 7px;
     border-left: 0;
-    background-color: #fff;
+    background-color: var(--main-text-color);
     padding: 20px;
     border: 1px solid #b3b3b3;
     cursor: pointer;
@@ -84,7 +87,7 @@ h1 {
     border-bottom-left-radius: 7px;
     border-top-left-radius: 7px;
     border-left: 0;
-    background-color: #fff;
+    background-color: var(--main-text-color);
     padding: 20px;
     border: 1px solid #b3b3b3;
     cursor: pointer;
@@ -98,7 +101,7 @@ h1 {
     font-size: 14px;
     padding: 6px 12px 6px 12px;
     background-color: rgba(217,217,217,0.9);
-    background-color: #fff;
+    background-color: var(--main-text-color);
     cursor: pointer;
     font-weight: bold;
     color: #737373;
@@ -115,7 +118,7 @@ h1 {
 }
 .menu:hover {
     background: #c34528;
-    color: #fff;
+    color: var(--main-text-color);
 }
 
 .regionStyle {
@@ -148,15 +151,15 @@ h1 {
 }
 
 .tick text {
-    fill: #fff;
+    fill: var(--main-text-color);
 }
 
 .axis--y path{
-     stroke: #fff; 
+     stroke: var(--main-text-color); 
 }
 
 .axis--y text{
-     fill: #fff; 
+     fill: var(--main-text-color); 
 }
  
 .axis--x path{
@@ -164,9 +167,9 @@ h1 {
 }
 
 .tick  line{
-    stroke: #fff;
+    stroke: var(--main-text-color);
 }
 
 .legend text {
-    fill: #fff;
+    fill: var(--main-text-color);
 }
