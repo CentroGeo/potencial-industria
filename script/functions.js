@@ -75,7 +75,7 @@ function offsetGlobal (center, zoom, refMap, tgtMap) {
                    .subtract([refC.offsetLeft, refC.offsetTop])
                    .subtract(refMap.getSize().divideBy(2))
                    .add([tgtC.offsetLeft, tgtC.offsetTop])
-        .add(tgtMap.getSize().divideBy(2));
+                   .add(tgtMap.getSize().divideBy(2));
     console.log(refMap.unproject(pt))
     return refMap.unproject(pt, zoom);
 }
@@ -105,7 +105,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 dict.grado_ferrocarril = e.properties.grado_ferrocarril;
                 dict.grado_total = e.properties.grado_total;
                 dict.zona = e.properties.zona;
-                properties.push(dict)
+                properties.push(dict);
             });
             avgCarr = d3.mean(properties,function(d) {
                     return d.grado_carretera;
@@ -120,7 +120,6 @@ q.defer(d3.json, "data/regiones.geojson")
                 "grado_ferrocarril": avgFerr,
                 "grado_total": avgCarr + avgFerr,
                 "zona": "Nacional"
-
             }
             makeMap(regiones, ciudades);
             initChart();
@@ -136,7 +135,7 @@ function makeMap(regiones, ciudades){
     quantile.domain(rateById.values())
     ciudadesLyr = L.geoJSON([ciudades], {
         style: function(feature){
-            return{
+            return {
                 weight: 0.5,
                 color: "#999",
                 opacity: 1,
@@ -146,8 +145,6 @@ function makeMap(regiones, ciudades){
         },
         interactive: false
     }).addTo(map);
-
-    //var isClicked = false;
 
     regionesLyr = L.geoJSON([regiones], {
         style: {weight: 2,
@@ -175,12 +172,8 @@ function layerClick(event){
     layer = event.target;
     feature = layer.feature;
     updateChart()
-    //console.log(feature, layer, event);
-    //console.log('last clicked: '+lastClickedLayer.feature.properties.region);
-    //console.log('is clicked: '+feature.properties.is_clicked);
     if (feature.properties.is_clicked == false){ // feature not clicked, so zoom in
         if (lastClickedLayer){ // when a region is clicked and you click another, reset previous one
-            //console.log('last clicked: '+lastClickedLayer.feature.properties.region);
             regionesLyr.resetStyle(lastClickedLayer);
             lastClickedLayer.feature.properties.is_clicked = false;
             $(lastClickedLayer.getElement()).removeClass("regionZoomed");
@@ -208,13 +201,8 @@ function layerClick(event){
             $(".icon-previous").css( "display", "block" );
         }
         
-        //console.log('current: '+currentRegion, feature.properties.region);
         $("#title").html('<h1>' + feature.properties.zona + '</h1>');
         var featBounds = feature.properties.bounds_calculated;
-        var diff = featBounds._southWest.lng - featBounds._northEast.lng
-        var newSW = L.latLng(featBounds.getSouth(), featBounds.getWest() - diff);
-        var newNE = L.latLng(featBounds.getNorth(), featBounds.getEast() - diff);
-        // map.flyToBounds(L.latLngBounds(newSW, newNE));
         map.flyToBounds(featBounds);
         $(layer.getElement()).removeClass("regionStyle");
         $(layer.getElement()).addClass("regionZoomed");
@@ -247,7 +235,7 @@ $("#restart, .fas.fa-reply").on('click', function(){
     $(".icon-next .fas").removeClass("fa-reply");
     $(".icon-next .fas").addClass("fa-chevron-right");
     currentRegion = 0;
-    updateChart()
+    updateChart();
 });
 
 $(".icon-next").on('click', function(){
@@ -315,18 +303,18 @@ function updateChart(){
             return d3.descending(x.grado_total, y.grado_total)
         }).slice(0, 14);
         
-        chartData.push(averages)
+        chartData.push(averages);
         chartData.sort(function(x,y){
             return d3.descending(x.grado_total, y.grado_total)
         })
         
     }else{
         var filtered = properties.filter(function(el){
-            return el.zona == idToName[currentRegion]
+            return el.zona == idToName[currentRegion];
         });
         filtered.push(averages)
         var chartData = filtered.sort(function(x,y){
-            return d3.descending(x.grado_total, y.grado_total)
+            return d3.descending(x.grado_total, y.grado_total);
         });   
     };
     var stackColors = ['#d8b365','#5ab4ac'];
@@ -343,8 +331,8 @@ function updateChart(){
                                    "nombre": e.nombre,
                                    "start": e.grado_carretera,
                                    "end": e.grado_ferrocarril + e.grado_carretera}]
-                         })
-        var lastValue = e.grado_ferrocarril
+                         });
+        var lastValue = e.grado_ferrocarril;
     });
 
     x.domain(chartData.map(function(d) {return d.nombre;}));
@@ -400,13 +388,13 @@ function initChart(){
     var chartData = properties.sort(function(x,y){
         return d3.descending(x.grado_total, y.grado_total)
     }).slice(0, 14);
-    chartData.push(averages)
+    chartData.push(averages);
     chartData.sort(function(x,y){
         return d3.descending(x.grado_total, y.grado_total)
     })
     var stackColors = ['#d8b365','#5ab4ac'];
     var stack = d3.stack();
-    var variables = ["grado_carretera", "grado_ferrocarril"]
+    var variables = ["grado_carretera", "grado_ferrocarril"];
     var stackedData = [];
     chartData.forEach(function(e){
         stackedData.push({"id":e.id,
@@ -418,8 +406,8 @@ function initChart(){
                                    "nombre": e.nombre,
                                    "start": e.grado_carretera,
                                    "end": e.grado_ferrocarril + e.grado_carretera}]
-                         })
-        var lastValue = e.grado_ferrocarril
+                         });
+        var lastValue = e.grado_ferrocarril;
     });
     x.domain(chartData.map(function(d) { return d.nombre; }));
     y.domain([0, d3.max(chartData, function(d) { return d.grado_total })]);
@@ -434,9 +422,9 @@ function initChart(){
         .append("rect")
         .attr("class", function(d){
             if(d.id == -1){
-                return "bar-avg"
+                return "bar-avg";
             } else{
-                return "bar"
+                return "bar";
             }
         })
         .attr("x", function(d) {return x(d.nombre);})
@@ -485,7 +473,5 @@ function initChart(){
         .attr("y", 9)
         .attr("dy", ".35em")
         .attr("text-anchor", "start")
-        .text(function(d) { return d; });
-
-    
+        .text(function(d) { return d; });    
 }

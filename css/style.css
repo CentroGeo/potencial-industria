@@ -43,6 +43,7 @@ body {
 #mapdiv, #overlaydiv {
     height: 854px;
     z-index:1;
+    background-color: var(--main-bg-color);
 }
 
 h1 {
