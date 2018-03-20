@@ -39,6 +39,7 @@ body {
     left: 50%;
     width: 50%
 }
+
 #mapdiv, #overlaydiv {
     height: 854px;
     z-index:1;
@@ -101,8 +102,7 @@ h1 {
     //color: #737373;
     background-color: #f4f4f4;
 }
-.menu{
-    border-left: 1px solid #e6e6e6;
+.menu {
     font-size: 14px;
     padding: 6px 12px 6px 12px;
     background-color: rgba(217,217,217,0.9);
@@ -116,8 +116,9 @@ h1 {
     top: 0px;
     text-align: left;
     overflow: hidden;
-    border-bottom: 1px solid #e6e6e6;
+    /*border-bottom: 1px solid #e6e6e6;
     border-right: 1px solid #e6e6e6;
+    border-left: 1px solid #e6e6e6;*/
     border-bottom-right-radius: 7px;
     border-bottom-left-radius: 7px;
 }
@@ -144,10 +145,10 @@ h1 {
 .bar {
 }
 
-.bar-avg{
+.bar-avg {
     stroke: blue;
 }
-.bar-avg:hover{
+.bar-avg:hover {
     fill: brown;
 }
 
@@ -159,19 +160,19 @@ h1 {
     fill: var(--main-text-color);
 }
 
-.axis--y path{
+.axis--y path {
      stroke: var(--main-text-color); 
 }
 
-.axis--y text{
+.axis--y text {
      fill: var(--main-text-color); 
 }
  
-.axis--x path{
+.axis--x path {
     stroke: none;
 }
 
-.tick  line{
+.tick  line {
     stroke: var(--main-text-color);
 }
 
