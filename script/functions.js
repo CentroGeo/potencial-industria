@@ -70,13 +70,11 @@ map.sync(overlay, {offsetFn: offsetGlobal});
 function offsetGlobal (center, zoom, refMap, tgtMap) {
     var refC = refMap.getContainer();
     var tgtC = tgtMap.getContainer();
-    //console.log(refC.offsetLeft, refC.offsetTop)
     var pt = refMap.project(center, zoom)
                    .subtract([refC.offsetLeft, refC.offsetTop])
                    .subtract(refMap.getSize().divideBy(2))
                    .add([tgtC.offsetLeft, tgtC.offsetTop])
                    .add(tgtMap.getSize().divideBy(2));
-    console.log(refMap.unproject(pt))
     return refMap.unproject(pt, zoom);
 }
 
@@ -171,16 +169,29 @@ function onEachFeatureRegiones(feature, layer){
 function layerClick(event){
     layer = event.target;
     feature = layer.feature;
-    updateChart()
+    noStyle = {weight: 1,
+                color: "#AAAAAA",
+                opacity: 0.1,
+                fillColor: "#AAAAAA",
+                fillOpacity: 0.1,
+                className: 'regionStyle'
+               };
+    updateChart();
     if (feature.properties.is_clicked == false){ // feature not clicked, so zoom in
         if (lastClickedLayer){ // when a region is clicked and you click another, reset previous one
-            regionesLyr.resetStyle(lastClickedLayer);
+            //regionesLyr.resetStyle(lastClickedLayer);
             lastClickedLayer.feature.properties.is_clicked = false;
             $(lastClickedLayer.getElement()).removeClass("regionZoomed");
             $(lastClickedLayer.getElement()).addClass("regionStyle");
         }
         lastClickedLayer = layer;
         currentRegion = feature.properties.id_0;
+        ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
+        ciudadesLyr.eachLayer(function(l){
+            if (l.feature.properties.zona != idToName[currentRegion]){
+                l.setStyle(noStyle);
+            } 
+        });
         if (currentRegion == 1){ // if first region, change button icon
             $(".icon-previous .fas").removeClass("fa-chevron-left");
             $(".icon-previous .fas").addClass("fa-reply");
@@ -204,12 +215,15 @@ function layerClick(event){
         $("#title").html('<h1>' + feature.properties.zona + '</h1>');
         var featBounds = feature.properties.bounds_calculated;
         map.flyToBounds(featBounds);
+        regionesLyr.eachLayer(function(l){l.setStyle(noStyle);})
         $(layer.getElement()).removeClass("regionStyle");
         $(layer.getElement()).addClass("regionZoomed");
         feature.properties.is_clicked = true;
     } else if (feature.properties.is_clicked == true){ // feature already clicked, so zoom out
         map.flyTo([23.75, -101.9], 5);
-        regionesLyr.resetStyle(layer);
+        //regionesLyr.resetStyle(layer);
+        regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);})
+        ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
         $(layer.getElement()).removeClass("regionZoomed");
         $(layer.getElement()).addClass("regionStyle");
         $("#title").html('<h1>México</h1>');
@@ -224,7 +238,9 @@ function layerClick(event){
 
 $("#restart, .fas.fa-reply").on('click', function(){ 
     if (lastClickedLayer){
-        regionesLyr.resetStyle(lastClickedLayer);
+        //regionesLyr.resetStyle(lastClickedLayer);
+        regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);})
+        ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
         $(lastClickedLayer.getElement()).removeClass("regionZoomed");
         $(lastClickedLayer.getElement()).addClass("regionStyle");
         lastClickedLayer.feature.properties.is_clicked = false;
@@ -240,7 +256,7 @@ $("#restart, .fas.fa-reply").on('click', function(){
 
 $(".icon-next").on('click', function(){
     if (lastClickedLayer){ // if something is clicked, reset style
-            regionesLyr.resetStyle(lastClickedLayer);
+            //regionesLyr.resetStyle(lastClickedLayer);
             lastClickedLayer.feature.properties.is_clicked = false;
             $(lastClickedLayer.getElement()).removeClass("regionZoomed");
             $(lastClickedLayer.getElement()).addClass("regionStyle");
@@ -264,13 +280,15 @@ $(".icon-next").on('click', function(){
         $(".icon-next .fas").addClass("fa-chevron-right");
         $(".icon-previous").css( "display", "none" );
         currentRegion = 0;
+        regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);})
+        ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
         updateChart();
     }
 });
 
 $(".icon-previous").on('click', function(){
     if (lastClickedLayer){ // if something is clicked, reset style
-            regionesLyr.resetStyle(lastClickedLayer);
+            //regionesLyr.resetStyle(lastClickedLayer);
             lastClickedLayer.feature.properties.is_clicked = false;
             $(lastClickedLayer.getElement()).removeClass("regionZoomed");
             $(lastClickedLayer.getElement()).addClass("regionStyle");
@@ -292,6 +310,8 @@ $(".icon-previous").on('click', function(){
         $(".icon-previous .fas").addClass("fa-chevron-left");
         $(".icon-previous").css( "display", "none" );
         currentRegion = 0;
+        regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);})
+        ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
         updateChart();
     }
 });
@@ -373,7 +393,6 @@ function updateChart(){
         .attr("width", x.bandwidth())
         .attr("height", function(d,i) {return y(d.start) - y(d.end);});
 
-
     g.select(".axis--y").transition(t).call(yAxis);
     
     g.select(".axis--x").transition(t).call(xAxis)
@@ -453,7 +472,6 @@ function initChart(){
         .attr("dx", "-2em")
         .attr("text-anchor", "start")
         .text("Degree");
-
         
     var legend = g.selectAll(".legend")
         .data(variables.reverse())
