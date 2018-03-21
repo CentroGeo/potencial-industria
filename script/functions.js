@@ -9,6 +9,7 @@ var idToName = {
     6 : "Centro Norte",
     7 : "Peninsula"
 };
+//r update_axes;
 
 var svg = d3.select("svg"),
     margin = {top: 100, right: 30, bottom: 30, left: 45},
@@ -81,10 +82,12 @@ function offsetGlobal (center, zoom, refMap, tgtMap) {
 // Load json data
 var properties; // properties for each city
 var averages; // store average values
+var imcoAvgs;
 var q = d3.queue();
 q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.json, "data/ciudades.geojson")
-    .await(function(error, regiones, ciudades) {
+    .defer(d3.csv, "data/variables-potencial-industrial.csv")
+    .await(function(error, regiones, ciudades, variables) {
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
         }
@@ -119,8 +122,109 @@ q.defer(d3.json, "data/regiones.geojson")
                 "grado_total": avgCarr + avgFerr,
                 "zona": "Nacional"
             }
+            imcoAvgs = {
+                "sis_dere": d3.mean(variables,function(d) {
+                    return d.sis_dere;
+                }),
+                "man_ambi": d3.mean(variables,function(d) {
+                    return d.man_ambi;
+                }),
+                "soc_incl": d3.mean(variables,function(d) {
+                    return d.soc_incl;
+                }),
+                "sis_poli": d3.mean(variables,function(d) {
+                    return d.sis_poli;
+                }),
+                "gob_efic": d3.mean(variables,function(d) {
+                    return d.gob_efic;
+                }),
+                "merc_fac": d3.mean(variables,function(d) {
+                    return d.merc_fac;
+                }),
+                "eco_esta": d3.mean(variables,function(d) {
+                    return d.eco_esta;
+                }),
+                "precur": d3.mean(variables,function(d) {
+                    return d.precur;
+                }),
+                "rela_inte": d3.mean(variables,function(d) {
+                    return d.rela_inte;
+                }),
+                "inno_eco": d3.mean(variables,function(d) {
+                    return d.inno_eco;
+                })  
+            };
+            radarData = 
+                [  
+                    {  
+                        "key":"Nokia Smartphone",
+                        "values":[  
+                            {  "axis":"Battery Life", "value":0.26 }, {  "axis":"Brand", "value":0.10 },
+                            {  "axis":"Contract Cost", "value":0.30 }, {  "axis":"Design And Quality", "value":0.14 },
+                            {  "axis":"Have Internet Connectivity", "value":0.22 }, {  "axis":"Large Screen", "value":0.04 },
+                            {  "axis":"Price Of Device", "value":0.41 }, {  "axis":"To Be A Smartphone", "value":0.30 }
+                        ]
+                    },
+                    {  
+                        "key":"Samsung",
+                        "values":[  
+                            {  "axis":"Battery Life", "value":0.27 }, {  "axis":"Brand", "value":0.16 },
+                            {  "axis":"Contract Cost", "value":0.35 }, {  "axis":"Design And Quality", "value":0.13 },
+                            {  "axis":"Have Internet Connectivity", "value":0.20 }, {  "axis":"Large Screen", "value":0.13 },
+                            {  "axis":"Price Of Device", "value":0.35 }, {  "axis":"To Be A Smartphone", "value":0.38 }
+                        ]
+                    },
+                    {  
+                        "key":"iPhone",
+                        "values":[  
+                            {  "axis":"Battery Life", "value":0.22 }, {  "axis":"Brand", "value":0.28 },
+                            {  "axis":"Contract Cost", "value":0.29 }, {  "axis":"Design And Quality", "value":0.17 },
+                            {  "axis":"Have Internet Connectivity", "value":0.22 }, {  "axis":"Large Screen", "value":0.02 },
+                            {  "axis":"Price Of Device", "value":0.21 }, {  "axis":"To Be A Smartphone", "value":0.50 }
+                        ]
+                    }
+                ];
+            // var radarData = [
+            //     {
+            //         "key": "National Average",
+            //         "values": [
+            //             {"axis": "sis_dere", "value":imcoAvgs.sis_dere},
+            //             {"axis": "man_ambi", "value":imcoAvgs.man_ambi},
+            //             {"axis": "soc_incl", "value":imcoAvgs.soc_incl},
+            //             {"axis": "gob_efic", "value":imcoAvgs.gob_efic},
+            //             {"axis": "merc_fac", "value":imcoAvgs.merc_fac},
+            //             {"axis": "eco_esta", "value":imcoAvgs.eco_esta},
+            //             {"axis": "precur", "value":imcoAvgs.precur},
+            //             {"axis": "rela_inte", "value":imcoAvgs.rela_inte},
+            //             {"axis": "inno_eco", "value":imcoAvgs.inno_eco},
+            //             {"axis": "sis_poli", "value":imcoAvgs.sis_poli},
+                        
+            //         ]
+            //     }
+            // ];
+            //console.log(imcoAvgs);
             makeMap(regiones, ciudades);
             initChart();
+            
+            //d3.scaleOrdinal().range(["#6F257F", "#CA0D59"])
+            var color = d3.scaleOrdinal(d3.schemeCategory10)
+	        .range(["#EDC951","#CC333F","#00A0B0"]);
+	    
+	    var radarChartOptions = {
+                width: 600,
+                height: 600,
+		color: color
+	    };
+            radarChart = RadarChart();
+            d3.select('#radarChart')
+                .call(radarChart);
+            radarChart.options(radarChartOptions)
+                .data(radarData)
+                .update();
+            // radarChart
+            //     .data(radarData)
+            //     .duration(1000)
+            //     .update();
         }
     });
 
