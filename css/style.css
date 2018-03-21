@@ -27,6 +27,10 @@ body {
     text-align:center;
 }
 
+.table > tbody > tr > td {
+     vertical-align: middle;
+}
+
 #story {
     height: 854px; 
     opacity: 0.75;
@@ -46,11 +50,7 @@ body {
     background-color: var(--main-bg-color);
 }
 
-h1 {
-    position: absolute;
-    top: 30px;
-    left: 30px;    
-}
+
 .icon-previous{
     color: #333;
     font-style: normal;
