@@ -11,10 +11,10 @@ var idToName = {
 };
 //r update_axes;
 
-var svg = d3.select("svg"),
+var svgBar = d3.select("#barChart"),
     margin = {top: 100, right: 30, bottom: 30, left: 45},
-    width = +svg.attr("width") - margin.left - margin.right,
-    height = +svg.attr("height") - margin.top - margin.bottom;
+    width = +svgBar.attr("width") - margin.left - margin.right,
+    height = +svgBar.attr("height") - margin.top - margin.bottom;
 
 
 var x = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1),
@@ -30,7 +30,7 @@ var yAxis = d3.axisLeft()
     .scale(y);
 
 
-var g = svg.append("g")
+var gBar = svgBar.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
@@ -82,7 +82,8 @@ function offsetGlobal (center, zoom, refMap, tgtMap) {
 // Load json data
 var properties; // properties for each city
 var averages; // store average values
-var imcoAvgs;
+var imcoAvgsRadar;
+var varsImco;
 var q = d3.queue();
 q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.json, "data/ciudades.geojson")
@@ -121,8 +122,9 @@ q.defer(d3.json, "data/regiones.geojson")
                 "grado_ferrocarril": avgFerr,
                 "grado_total": avgCarr + avgFerr,
                 "zona": "Nacional"
-            }
-            imcoAvgs = {
+            };
+            
+            var imcoAvgs = {
                 "sis_dere": d3.mean(variables,function(d) {
                     return d.sis_dere;
                 }),
@@ -154,7 +156,8 @@ q.defer(d3.json, "data/regiones.geojson")
                     return d.inno_eco;
                 })  
             };
-            var radarData = [
+            
+            imcoAvgsRadar = [
                 {
                     "name": "National Average",
                     "axes": [
@@ -167,46 +170,29 @@ q.defer(d3.json, "data/regiones.geojson")
                         {"axis": "precur", "value":imcoAvgs.precur},
                         {"axis": "rela_inte", "value":imcoAvgs.rela_inte},
                         {"axis": "inno_eco", "value":imcoAvgs.inno_eco},
-                        {"axis": "sis_poli", "value":imcoAvgs.sis_poli},
+                        {"axis": "sis_poli", "value":imcoAvgs.sis_poli}
                         
                     ]
                 }
             ];
+            varsImco = variables;
             //console.log(imcoAvgs);
             makeMap(regiones, ciudades);
             initChart();
 	    var radarChartOptions = {
 	        w: 290,
 	        h: 300,
+                maxValue: 100,
 	        margin: { top: 10, right: 20, bottom: 10, left: 20 },
 	        levels: 5,
 	        roundStrokes: true,
-	        color: d3.scaleOrdinal().range(["#26AF32", "#762712"]),
-	        format: '.0f'
+	        color: d3.scaleOrdinal().range(d3.schemeCategory20),
+	        format: '.0f',
+                opacityArea: 0.1
 	    };
 
 	    // Draw the chart, get a reference the created svg element :
-	    let svg_radar1 = RadarChart("#radarChart", radarData, radarChartOptions);
-            
-            //d3.scaleOrdinal().range(["#6F257F", "#CA0D59"])
-            // var color = d3.scaleOrdinal(d3.schemeCategory10)
-	    //     .range(["#EDC951","#CC333F","#00A0B0"]);
-	    
-	    // var radarChartOptions = {
-            //     width: 600,
-            //     height: 600,
-	    //     color: color
-	    // };
-            // radarChart = RadarChart();
-            // d3.select('#radarChart')
-            //     .call(radarChart);
-            // radarChart.options(radarChartOptions)
-            //     .data(radarData)
-            //     .update();
-            // radarChart
-            //     .data(radarData)
-            //     .duration(1000)
-            //     .update();
+	    var svgRadar = RadarChart("#radarChart", imcoAvgsRadar, radarChartOptions);
         }
     });
 
@@ -262,7 +248,6 @@ function layerClick(event){
                 fillOpacity: 0.1,
                 className: 'regionStyle'
                };
-    updateChart();
     if (feature.properties.is_clicked == false){ // feature not clicked, so zoom in
         if (lastClickedLayer){ // when a region is clicked and you click another, reset previous one
             //regionesLyr.resetStyle(lastClickedLayer);
@@ -298,6 +283,7 @@ function layerClick(event){
             $(".icon-previous").css( "display", "block" );
         }
         
+        
         $("#title").html('<h1>' + feature.properties.zona + '</h1>');
         var featBounds = feature.properties.bounds_calculated;
         map.flyToBounds(featBounds);
@@ -320,6 +306,8 @@ function layerClick(event){
         $(".icon-previous").css( "display", "none" );
     }
     updateChart();
+    updateRadar();
+
 }
 
 $("#restart, .fas.fa-reply").on('click', function(){ 
@@ -337,6 +325,7 @@ $("#restart, .fas.fa-reply").on('click', function(){
     $(".icon-next .fas").removeClass("fa-reply");
     $(".icon-next .fas").addClass("fa-chevron-right");
     currentRegion = 0;
+    updateRadar();
     updateChart();
 });
 
@@ -366,9 +355,8 @@ $(".icon-next").on('click', function(){
         $(".icon-next .fas").addClass("fa-chevron-right");
         $(".icon-previous").css( "display", "none" );
         currentRegion = 0;
-        regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);})
-        ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
-        updateChart();
+        regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
+        ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
     }
 });
 
@@ -396,9 +384,8 @@ $(".icon-previous").on('click', function(){
         $(".icon-previous .fas").addClass("fa-chevron-left");
         $(".icon-previous").css( "display", "none" );
         currentRegion = 0;
-        regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);})
-        ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
-        updateChart();
+        regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
+        ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
     }
 });
 
@@ -406,12 +393,12 @@ function updateChart(){
     if(currentRegion == 0){
         // at the national extent, display only top 15 values
         var chartData = properties.sort(function(x,y){
-            return d3.descending(x.grado_total, y.grado_total)
+            return d3.descending(x.grado_total, y.grado_total);
         }).slice(0, 14);
         
         chartData.push(averages);
         chartData.sort(function(x,y){
-            return d3.descending(x.grado_total, y.grado_total)
+            return d3.descending(x.grado_total, y.grado_total);
         })
         
     }else{
@@ -444,7 +431,7 @@ function updateChart(){
     x.domain(chartData.map(function(d) {return d.nombre;}));
     y.domain([0, d3.max(chartData, function(d) { return d.grado_total })]);
     
-    var barsUpdate = g.selectAll(".ciudad")
+    var barsUpdate = gBar.selectAll(".ciudad")
         .data(stackedData, function(d){return d.id;});
     
     var t = barsUpdate.transition()
@@ -479,9 +466,9 @@ function updateChart(){
         .attr("width", x.bandwidth())
         .attr("height", function(d,i) {return y(d.start) - y(d.end);});
 
-    g.select(".axis--y").transition(t).call(yAxis);
+    gBar.select(".axis--y").transition(t).call(yAxis);
     
-    g.select(".axis--x").transition(t).call(xAxis)
+    gBar.select(".axis--x").transition(t).call(xAxis)
         .selectAll("text")
         .style("text-anchor", "start")
         .attr("dx", "0em")
@@ -516,7 +503,7 @@ function initChart(){
     });
     x.domain(chartData.map(function(d) { return d.nombre; }));
     y.domain([0, d3.max(chartData, function(d) { return d.grado_total })]);
-    g.selectAll(".bar")
+    gBar.selectAll(".bar")
         .data(stackedData, function(d){return d.id;})
         .enter().append("g")
         .attr("id", function(d){return d.id;})
@@ -538,7 +525,7 @@ function initChart(){
         .attr("width", x.bandwidth())
         .attr("height", function(d,i) {return y(d.start) - y(d.end);});
     
-    g.append("g")
+    gBar.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," +  (height - margin.top) + ")")
         .call(xAxis)
@@ -548,7 +535,7 @@ function initChart(){
         .attr("dy", "2em")
         .attr("transform", "rotate(45)");
 
-    g.append("g")
+    gBar.append("g")
         .attr("class", "axis axis--y")
         .call(yAxis)
         .append("text")
@@ -559,7 +546,7 @@ function initChart(){
         .attr("text-anchor", "start")
         .text("Degree");
         
-    var legend = g.selectAll(".legend")
+    var legend = gBar.selectAll(".legend")
         .data(variables.reverse())
         .enter().append("g")
         .attr("class", "legend")
@@ -579,3 +566,36 @@ function initChart(){
         .attr("text-anchor", "start")
         .text(function(d) { return d; });    
 }
+
+function updateRadar(){
+    if (currentRegion == 0) {
+        // at the national extent, display only averages
+        var chartData = imcoAvgsRadar;
+    } else {
+        var filtered = varsImco.filter(function(el){
+            return el.zona == idToName[currentRegion];
+        });
+        var chartData = []
+        filtered.forEach(function(d){
+            chartData.push(
+                {
+                    "name": d.nom_ciudad,
+                    "axes": [
+                        {"axis": "sis_dere", "value":d.sis_dere},
+                        {"axis": "man_ambi", "value":d.man_ambi},
+                        {"axis": "soc_incl", "value":d.soc_incl},
+                        {"axis": "gob_efic", "value":d.gob_efic},
+                        {"axis": "merc_fac", "value":d.merc_fac},
+                        {"axis": "eco_esta", "value":d.eco_esta},
+                        {"axis": "precur", "value":d.precur},
+                        {"axis": "rela_inte", "value":d.rela_inte},
+                        {"axis": "inno_eco", "value":d.inno_eco},
+                        {"axis": "sis_poli", "value":d.sis_poli}   
+                    ]
+                }
+            )
+        });
+        chartData.push(imcoAvgsRadar[0]);
+    }
+    UpdateRadarChart("#radarChart", chartData);
+};

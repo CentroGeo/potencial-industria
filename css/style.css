@@ -182,3 +182,11 @@ body {
 .legend text {
     fill: var(--main-text-color);
 }
+
+.axisLabel {
+    fill: var(--main-text-color);
+}
+
+.axis .legend {
+    fill: var(--main-text-color);
+}
