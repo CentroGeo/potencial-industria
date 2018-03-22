@@ -154,73 +154,55 @@ q.defer(d3.json, "data/regiones.geojson")
                     return d.inno_eco;
                 })  
             };
-            radarData = 
-                [  
-                    {  
-                        "key":"Nokia Smartphone",
-                        "values":[  
-                            {  "axis":"Battery Life", "value":0.26 }, {  "axis":"Brand", "value":0.10 },
-                            {  "axis":"Contract Cost", "value":0.30 }, {  "axis":"Design And Quality", "value":0.14 },
-                            {  "axis":"Have Internet Connectivity", "value":0.22 }, {  "axis":"Large Screen", "value":0.04 },
-                            {  "axis":"Price Of Device", "value":0.41 }, {  "axis":"To Be A Smartphone", "value":0.30 }
-                        ]
-                    },
-                    {  
-                        "key":"Samsung",
-                        "values":[  
-                            {  "axis":"Battery Life", "value":0.27 }, {  "axis":"Brand", "value":0.16 },
-                            {  "axis":"Contract Cost", "value":0.35 }, {  "axis":"Design And Quality", "value":0.13 },
-                            {  "axis":"Have Internet Connectivity", "value":0.20 }, {  "axis":"Large Screen", "value":0.13 },
-                            {  "axis":"Price Of Device", "value":0.35 }, {  "axis":"To Be A Smartphone", "value":0.38 }
-                        ]
-                    },
-                    {  
-                        "key":"iPhone",
-                        "values":[  
-                            {  "axis":"Battery Life", "value":0.22 }, {  "axis":"Brand", "value":0.28 },
-                            {  "axis":"Contract Cost", "value":0.29 }, {  "axis":"Design And Quality", "value":0.17 },
-                            {  "axis":"Have Internet Connectivity", "value":0.22 }, {  "axis":"Large Screen", "value":0.02 },
-                            {  "axis":"Price Of Device", "value":0.21 }, {  "axis":"To Be A Smartphone", "value":0.50 }
-                        ]
-                    }
-                ];
-            // var radarData = [
-            //     {
-            //         "key": "National Average",
-            //         "values": [
-            //             {"axis": "sis_dere", "value":imcoAvgs.sis_dere},
-            //             {"axis": "man_ambi", "value":imcoAvgs.man_ambi},
-            //             {"axis": "soc_incl", "value":imcoAvgs.soc_incl},
-            //             {"axis": "gob_efic", "value":imcoAvgs.gob_efic},
-            //             {"axis": "merc_fac", "value":imcoAvgs.merc_fac},
-            //             {"axis": "eco_esta", "value":imcoAvgs.eco_esta},
-            //             {"axis": "precur", "value":imcoAvgs.precur},
-            //             {"axis": "rela_inte", "value":imcoAvgs.rela_inte},
-            //             {"axis": "inno_eco", "value":imcoAvgs.inno_eco},
-            //             {"axis": "sis_poli", "value":imcoAvgs.sis_poli},
+            var radarData = [
+                {
+                    "name": "National Average",
+                    "axes": [
+                        {"axis": "sis_dere", "value":imcoAvgs.sis_dere},
+                        {"axis": "man_ambi", "value":imcoAvgs.man_ambi},
+                        {"axis": "soc_incl", "value":imcoAvgs.soc_incl},
+                        {"axis": "gob_efic", "value":imcoAvgs.gob_efic},
+                        {"axis": "merc_fac", "value":imcoAvgs.merc_fac},
+                        {"axis": "eco_esta", "value":imcoAvgs.eco_esta},
+                        {"axis": "precur", "value":imcoAvgs.precur},
+                        {"axis": "rela_inte", "value":imcoAvgs.rela_inte},
+                        {"axis": "inno_eco", "value":imcoAvgs.inno_eco},
+                        {"axis": "sis_poli", "value":imcoAvgs.sis_poli},
                         
-            //         ]
-            //     }
-            // ];
+                    ]
+                }
+            ];
             //console.log(imcoAvgs);
             makeMap(regiones, ciudades);
             initChart();
+	    var radarChartOptions = {
+	        w: 290,
+	        h: 300,
+	        margin: { top: 10, right: 20, bottom: 10, left: 20 },
+	        levels: 5,
+	        roundStrokes: true,
+	        color: d3.scaleOrdinal().range(["#26AF32", "#762712"]),
+	        format: '.0f'
+	    };
+
+	    // Draw the chart, get a reference the created svg element :
+	    let svg_radar1 = RadarChart("#radarChart", radarData, radarChartOptions);
             
             //d3.scaleOrdinal().range(["#6F257F", "#CA0D59"])
-            var color = d3.scaleOrdinal(d3.schemeCategory10)
-	        .range(["#EDC951","#CC333F","#00A0B0"]);
+            // var color = d3.scaleOrdinal(d3.schemeCategory10)
+	    //     .range(["#EDC951","#CC333F","#00A0B0"]);
 	    
-	    var radarChartOptions = {
-                width: 600,
-                height: 600,
-		color: color
-	    };
-            radarChart = RadarChart();
-            d3.select('#radarChart')
-                .call(radarChart);
-            radarChart.options(radarChartOptions)
-                .data(radarData)
-                .update();
+	    // var radarChartOptions = {
+            //     width: 600,
+            //     height: 600,
+	    //     color: color
+	    // };
+            // radarChart = RadarChart();
+            // d3.select('#radarChart')
+            //     .call(radarChart);
+            // radarChart.options(radarChartOptions)
+            //     .data(radarData)
+            //     .update();
             // radarChart
             //     .data(radarData)
             //     .duration(1000)

@@ -243,22 +243,33 @@ function RadarChart() {
                    .style('opacity', 0)
                    .remove()
 
+                //console.log(update_axes.enter().selectAll(".line"));
                 var line_data = []
-                radial_calcs.axes.forEach(function(e){line_data.push([e])})
+                radial_calcs.axes.forEach(function(e){line_data.push(e)})
                 
-                var update_lines = update_axes.selectAll(".line")
-                    .data(line_data, get_axis);
-                console.log(line_data);
+                // var update_lines = update_axes.selectAll(".line")
+                //     .data(line_data, get_axis);
+                               
+                var update_lines = update_axes.enter().selectAll(".line")
+                    .data(line_data, function(d){
+                        
+                        return [d];
+                    }, get_axis);
+
                 
                 update_lines.enter()
                     .append("line")
                     .attr("class", "line")
                     .attr("x1", 0)
                     .attr("y1", 0)
-                    .attr("x2", function(d, i, j) { return calcX(null, 1.1, j); })
-                    .attr("y2", function(d, i, j) { return calcY(null, 1.1, j); })
-                    .on('mouseover', function(d, i, j) { if (events.line.mouseover) events.line.mouseover(d, j); })
-                    .on('mouseout', function(d, i, j) { if (events.line.mouseout) events.line.mouseout(d, j); })
+                    .attr("x2", function(d, i, j) {
+                        var j = +this.parentNode.getAttribute("data-index");
+                        console.log(j);
+                        return calcX(null, 1.1, i);
+                    })
+                    .attr("y2", function(d, i, j) { return calcY(null, 1.1, i); })
+                    .on('mouseover', function(d, i, j) { if (events.line.mouseover) events.line.mouseover(d, i); })
+                    .on('mouseout', function(d, i, j) { if (events.line.mouseout) events.line.mouseout(d, i); })
                     .style("stroke", options.axes.lineColor)
                     .style("stroke-width", "2px")
 
@@ -271,23 +282,45 @@ function RadarChart() {
                     .transition().duration(duration)
                     .style("stroke", options.axes.lineColor)
                     .style("stroke-width", options.axes.lineWidth)
-                    .attr("x2", function(d, i, j) { return calcX(null, 1.1, j); })
-                    .attr("y2", function(d, i, j) { return calcY(null, 1.1, j); })
+                    .attr("x2", function(d, i, j) { return calcX(null, 1.1, i); })
+                    .attr("y2", function(d, i, j) { return calcY(null, 1.1, i); })
 
-                var update_axis_legends = update_axes.selectAll(".axis_legend")
-                    .data(function(d) { return [d]; }, get_axis)
+                // console.log(update_axes);
+                // var update_axis_legends = update_axes.enter().selectAll(".axis_legend")
+                //     .data(function(d) {
+                //         console.log(get_axis(d))
+                //         return d;
+                //     }, get_axis(d))
 
+                //console.log(update_axes.enter().data())
+                var update_axis_legends = update_axes.enter().selectAll(".axis_legend")
+                    .data(function(d) {
+                        //console.log(d)
+                        return [d];
+                    }, get_axis)
+
+                
                 update_axis_legends.enter()
                     .append("text")
                     .attr("class", "axis_legend")
                     .style("font-size", "11px")
                     .attr("text-anchor", "middle")
                     .attr("dy", "0.35em")
-                    .attr("x", function(d, i, j) { return calcX(null, options.circles.labelFactor, j); })
-                    .attr("y", function(d, i, j) { return calcY(null, options.circles.labelFactor, j); })
-                    .on('mouseover', function(d, i, j) { if (events.axis_legend.mouseover) events.axis_legend.mouseover(d, i, j); })
-                    .on('mouseout', function(d, i, j) { if (events.axis_legend.mouseout) events.axis_legend.mouseout(d, i, j); })
-                    .call(wrap, options.axes.wrapWidth)
+                    .attr("x", function(d, i, j) {
+                        var j = +this.parentNode.getAttribute("data-index");
+                        //console.log(this)
+                        return calcX(null, options.circles.labelFactor, i);
+                    })
+                    .attr("y", function(d, i, j) {
+                        return calcY(null, options.circles.labelFactor, i);
+                    })
+                    // .on('mouseover', function(d, i, j) {
+                    //     if (events.axis_legend.mouseover)
+                    //         events.axis_legend.mouseover(d, i, j); })
+                    // .on('mouseout', function(d, i, j) {
+                    //     if (events.axis_legend.mouseout)
+                    //         events.axis_legend.mouseout(d, i, j); })
+                    //.call(wrap, options.axes.wrapWidth)
 
                 update_axis_legends.exit()
                     .transition().duration(duration * .5)
@@ -968,14 +1001,17 @@ function RadarChart() {
    }
 
    var get_key = function(d) { return d && d.key; };
-   var get_axis = function(d) { return d && d.axis; };
+    var get_axis = function(d) {
+        //console.log(d)
+        return d && d.axis;
+    };
 
 	// Wraps SVG text	
 	// modification of: http://bl.ocks.org/mbostock/7555321
-	function wrap(text, width) {
-	  text.each(function(d, i, j) {
+    function wrap(text, width) {
+	text.each(function(d, i, j) {
 		var text = d3.select(this);
-		var words = d.axis.split(/\s+/).reverse();
+		var words = j.axis.split(/\s+/).reverse();
 		var word;
 		var line = [];
 		var lineNumber = 0;
