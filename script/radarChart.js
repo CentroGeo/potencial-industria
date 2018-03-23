@@ -19,7 +19,7 @@ var imcoVarsDict = {
     "gob_efic": "Efficient Government",
     "merc_fac": "Merchandise ??",
     "eco_esta": "Economic Stability",
-    "precur": "????",
+    "precur": "Precursors",
     "rela_inte": "International Relationships",
     "inno_eco": "Economic Innovation"
 }
