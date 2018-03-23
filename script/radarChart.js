@@ -12,6 +12,18 @@ const HALF_PI = Math.PI / 2;
 var radarLine,
     cfg,
     wrap;
+var imcoVarsDict = {
+    "sis_poli": "Political System",
+    "man_ambi": "Environmental Management",
+    "soc_inclu": "Inclusive Society",
+    "gob_efic": "Efficient Government",
+    "merc_fac": "Merchandise ??",
+    "eco_esta": "Economic Stability",
+    "precur": "????",
+    "rela_inte": "International Relationships",
+    "inno_eco": "Economic Innovation"
+}
+
 
 const RadarChart = function RadarChart(parent_selector, data, options) {
     //Wraps SVG text - Taken from http://bl.ocks.org/mbostock/7555321
@@ -179,7 +191,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	.attr("dy", "0.35em")
 	.attr("x", (d,i) => rScale(maxValue * cfg.labelFactor) * cos(angleSlice * i - HALF_PI))
 	.attr("y", (d,i) => rScale(maxValue * cfg.labelFactor) * sin(angleSlice * i - HALF_PI))
-	.text(d => d)
+	.text(d => imcoVarsDict[d])
 	.call(wrap, cfg.wrapWidth);
 
     /////////////////////////////////////////////////////////

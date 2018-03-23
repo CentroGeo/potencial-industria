@@ -180,15 +180,18 @@ q.defer(d3.json, "data/regiones.geojson")
             makeMap(regiones, ciudades);
             initChart();
 	    var radarChartOptions = {
-	        w: 290,
-	        h: 300,
+	        w: 270,
+	        h: 230,
                 maxValue: 100,
-	        margin: { top: 10, right: 20, bottom: 10, left: 20 },
+	        margin: { top: 20, right: 75, bottom: 60, left: 75},
 	        levels: 5,
 	        roundStrokes: true,
 	        color: d3.scaleOrdinal().range(d3.schemeCategory20),
 	        format: '.0f',
-                opacityArea: 0.1
+                opacityArea: 0.1,
+                labelFactor: 1.35,
+                strokeWidth: 1.5,
+                opacityCircles: 0.05
 	    };
 
 	    // Draw the chart, get a reference the created svg element :
@@ -209,8 +212,8 @@ function makeMap(regiones, ciudades){
                 weight: 0.5,
                 color: "#999",
                 opacity: 1,
-                fillColor: quantile(rateById.get(feature.properties.id)),
-                fillOpacity: 0.8  
+                fillOpacity: 0.1,
+                fillColor: quantile(rateById.get(feature.properties.id))
             };
         },
         interactive: false
