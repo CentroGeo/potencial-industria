@@ -212,7 +212,7 @@ function makeMap(regiones, ciudades){
                 weight: 0.5,
                 color: "#999",
                 opacity: 1,
-                fillOpacity: 0.1,
+                fillOpacity: 0.8,
                 fillColor: quantile(rateById.get(feature.properties.id))
             };
         },
