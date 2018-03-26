@@ -155,7 +155,6 @@ q.defer(d3.json, "data/regiones.geojson")
                 }
             ];
             varsImco = variables;
-            //console.log(imcoAvgs);
             makeMap(regiones, ciudades);
             var barChartOptions ={
                 "width": 350,
@@ -316,6 +315,7 @@ $("#restart, .fas.fa-reply").on('click', function(){
     map.flyTo([23.75, -101.9], 5);
     $(".icon-next .fas").removeClass("fa-reply");
     $(".icon-next .fas").addClass("fa-chevron-right");
+    $(".icon-previous").css( "display", "none" );
     currentRegion = 0;
     updateChart("#barChart",
                 getBarData(["grado_carretera", "grado_ferrocarril"]));
@@ -350,10 +350,15 @@ $(".icon-next").on('click', function(){
         currentRegion = 0;
         regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
+        $("#title").html('<h1>México</h1>');
+        updateChart("#barChart",
+                    getBarData(["grado_carretera", "grado_ferrocarril"]));
+        updateRadar("#radarChart", getRadarData());
     }
 });
 
 $(".icon-previous").on('click', function(){
+    
     if (lastClickedLayer){ // if something is clicked, reset style
             //regionesLyr.resetStyle(lastClickedLayer);
             lastClickedLayer.feature.properties.is_clicked = false;
@@ -379,6 +384,10 @@ $(".icon-previous").on('click', function(){
         currentRegion = 0;
         regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
+        $("#title").html('<h1>México</h1>');
+        updateChart("#barChart",
+                    getBarData(["grado_carretera", "grado_ferrocarril"]));
+        updateRadar("#radarChart", getRadarData());
     }
 });
 
