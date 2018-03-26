@@ -43,14 +43,14 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 		tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
 
 	    while (word = words.pop()) {
-		line.push(word);
-		tspan.text(line.join(" "));
-		if (tspan.node().getComputedTextLength() > width) {
-		    line.pop();
-		    tspan.text(line.join(" "));
-		    line = [word];
-		    tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
-		}
+            line.push(word);
+            tspan.text(line.join(" "));
+            if (tspan.node().getComputedTextLength() > width) {
+                line.pop();
+                tspan.text(line.join(" "));
+                line = [word];
+                tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+            }
 	    }
 	});
     }//wrap
@@ -72,7 +72,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	format: '.2%',
 	unit: '',
 	legend: false,
-        transition_duration: 500
+    transition_duration: 500
     };
 
     //Put all of the options into a variable called radarRadarCfg
@@ -442,7 +442,6 @@ function updateRadar(parent_selector, data) {
     var radarLegendTextUpdate = radarLegend.selectAll("text")
         .data(names, function(d){ return d;});
 
-    console.log(radarLegendSquareUpdate)
     var radarLegendSquareEnter = radarLegendSquareUpdate.enter();
     var radarLegendTextEnter = radarLegendTextUpdate.enter();
 

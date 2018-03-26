@@ -296,9 +296,11 @@ function layerClick(event){
         $(".icon-next .fas").addClass("fa-chevron-right");
         $(".icon-previous").css( "display", "none" );
     }
-    updateChart("#barChart",
+    map.on("moveend", function(){
+        updateChart("#barChart",
                 getBarData(["grado_carretera", "grado_ferrocarril"]));
-    updateRadar("#radarChart", getRadarData());
+        updateRadar("#radarChart", getRadarData());
+    });
 
 }
 
@@ -318,9 +320,11 @@ $("#restart, .fas.fa-reply").on('click', function(){
     $(".icon-next .fas").addClass("fa-chevron-right");
     $(".icon-previous").css( "display", "none" );
     currentRegion = 0;
-    updateChart("#barChart",
+    map.on("moveend", function(){
+        updateChart("#barChart",
                 getBarData(["grado_carretera", "grado_ferrocarril"]));
-    updateRadar("#radarChart", getRadarData());
+        updateRadar("#radarChart", getRadarData());
+    });
 });
 
 $(".icon-next").on('click', function(){
