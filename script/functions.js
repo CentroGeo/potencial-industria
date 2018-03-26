@@ -12,7 +12,6 @@ var idToName = {
 //r update_axes;
 
 
-
 // Set basic functions for styling the map
 var rateById = d3.map(); // will hold the map from ids to property values
 var colors5 = ['#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026']; // 5 color scheme
@@ -97,7 +96,7 @@ q.defer(d3.json, "data/regiones.geojson")
             });
             averages = {
                 "id": -1,
-                "nombre": "Promedio Nacional",
+                "nombre": "National Average",
                 "grado_carretera": avgCarr,
                 "grado_ferrocarril": avgFerr,
                 "grado_total": avgCarr + avgFerr,
@@ -158,7 +157,16 @@ q.defer(d3.json, "data/regiones.geojson")
             varsImco = variables;
             //console.log(imcoAvgs);
             makeMap(regiones, ciudades);
-            svgBar = initChart();
+            var barChartOptions ={
+                "width": 350,
+                "height": 300,
+                "margin": {top: 100, right: 30, bottom: 30, left: 45},
+                "transition_duration": 500
+            };
+            var barData = getBarData(["grado_carretera", "grado_ferrocarril"]);
+            svgBar = initChart("#barChart", barData,
+                               ["grado_carretera", "grado_ferrocarril"],
+                               barChartOptions);
 	    var radarChartOptions = {
 	        w: 250,
 	        h: 200,
@@ -267,7 +275,6 @@ function layerClick(event){
             $(".icon-previous").css( "display", "block" );
         }
         
-        
         $("#title").html('<h1>' + feature.properties.zona + '</h1>');
         var featBounds = feature.properties.bounds_calculated;
         map.flyToBounds(featBounds);
@@ -289,8 +296,9 @@ function layerClick(event){
         $(".icon-next .fas").addClass("fa-chevron-right");
         $(".icon-previous").css( "display", "none" );
     }
-    updateChart(svgBar);
-    updateRadar();
+    updateChart("#barChart",
+                getBarData(["grado_carretera", "grado_ferrocarril"]));
+    updateRadar("#radarChart", getRadarData());
 
 }
 
@@ -309,8 +317,9 @@ $("#restart, .fas.fa-reply").on('click', function(){
     $(".icon-next .fas").removeClass("fa-reply");
     $(".icon-next .fas").addClass("fa-chevron-right");
     currentRegion = 0;
-    updateRadar();
-    updateChart();
+    updateChart("#barChart",
+                getBarData(["grado_carretera", "grado_ferrocarril"]));
+    updateRadar("#radarChart", getRadarData());
 });
 
 $(".icon-next").on('click', function(){
@@ -373,3 +382,75 @@ $(".icon-previous").on('click', function(){
     }
 });
 
+function getRadarData(){
+    if (currentRegion == 0) {
+        // at the national extent, display only averages
+        var chartData = imcoAvgsRadar;
+    } else {
+        var filtered = varsImco.filter(function(el){
+            return el.zona == idToName[currentRegion];
+        });
+        var chartData = []
+        filtered.forEach(function(d){
+            chartData.push(
+                {
+                    "name": d.nom_ciudad,
+                    "axes": [
+                        {"axis": "sis_dere", "value":d.sis_dere},
+                        {"axis": "man_ambi", "value":d.man_ambi},
+                        {"axis": "soc_incl", "value":d.soc_incl},
+                        {"axis": "gob_efic", "value":d.gob_efic},
+                        {"axis": "merc_fac", "value":d.merc_fac},
+                        {"axis": "eco_esta", "value":d.eco_esta},
+                        {"axis": "precur", "value":d.precur},
+                        {"axis": "rela_inte", "value":d.rela_inte},
+                        {"axis": "inno_eco", "value":d.inno_eco},
+                        {"axis": "sis_poli", "value":d.sis_poli}   
+                    ]
+                }
+            )
+        });
+        chartData.push(imcoAvgsRadar[0]);
+    }
+    return chartData;
+}
+
+function getBarData(stackVariables){
+    // Stack variables: array
+    if(currentRegion == 0){
+        // at the national extent, display only top 15 values
+        var chartData = properties.sort(function(x,y){
+            return d3.descending(x.grado_total, y.grado_total);
+        }).slice(0, 14);
+        
+        chartData.push(averages);
+        chartData.sort(function(x,y){
+            return d3.descending(x.grado_total, y.grado_total);
+        })
+        
+    }else{
+        var filtered = properties.filter(function(el){
+            return el.zona == idToName[currentRegion];
+        });
+        filtered.push(averages);
+        var chartData = filtered.sort(function(x,y){
+            return d3.descending(x.grado_total, y.grado_total);
+        });   
+    };
+    var stack = d3.stack();
+    var stackedData = [];
+    chartData.forEach(function(e){
+        stackedData.push({"id":e.id,
+                          "data":[{"id": e.id,
+                                   "nombre": e.nombre,
+                                   "start": 0,
+                                   "end": e[stackVariables[0]]
+                                  },
+                                  {"id": e.id,
+                                   "nombre": e.nombre,
+                                   "start": e[stackVariables[0]],
+                                   "end": e[stackVariables[1]] + e[stackVariables[0]]}]
+                         });
+    });
+    return stackedData;
+}

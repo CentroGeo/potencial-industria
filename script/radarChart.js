@@ -10,7 +10,7 @@ const sin = Math.sin;
 const cos = Math.cos;
 const HALF_PI = Math.PI / 2;
 var radarLine,
-    cfg,
+    radarCfg,
     wrap;
 var imcoVarsDict = {
     "sis_dere": "Legal System",
@@ -54,7 +54,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	});
     }//wrap
 
-    cfg = {
+    radarCfg = {
 	w: 600,				//Width of the circle
 	h: 600,				//Height of the circle
 	margin: {top: 20, right: 20, bottom: 20, left: 20}, //The margins of the SVG
@@ -66,22 +66,23 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	dotRadius: 4, 			//The size of the colored circles of each blog
 	opacityCircles: 0.1, 	//The opacity of the circles of each blob
 	strokeWidth: 2, 		//The width of the stroke around each blob
-	roundStrokes: false,	//If true the area and stroke will follow a round path (cardinal-closed)
+	roundStrokes: false,	//If true the area and stroke will follow a round path (2cardinal-closed)
 	color: d3.scaleOrdinal(d3.schemeCategory10),	//Color function,
 	format: '.2%',
 	unit: '',
-	legend: false
+	legend: false,
+        transition_duration: 500
     };
 
-    //Put all of the options into a variable called cfg
+    //Put all of the options into a variable called radarRadarCfg
     if('undefined' !== typeof options){
 	for(var i in options){
-	    if('undefined' !== typeof options[i]){ cfg[i] = options[i]; }
+	    if('undefined' !== typeof options[i]){ radarCfg[i] = options[i]; }
 	}//for i
     }//if
 
     //If the supplied maxValue is smaller than the actual one, replace by the max in the data
-    // var maxValue = max(cfg.maxValue, d3.max(data, function(i){return d3.max(i.map(function(o){return o.value;}))}));
+    // var maxValue = max(radarRadarCfg.maxValue, d3.max(data, function(i){return d3.max(i.map(function(o){return o.value;}))}));
     let maxValue = 0;
     for (let j=0; j < data.length; j++) {
 	for (let i = 0; i < data[j].axes.length; i++) {
@@ -91,12 +92,12 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	    }
 	}
     }
-    maxValue = max(cfg.maxValue, maxValue);
+    maxValue = max(radarCfg.maxValue, maxValue);
 
     const allAxis = data[0].axes.map((i, j) => i.axis),	//Names of each axis
 	  total = allAxis.length,					//The number of different axes
-	  radius = Math.min(cfg.w/2, cfg.h/2), 	//Radius of the outermost circle
-	  Format = d3.format(cfg.format),			 	//Formatting
+	  radius = Math.min(radarCfg.w/2, radarCfg.h/2), 	//Radius of the outermost circle
+	  Format = d3.format(radarCfg.format),			 	//Formatting
 	  angleSlice = Math.PI * 2 / total;		//The width in radians of each "slice"
 
     //Scale for the radius
@@ -114,13 +115,13 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 
     //Initiate the radar chart SVG
     let svg = parent.append("svg")
-	.attr("width",  cfg.w + cfg.margin.left + cfg.margin.right)
-	.attr("height", cfg.h + cfg.margin.top + cfg.margin.bottom)
+	.attr("width",  radarCfg.w + radarCfg.margin.left + radarCfg.margin.right)
+	.attr("height", radarCfg.h + radarCfg.margin.top + radarCfg.margin.bottom)
 	.attr("class", "radar");
 
     //Append a g element
     let g = svg.append("g")
-	.attr("transform", "translate(" + (cfg.w/2 + cfg.margin.left) + "," + (cfg.h/2 + cfg.margin.top) + ")");
+	.attr("transform", "translate(" + (radarCfg.w/2 + radarCfg.margin.left) + "," + (radarCfg.h/2 + radarCfg.margin.top) + ")");
 
     /////////////////////////////////////////////////////////
     ////////// Glow filter for some extra pizzazz ///////////
@@ -142,27 +143,27 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 
     //Draw the background circles
     axisGrid.selectAll(".levels")
-	.data(d3.range(1,(cfg.levels+1)).reverse())
+	.data(d3.range(1,(radarCfg.levels+1)).reverse())
 	.enter()
 	.append("circle")
 	.attr("class", "gridCircle")
-	.attr("r", d => radius / cfg.levels * d)
+	.attr("r", d => radius / radarCfg.levels * d)
 	.style("fill", "#CDCDCD")
 	.style("stroke", "#CDCDCD")
-	.style("fill-opacity", cfg.opacityCircles)
+	.style("fill-opacity", radarCfg.opacityCircles)
 	.style("filter" , "url(#glow)");
 
     //Text indicating at what % each level is
     axisGrid.selectAll(".axisLabel")
-	.data(d3.range(1,(cfg.levels+1)).reverse())
+	.data(d3.range(1,(radarCfg.levels+1)).reverse())
 	.enter().append("text")
 	.attr("class", "axisLabel")
 	.attr("x", 4)
-	.attr("y", d => -d * radius / cfg.levels)
+	.attr("y", d => -d * radius / radarCfg.levels)
 	.attr("dy", "0.4em")
 	.style("font-size", "10px")
 	.attr("fill", "#737373")
-	.text(d => Format(maxValue * d / cfg.levels) + cfg.unit);
+	.text(d => Format(maxValue * d / radarCfg.levels) + radarCfg.unit);
 
     /////////////////////////////////////////////////////////
     //////////////////// Draw the axes //////////////////////
@@ -190,10 +191,10 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	.style("font-size", "11px")
 	.attr("text-anchor", "middle")
 	.attr("dy", "0.35em")
-	.attr("x", (d,i) => rScale(maxValue * cfg.labelFactor) * cos(angleSlice * i - HALF_PI))
-	.attr("y", (d,i) => rScale(maxValue * cfg.labelFactor) * sin(angleSlice * i - HALF_PI))
+	.attr("x", (d,i) => rScale(maxValue * radarCfg.labelFactor) * cos(angleSlice * i - HALF_PI))
+	.attr("y", (d,i) => rScale(maxValue * radarCfg.labelFactor) * sin(angleSlice * i - HALF_PI))
 	.text(d => imcoVarsDict[d])
-	.call(wrap, cfg.wrapWidth);
+	.call(wrap, radarCfg.wrapWidth);
 
     /////////////////////////////////////////////////////////
     ///////////// Draw the radar chart blobs ////////////////
@@ -205,7 +206,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	  .radius(d => rScale(d.value))
 	  .angle((d,i) => i * angleSlice);
 
-    if(cfg.roundStrokes) {
+    if(radarCfg.roundStrokes) {
 	radarLine.curve(d3.curveCardinalClosed)
     }
 
@@ -222,31 +223,31 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	.append("path")
 	.attr("class", "radarArea")
 	.attr("d", d => radarLine(d.axes))
-	.style("fill", (d,i) => cfg.color(i))
-	.style("fill-opacity", cfg.opacityArea)
+	.style("fill", (d,i) => radarCfg.color(i))
+	.style("fill-opacity", radarCfg.opacityArea)
 	.on('mouseover', function(d, i) {
 	    //Dim all blobs
 	    parent.selectAll(".radarArea")
-		.transition().duration(200)
+		.transition().duration(radarCfg.transition_duration)
 		.style("fill-opacity", 0.1);
 	    //Bring back the hovered over blob
 	    d3.select(this)
-		.transition().duration(200)
+		.transition().duration(radarCfg.transition_duration)
 		.style("fill-opacity", 0.7);
 	})
 	.on('mouseout', () => {
 	    //Bring back all blobs
 	    parent.selectAll(".radarArea")
-		.transition().duration(200)
-		.style("fill-opacity", cfg.opacityArea);
+		.transition().duration(radarCfg.transition_duration)
+		.style("fill-opacity", radarCfg.opacityArea);
 	});
 
     //Create the outlines
     blobWrapper.append("path")
 	.attr("class", "radarStroke")
 	.attr("d", function(d,i) { return radarLine(d.axes); })
-	.style("stroke-width", cfg.strokeWidth + "px")
-	.style("stroke", (d,i) => cfg.color(i))
+	.style("stroke-width", radarCfg.strokeWidth + "px")
+	.style("stroke", (d,i) => radarCfg.color(i))
 	.style("fill", "none")
 	.style("filter" , "url(#glow)");
 
@@ -256,10 +257,10 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	.enter()
 	.append("circle")
 	.attr("class", "radarCircle")
-	.attr("r", cfg.dotRadius)
+	.attr("r", radarCfg.dotRadius)
 	.attr("cx", (d,i) => rScale(d.value) * cos(angleSlice * i - HALF_PI))
 	.attr("cy", (d,i) => rScale(d.value) * sin(angleSlice * i - HALF_PI))
-	.style("fill", (d) => cfg.color(d.id))
+	.style("fill", (d) => radarCfg.color(d.id))
 	.style("fill-opacity", 0.8);
 
     /////////////////////////////////////////////////////////
@@ -277,7 +278,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	.data(d => d.axes)
 	.enter().append("circle")
 	.attr("class", "radarInvisibleCircle")
-	.attr("r", cfg.dotRadius * 1.5)
+	.attr("r", radarCfg.dotRadius * 1.5)
 	.attr("cx", (d,i) => rScale(d.value) * cos(angleSlice*i - HALF_PI))
 	.attr("cy", (d,i) => rScale(d.value) * sin(angleSlice*i - HALF_PI))
 	.style("fill", "none")
@@ -288,7 +289,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 		.attr('y', this.cy.baseVal.value - 10)
 		.transition()
 		.style('display', 'block')
-		.text(Format(d.value) + cfg.unit);
+		.text(Format(d.value) + radarCfg.unit);
 	})
 	.on("mouseout", function(){
 	    tooltip.transition()
@@ -304,40 +305,40 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	  .attr("text-anchor", "middle")
 	  .attr("dy", "0.35em");
 
-    if (cfg.legend !== false && typeof cfg.legend === "object") {
+    if (radarCfg.legend !== false && typeof radarCfg.legend === "object") {
 	let legendZone = svg.append('g');
 	let names = data.map(el => el.name);
-	if (cfg.legend.title) {
+	if (radarCfg.legend.title) {
 	    let title = legendZone.append("text")
 		.attr("class", "title")
-		.attr('transform', `translate(${cfg.legend.translateX},${cfg.legend.translateY})`)
-		.attr("x", cfg.w - 70)
+		.attr('transform', `translate(${radarCfg.legend.translateX},${radarCfg.legend.translateY})`)
+		.attr("x", radarCfg.w - 70)
 		.attr("y", 10)
 		.attr("font-size", "12px")
 		.attr("fill", "#404040")
-		.text(cfg.legend.title);
+		.text(radarCfg.legend.title);
 	}
 	let legend = legendZone.append("g")
 	    .attr("class", "legend")
 	    .attr("height", 100)
 	    .attr("width", 200)
-	    .attr('transform', `translate(${cfg.legend.translateX},${cfg.legend.translateY + 20})`);
+	    .attr('transform', `translate(${radarCfg.legend.translateX},${radarCfg.legend.translateY + 20})`);
 	// Create rectangles markers
 	legend.selectAll('rect')
 	    .data(names)
 	    .enter()
 	    .append("rect")
-	    .attr("x", cfg.w - 65)
+	    .attr("x", radarCfg.w - 65)
 	    .attr("y", (d,i) => i * 20)
 	    .attr("width", 10)
 	    .attr("height", 10)
-	    .style("fill", (d,i) => cfg.color(i));
+	    .style("fill", (d,i) => radarCfg.color(i));
 	// Create labels
 	legend.selectAll('text')
 	    .data(names)
 	    .enter()
 	    .append("text")
-	    .attr("x", cfg.w - 52)
+	    .attr("x", radarCfg.w - 52)
 	    .attr("y", (d,i) => i * 20 + 9)
 	    .attr("font-size", "11px")
 	    .attr("fill", "#737373")
@@ -346,13 +347,13 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
     return svg;
 }
 
-function UpdateRadarChart(parent_selector, data) {
+function updateRadar(parent_selector, data) {
 
-    var g = d3.select("#radarChart g");
+    var g = d3.select(parent_selector).select("g");
     const allAxis = data[0].axes.map((i, j) => i.axis),	
 	  total = allAxis.length,
-	  radius = Math.min(cfg.w/2, cfg.h/2),
-	  Format = d3.format(cfg.format),
+	  radius = Math.min(radarCfg.w/2, radarCfg.h/2),
+	  Format = d3.format(radarCfg.format),
 	  angleSlice = Math.PI * 2 / total;
     
     let maxValue = 0;
@@ -364,8 +365,7 @@ function UpdateRadarChart(parent_selector, data) {
 	    }
 	}
     }
-    maxValue = max(cfg.maxValue, maxValue);
-    console.log(maxValue)
+    maxValue = max(radarCfg.maxValue, maxValue);
 
      rScale = d3.scaleLinear()
 	  .range([0, radius])
@@ -373,7 +373,7 @@ function UpdateRadarChart(parent_selector, data) {
 
     //Text indicating at what % each level is
     g.selectAll(".axisLabel")
-	.text(d => Format(maxValue * d / cfg.levels) + cfg.unit).transition();
+	.text(d => Format(maxValue * d / radarCfg.levels) + radarCfg.unit).transition();
 
     g.selectAll(".axis line")
         .attr("x1", 0)
@@ -382,12 +382,12 @@ function UpdateRadarChart(parent_selector, data) {
 	.attr("y2", (d, i) => rScale(maxValue* 1.1) * sin(angleSlice * i - HALF_PI))
 
     g.selectAll(".axis text")
-        .attr("x", (d,i) => rScale(maxValue * cfg.labelFactor) * cos(angleSlice * i - HALF_PI))
-	.attr("y", (d,i) => rScale(maxValue * cfg.labelFactor) * sin(angleSlice * i - HALF_PI))
+        .attr("x", (d,i) => rScale(maxValue * radarCfg.labelFactor) * cos(angleSlice * i - HALF_PI))
+	.attr("y", (d,i) => rScale(maxValue * radarCfg.labelFactor) * sin(angleSlice * i - HALF_PI))
 	.text(d => imcoVarsDict[d])
-	.call(wrap, cfg.wrapWidth);
+	.call(wrap, radarCfg.wrapWidth);
     
-    if (cfg.roundStrokes) {
+    if (radarCfg.roundStrokes) {
 	radarLine.curve(d3.curveCardinalClosed)
     }
     
@@ -401,17 +401,19 @@ function UpdateRadarChart(parent_selector, data) {
 	.attr("class", "radarWrapper");
     
     var radarAreaEnter = radarWrapperEnter.append("path")
+        .transition(500)
 	.attr("class", "radarArea")
 	.attr("d", d => radarLine(d.axes))
-	.style("fill", (d,i) => cfg.color(i))
-	.style("fill-opacity", cfg.opacityArea);
+	.style("fill", (d,i) => radarCfg.color(i))
+	.style("fill-opacity", radarCfg.opacityArea);
 
     //Create the outlines
     var radarStrokeEnter = radarWrapperEnter.append("path")
+        .transition(500)
 	.attr("class", "radarStroke")
 	.attr("d", function(d,i) { return radarLine(d.axes); })
-	.style("stroke-width", cfg.strokeWidth + "px")
-	.style("stroke", (d,i) => cfg.color(i))
+	.style("stroke-width", radarCfg.strokeWidth + "px")
+	.style("stroke", (d,i) => radarCfg.color(i))
 	.style("fill", "none")
 	.style("filter" , "url(#glow)");
 
@@ -420,11 +422,12 @@ function UpdateRadarChart(parent_selector, data) {
 	.data(d => d.axes)
 	.enter()
 	.append("circle")
+        .transition(500)
 	.attr("class", "radarCircle")
-	.attr("r", cfg.dotRadius)
+	.attr("r", radarCfg.dotRadius)
 	.attr("cx", (d,i) => rScale(d.value) * cos(angleSlice * i - HALF_PI))
 	.attr("cy", (d,i) => rScale(d.value) * sin(angleSlice * i - HALF_PI))
-	.style("fill", (d) => cfg.color(d.id))
+	.style("fill", (d) => radarCfg.color(d.id))
 	.style("fill-opacity", 0.8);
     
     radarWrapperUpdate.exit().remove();
@@ -432,35 +435,36 @@ function UpdateRadarChart(parent_selector, data) {
 };
 
 
-function updateRadar(){
-    if (currentRegion == 0) {
-        // at the national extent, display only averages
-        var chartData = imcoAvgsRadar;
-    } else {
-        var filtered = varsImco.filter(function(el){
-            return el.zona == idToName[currentRegion];
-        });
-        var chartData = []
-        filtered.forEach(function(d){
-            chartData.push(
-                {
-                    "name": d.nom_ciudad,
-                    "axes": [
-                        {"axis": "sis_dere", "value":d.sis_dere},
-                        {"axis": "man_ambi", "value":d.man_ambi},
-                        {"axis": "soc_incl", "value":d.soc_incl},
-                        {"axis": "gob_efic", "value":d.gob_efic},
-                        {"axis": "merc_fac", "value":d.merc_fac},
-                        {"axis": "eco_esta", "value":d.eco_esta},
-                        {"axis": "precur", "value":d.precur},
-                        {"axis": "rela_inte", "value":d.rela_inte},
-                        {"axis": "inno_eco", "value":d.inno_eco},
-                        {"axis": "sis_poli", "value":d.sis_poli}   
-                    ]
-                }
-            )
-        });
-        chartData.push(imcoAvgsRadar[0]);
-    }
-    UpdateRadarChart("#radarChart", chartData);
-};
+// function updateRadar(data, container){
+//     if (currentRegion == 0) {
+//         // at the national extent, display only averages
+//         var chartData = data;
+//     } else {
+//         var filtered = varsImco.filter(function(el){
+//             return el.zona == idToName[currentRegion];
+//         });
+//         var chartData = []
+//         filtered.forEach(function(d){
+//             chartData.push(
+//                 {
+//                     "name": d.nom_ciudad,
+//                     "axes": [
+//                         {"axis": "sis_dere", "value":d.sis_dere},
+//                         {"axis": "man_ambi", "value":d.man_ambi},
+//                         {"axis": "soc_incl", "value":d.soc_incl},
+//                         {"axis": "gob_efic", "value":d.gob_efic},
+//                         {"axis": "merc_fac", "value":d.merc_fac},
+//                         {"axis": "eco_esta", "value":d.eco_esta},
+//                         {"axis": "precur", "value":d.precur},
+//                         {"axis": "rela_inte", "value":d.rela_inte},
+//                         {"axis": "inno_eco", "value":d.inno_eco},
+//                         {"axis": "sis_poli", "value":d.sis_poli}   
+//                     ]
+//                 }
+//             )
+//         });
+//         chartData.push(imcoAvgsRadar[0]);
+//     }
+//     UpdateRadarChart("#radarChart", chartData);
+    
+// };
