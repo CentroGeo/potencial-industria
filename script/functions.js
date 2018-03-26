@@ -179,7 +179,8 @@ q.defer(d3.json, "data/regiones.geojson")
                 labelFactor: 1.35,
                 strokeWidth: 1.2,
                 opacityCircles: 0.05,
-                dotRadius: 3
+                dotRadius: 3,
+                legend: { title: 'aaa', translateX: 100, translateY: 0 }
 	    };
 
 	    // Draw the chart, get a reference the created svg element :
@@ -399,6 +400,7 @@ function getRadarData(){
         var filtered = varsImco.filter(function(el){
             return el.zona == idToName[currentRegion];
         });
+
         var chartData = []
         filtered.forEach(function(d){
             chartData.push(

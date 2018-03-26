@@ -11,7 +11,8 @@ const cos = Math.cos;
 const HALF_PI = Math.PI / 2;
 var radarLine,
     radarCfg,
-    wrap;
+    wrap,
+    radarLegend;
 var imcoVarsDict = {
     "sis_dere": "Legal System",
     "sis_poli": "Political System",
@@ -306,7 +307,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	  .attr("dy", "0.35em");
 
     if (radarCfg.legend !== false && typeof radarCfg.legend === "object") {
-	let legendZone = svg.append('g');
+	let legendZone = svg.append('g').attr("id", "legendZone");
 	let names = data.map(el => el.name);
 	if (radarCfg.legend.title) {
 	    let title = legendZone.append("text")
@@ -318,13 +319,15 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 		.attr("fill", "#404040")
 		.text(radarCfg.legend.title);
 	}
-	let legend = legendZone.append("g")
+	radarLegend = legendZone.append("g")
+            .attr("id", "radarLegend")
 	    .attr("class", "legend")
 	    .attr("height", 100)
 	    .attr("width", 200)
 	    .attr('transform', `translate(${radarCfg.legend.translateX},${radarCfg.legend.translateY + 20})`);
+        
 	// Create rectangles markers
-	legend.selectAll('rect')
+	radarLegend.selectAll('rect')
 	    .data(names)
 	    .enter()
 	    .append("rect")
@@ -334,7 +337,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	    .attr("height", 10)
 	    .style("fill", (d,i) => radarCfg.color(i));
 	// Create labels
-	legend.selectAll('text')
+	radarLegend.selectAll('text')
 	    .data(names)
 	    .enter()
 	    .append("text")
@@ -432,39 +435,33 @@ function updateRadar(parent_selector, data) {
     
     radarWrapperUpdate.exit().remove();
 
-};
-
-
-// function updateRadar(data, container){
-//     if (currentRegion == 0) {
-//         // at the national extent, display only averages
-//         var chartData = data;
-//     } else {
-//         var filtered = varsImco.filter(function(el){
-//             return el.zona == idToName[currentRegion];
-//         });
-//         var chartData = []
-//         filtered.forEach(function(d){
-//             chartData.push(
-//                 {
-//                     "name": d.nom_ciudad,
-//                     "axes": [
-//                         {"axis": "sis_dere", "value":d.sis_dere},
-//                         {"axis": "man_ambi", "value":d.man_ambi},
-//                         {"axis": "soc_incl", "value":d.soc_incl},
-//                         {"axis": "gob_efic", "value":d.gob_efic},
-//                         {"axis": "merc_fac", "value":d.merc_fac},
-//                         {"axis": "eco_esta", "value":d.eco_esta},
-//                         {"axis": "precur", "value":d.precur},
-//                         {"axis": "rela_inte", "value":d.rela_inte},
-//                         {"axis": "inno_eco", "value":d.inno_eco},
-//                         {"axis": "sis_poli", "value":d.sis_poli}   
-//                     ]
-//                 }
-//             )
-//         });
-//         chartData.push(imcoAvgsRadar[0]);
-//     }
-//     UpdateRadarChart("#radarChart", chartData);
+    let names = data.map(el => el.name);
     
-// };
+    var radarLegendSquareUpdate = radarLegend.selectAll("rect")
+        .data(names, function(d){ return d;});
+    var radarLegendTextUpdate = radarLegend.selectAll("text")
+        .data(names, function(d){ return d;});
+
+    console.log(radarLegendSquareUpdate)
+    var radarLegendSquareEnter = radarLegendSquareUpdate.enter();
+    var radarLegendTextEnter = radarLegendTextUpdate.enter();
+
+
+    var legendSquares = radarLegendSquareEnter.append("rect")
+	.attr("x", radarCfg.w - 65)
+	.attr("y", (d,i) => (i+1) * 20)
+	.attr("width", 10)
+	.attr("height", 10)
+	.style("fill", (d,i) => radarCfg.color(i));
+
+    var legendTexts = radarLegendTextEnter.append("text")
+	.attr("x", radarCfg.w - 52)
+	.attr("y", (d,i) => (i+1) * 20 + 9)
+	.attr("font-size", "11px")
+	.attr("fill", "#737373")
+	.text(d => d);
+
+    radarLegendSquareUpdate.exit().remove();
+    radarLegendTextUpdate.exit().remove();    
+
+};
