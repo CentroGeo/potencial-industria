@@ -11,27 +11,6 @@ var idToName = {
 };
 //r update_axes;
 
-var svgBar = d3.select("#barChart"),
-    margin = {top: 100, right: 30, bottom: 30, left: 45},
-    width = +svgBar.attr("width") - margin.left - margin.right,
-    height = +svgBar.attr("height") - margin.top - margin.bottom;
-
-
-var x = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1),
-    y = d3.scaleLinear().rangeRound([height - margin.top, 0]);
-
-var xAxis = d3.axisTop()
-    .tickSizeInner(0) // the inner ticks will be of size 0
-    .tickSizeOuter(0)
-    .scale(x);
-
-var yAxis = d3.axisLeft()
-    .tickSizeOuter(0)
-    .scale(y);
-
-
-var gBar = svgBar.append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
 // Set basic functions for styling the map
@@ -84,6 +63,7 @@ var properties; // properties for each city
 var averages; // store average values
 var imcoAvgsRadar;
 var varsImco;
+var svgBar;
 var q = d3.queue();
 q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.json, "data/ciudades.geojson")
@@ -178,20 +158,21 @@ q.defer(d3.json, "data/regiones.geojson")
             varsImco = variables;
             //console.log(imcoAvgs);
             makeMap(regiones, ciudades);
-            initChart();
+            svgBar = initChart();
 	    var radarChartOptions = {
-	        w: 270,
-	        h: 230,
+	        w: 250,
+	        h: 200,
                 maxValue: 100,
-	        margin: { top: 20, right: 75, bottom: 60, left: 75},
+	        margin: { top: 40, right: 75, bottom: 60, left: 75},
 	        levels: 5,
 	        roundStrokes: true,
 	        color: d3.scaleOrdinal().range(d3.schemeCategory20),
 	        format: '.0f',
-                opacityArea: 0.1,
+                opacityArea: 0.05,
                 labelFactor: 1.35,
-                strokeWidth: 1.5,
-                opacityCircles: 0.05
+                strokeWidth: 1.2,
+                opacityCircles: 0.05,
+                dotRadius: 3
 	    };
 
 	    // Draw the chart, get a reference the created svg element :
@@ -308,7 +289,7 @@ function layerClick(event){
         $(".icon-next .fas").addClass("fa-chevron-right");
         $(".icon-previous").css( "display", "none" );
     }
-    updateChart();
+    updateChart(svgBar);
     updateRadar();
 
 }
@@ -392,213 +373,3 @@ $(".icon-previous").on('click', function(){
     }
 });
 
-function updateChart(){
-    if(currentRegion == 0){
-        // at the national extent, display only top 15 values
-        var chartData = properties.sort(function(x,y){
-            return d3.descending(x.grado_total, y.grado_total);
-        }).slice(0, 14);
-        
-        chartData.push(averages);
-        chartData.sort(function(x,y){
-            return d3.descending(x.grado_total, y.grado_total);
-        })
-        
-    }else{
-        var filtered = properties.filter(function(el){
-            return el.zona == idToName[currentRegion];
-        });
-        filtered.push(averages)
-        var chartData = filtered.sort(function(x,y){
-            return d3.descending(x.grado_total, y.grado_total);
-        });   
-    };
-    var stackColors = ['#d8b365','#5ab4ac'];
-    var stack = d3.stack();
-    var variables = ["grado_carretera", "grado_ferrocarril"]
-    var stackedData = [];
-    chartData.forEach(function(e){
-        stackedData.push({"id":e.id,
-                          "data":[{"id": e.id,
-                                   "nombre": e.nombre,
-                                   "start": 0,
-                                   "end": e.grado_carretera},
-                                  {"id": e.id,
-                                   "nombre": e.nombre,
-                                   "start": e.grado_carretera,
-                                   "end": e.grado_ferrocarril + e.grado_carretera}]
-                         });
-        var lastValue = e.grado_ferrocarril;
-    });
-
-    x.domain(chartData.map(function(d) {return d.nombre;}));
-    y.domain([0, d3.max(chartData, function(d) { return d.grado_total })]);
-    
-    var barsUpdate = gBar.selectAll(".ciudad")
-        .data(stackedData, function(d){return d.id;});
-    
-    var t = barsUpdate.transition()
-        .duration(500);
-    
-    barsUpdate.exit().style('opacity', 1)
-        .transition(t)
-        .style('opacity', 0)
-        .remove();
-    
-    var barsEnter= barsUpdate.enter()
-        .append("g")
-        .attr("id", function(d){return d.id;})
-        .attr("class", "ciudad")
-        .selectAll("rect")
-        .data(function(d){return d.data;}, function(d){return d.id;})
-        .enter()
-        .append("rect")
-        .transition(t)
-        .attr("class", "bar")
-        .attr("x", function(d) {return x(d.nombre);})
-        .attr("y", function(d, i) {return y(d.end);})
-        .attr("fill", function(d,i) {return stackColors[i];})
-        .attr("width", x.bandwidth())
-        .attr("height", function(d,i) {return y(d.start) - y(d.end);});
-
-    barsUpdate.selectAll("rect")
-        .transition(t)
-        .attr("x", function(d) {return x(d.nombre);})
-        .attr("y", function(d, i) {return y(d.end);})
-        .attr("fill", function(d,i) {return stackColors[i];})
-        .attr("width", x.bandwidth())
-        .attr("height", function(d,i) {return y(d.start) - y(d.end);});
-
-    gBar.select(".axis--y").transition(t).call(yAxis);
-    
-    gBar.select(".axis--x").transition(t).call(xAxis)
-        .selectAll("text")
-        .style("text-anchor", "start")
-        .attr("dx", "0em")
-        .attr("dy", "2em")
-        .attr("transform", "rotate(45)");
-};
-
-function initChart(){
-    var chartData = properties.sort(function(x,y){
-        return d3.descending(x.grado_total, y.grado_total)
-    }).slice(0, 14);
-    chartData.push(averages);
-    chartData.sort(function(x,y){
-        return d3.descending(x.grado_total, y.grado_total)
-    })
-    var stackColors = ['#d8b365','#5ab4ac'];
-    var stack = d3.stack();
-    var variables = ["grado_carretera", "grado_ferrocarril"];
-    var stackedData = [];
-    chartData.forEach(function(e){
-        stackedData.push({"id":e.id,
-                          "data":[{"id": e.id,
-                                   "nombre": e.nombre,
-                                   "start": 0,
-                                   "end": e.grado_carretera},
-                                  {"id": e.id,
-                                   "nombre": e.nombre,
-                                   "start": e.grado_carretera,
-                                   "end": e.grado_ferrocarril + e.grado_carretera}]
-                         });
-        var lastValue = e.grado_ferrocarril;
-    });
-    x.domain(chartData.map(function(d) { return d.nombre; }));
-    y.domain([0, d3.max(chartData, function(d) { return d.grado_total })]);
-    gBar.selectAll(".bar")
-        .data(stackedData, function(d){return d.id;})
-        .enter().append("g")
-        .attr("id", function(d){return d.id;})
-        .attr("class", "ciudad")
-        .selectAll("rect")
-        .data(function(d){return d.data;}, function(d){return d.id;})
-        .enter()
-        .append("rect")
-        .attr("class", function(d){
-            if(d.id == -1){
-                return "bar-avg";
-            } else{
-                return "bar";
-            }
-        })
-        .attr("x", function(d) {return x(d.nombre);})
-        .attr("y", function(d, i) {return y(d.end);})
-        .attr("fill", function(d,i) {return stackColors[i];})
-        .attr("width", x.bandwidth())
-        .attr("height", function(d,i) {return y(d.start) - y(d.end);});
-    
-    gBar.append("g")
-        .attr("class", "axis axis--x")
-        .attr("transform", "translate(0," +  (height - margin.top) + ")")
-        .call(xAxis)
-        .selectAll("text")    
-        .style("text-anchor", "start")
-        .attr("dx", "0em")
-        .attr("dy", "2em")
-        .attr("transform", "rotate(45)");
-
-    gBar.append("g")
-        .attr("class", "axis axis--y")
-        .call(yAxis)
-        .append("text")
-        .attr("x", 2)
-        .attr("y", y(y.ticks().pop()))
-        .attr("dy", "-2em")
-        .attr("dx", "-2em")
-        .attr("text-anchor", "start")
-        .text("Degree");
-        
-    var legend = gBar.selectAll(".legend")
-        .data(variables.reverse())
-        .enter().append("g")
-        .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
-        .style("font", "10px sans-serif");
-
-    legend.append("rect")
-        .attr("x", width - 95)
-        .attr("width", 18)
-        .attr("height", 18)
-        .attr("fill", function(d,i){ return stackColors[i];});
-
-    legend.append("text")
-        .attr("x", width - 70)
-        .attr("y", 9)
-        .attr("dy", ".35em")
-        .attr("text-anchor", "start")
-        .text(function(d) { return d; });    
-}
-
-function updateRadar(){
-    if (currentRegion == 0) {
-        // at the national extent, display only averages
-        var chartData = imcoAvgsRadar;
-    } else {
-        var filtered = varsImco.filter(function(el){
-            return el.zona == idToName[currentRegion];
-        });
-        var chartData = []
-        filtered.forEach(function(d){
-            chartData.push(
-                {
-                    "name": d.nom_ciudad,
-                    "axes": [
-                        {"axis": "sis_dere", "value":d.sis_dere},
-                        {"axis": "man_ambi", "value":d.man_ambi},
-                        {"axis": "soc_incl", "value":d.soc_incl},
-                        {"axis": "gob_efic", "value":d.gob_efic},
-                        {"axis": "merc_fac", "value":d.merc_fac},
-                        {"axis": "eco_esta", "value":d.eco_esta},
-                        {"axis": "precur", "value":d.precur},
-                        {"axis": "rela_inte", "value":d.rela_inte},
-                        {"axis": "inno_eco", "value":d.inno_eco},
-                        {"axis": "sis_poli", "value":d.sis_poli}   
-                    ]
-                }
-            )
-        });
-        chartData.push(imcoAvgsRadar[0]);
-    }
-    UpdateRadarChart("#radarChart", chartData);
-};

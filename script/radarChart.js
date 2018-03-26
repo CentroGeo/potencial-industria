@@ -13,13 +13,14 @@ var radarLine,
     cfg,
     wrap;
 var imcoVarsDict = {
+    "sis_dere": "Legal System",
     "sis_poli": "Political System",
-    "man_ambi": "Environmental Management",
-    "soc_inclu": "Inclusive Society",
+    "man_ambi": "Environment",
+    "soc_incl": "Inclusive Society",
     "gob_efic": "Efficient Government",
-    "merc_fac": "Merchandise ??",
+    "merc_fac": "Market Factors",
     "eco_esta": "Economic Stability",
-    "precur": "Precursors",
+    "precur": "Infrastructure",
     "rela_inte": "International Relationships",
     "inno_eco": "Economic Innovation"
 }
@@ -383,7 +384,7 @@ function UpdateRadarChart(parent_selector, data) {
     g.selectAll(".axis text")
         .attr("x", (d,i) => rScale(maxValue * cfg.labelFactor) * cos(angleSlice * i - HALF_PI))
 	.attr("y", (d,i) => rScale(maxValue * cfg.labelFactor) * sin(angleSlice * i - HALF_PI))
-	.text(d => d)
+	.text(d => imcoVarsDict[d])
 	.call(wrap, cfg.wrapWidth);
     
     if (cfg.roundStrokes) {
@@ -428,4 +429,38 @@ function UpdateRadarChart(parent_selector, data) {
     
     radarWrapperUpdate.exit().remove();
 
+};
+
+
+function updateRadar(){
+    if (currentRegion == 0) {
+        // at the national extent, display only averages
+        var chartData = imcoAvgsRadar;
+    } else {
+        var filtered = varsImco.filter(function(el){
+            return el.zona == idToName[currentRegion];
+        });
+        var chartData = []
+        filtered.forEach(function(d){
+            chartData.push(
+                {
+                    "name": d.nom_ciudad,
+                    "axes": [
+                        {"axis": "sis_dere", "value":d.sis_dere},
+                        {"axis": "man_ambi", "value":d.man_ambi},
+                        {"axis": "soc_incl", "value":d.soc_incl},
+                        {"axis": "gob_efic", "value":d.gob_efic},
+                        {"axis": "merc_fac", "value":d.merc_fac},
+                        {"axis": "eco_esta", "value":d.eco_esta},
+                        {"axis": "precur", "value":d.precur},
+                        {"axis": "rela_inte", "value":d.rela_inte},
+                        {"axis": "inno_eco", "value":d.inno_eco},
+                        {"axis": "sis_poli", "value":d.sis_poli}   
+                    ]
+                }
+            )
+        });
+        chartData.push(imcoAvgsRadar[0]);
+    }
+    UpdateRadarChart("#radarChart", chartData);
 };
