@@ -70,8 +70,7 @@ q.defer(d3.json, "data/regiones.geojson")
     .await(function(error, regiones, ciudades, variables) {
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
-        }
-        else {
+        } else {
             ciudades.features.forEach(function(e) {
                 // Populate the map
                 rateById.set(e.properties.id, +e.properties.grado_total);
@@ -178,25 +177,25 @@ q.defer(d3.json, "data/regiones.geojson")
             svgBar = initChart("#barChart", barData,
                                ["grado_carretera", "grado_ferrocarril"],
                                barChartOptions);
-	    var radarChartOptions = {
-	        w: 250,
-	        h: 200,
+            var radarChartOptions = {
+                w: 250,
+                h: 200,
                 maxValue: 100,
-	        margin: { top: 40, right: 75, bottom: 60, left: 75},
-	        levels: 5,
-	        roundStrokes: true,
-	        color: d3.scaleOrdinal().domain(allNames).range(d3.schemeCategory20),
-	        format: '.0f',
+                margin: { top: 40, right: 75, bottom: 60, left: 75},
+                levels: 5,
+                roundStrokes: true,
+                color: d3.scaleOrdinal().domain(allNames).range(d3.schemeCategory20),
+                format: '.0f',
                 opacityArea: 0.05,
                 labelFactor: 1.35,
                 strokeWidth: 1.2,
                 opacityCircles: 0.05,
                 dotRadius: 3,
                 legend: { title: '', translateX: 100, translateY: 0 }
-	    };
+            };
 
-	    // Draw the chart, get a reference the created svg element :
-	    var svgRadar = RadarChart("#radarChart", imcoAvgsRadar, radarChartOptions);
+            // Draw the chart, get a reference the created svg element :
+            var svgRadar = RadarChart("#radarChart", imcoAvgsRadar, radarChartOptions);
         }
     });
 
@@ -455,7 +454,7 @@ function getRadarData(){
 
 function getBarData(stackVariables){
     // Stack variables: array
-    if(currentRegion == 0){
+    if (currentRegion == 0){
         // at the national extent, display only top 15 values
         var chartData = properties.sort(function(x,y){
             return d3.descending(x.grado_total, y.grado_total);
@@ -464,9 +463,9 @@ function getBarData(stackVariables){
         chartData.push(averages);
         chartData.sort(function(x,y){
             return d3.descending(x.grado_total, y.grado_total);
-        })
+        });
         
-    }else{
+    } else {
         var filtered = properties.filter(function(el){
             return el.zona == idToName[currentRegion];
         });
@@ -474,7 +473,7 @@ function getBarData(stackVariables){
         var chartData = filtered.sort(function(x,y){
             return d3.descending(x.grado_total, y.grado_total);
         });   
-    };
+    }
     var stack = d3.stack();
     var stackedData = [];
     chartData.forEach(function(e){
