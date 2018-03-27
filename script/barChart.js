@@ -1,11 +1,9 @@
-
 var x,
     y,
     xAxis,
     yAxis,
     gBar,
     barCfg;
-
 
 function initChart(container, stackedData, stackVariables, options){
 
@@ -61,13 +59,32 @@ function initChart(container, stackedData, stackVariables, options){
         .data(function(d){return d.data;}, function(d){return d.id;})
         .enter()
         .append("rect")
-        .attr("class", function(d){
+        /*.attr("class", function(d){
             if(d.id == -1){
                 return "bar-avg";
             } else{
                 return "bar";
             }
+        })*/
+        .attr("stroke-dasharray", function(d, i){
+            if(d.id == -1){
+                if (i == 1){ // if top bar
+                    return (x.bandwidth()+y(d.start) - y(d.end)+", "+(x.bandwidth()));
+                } else if (i == 0){ //if bottom bar
+                    return ("0, "+x.bandwidth()+", "+2*(y(d.start) - y(d.end)+(x.bandwidth())));
+                }
+            } else{
+                return "none";
+            }
         })
+        .attr("stroke", function(d){
+            if(d.id == -1){
+                return "blue";
+            } else{
+                return "none";
+            }
+        })
+        .attr("stroke-width", 2)
         .attr("x", function(d) {return x(d.nombre);})
         .attr("y", function(d) {return y(d.end);})
         .attr("fill", function(d,i) {return barCfg.stackColors[i];})
@@ -118,8 +135,6 @@ function initChart(container, stackedData, stackVariables, options){
     return svgBar;
 }
 
-
-
 function updateChart(element, data){
 
     x.domain(getxDomain(data));
@@ -158,7 +173,26 @@ function updateChart(element, data){
         .attr("y", function(d, i) {return y(d.end);})
         .attr("fill", function(d,i) {return barCfg.stackColors[i];})
         .attr("width", x.bandwidth())
-        .attr("height", function(d,i) {return y(d.start) - y(d.end);});
+        .attr("height", function(d,i) {return y(d.start) - y(d.end);})
+        .attr("stroke-dasharray", function(d, i){
+            if(d.id == -1){
+                if (i == 1){ // if top bar
+                    return (x.bandwidth()+y(d.start) - y(d.end)+", "+(x.bandwidth()));
+                } else if (i == 0){ //if bottom bar
+                    return ("0, "+x.bandwidth()+", "+2*(y(d.start) - y(d.end)+(x.bandwidth())));
+                }
+            } else{
+                return "none";
+            }
+        })
+        .attr("stroke", function(d){
+            if(d.id == -1){
+                return "blue";
+            } else{
+                return "none";
+            }
+        })
+        .attr("stroke-width", 2);
 
     gBar.select(".axis--y").transition(t).call(yAxis);
     
@@ -169,7 +203,6 @@ function updateChart(element, data){
         .attr("dy", "2em")
         .attr("transform", "rotate(45)");
 };
-
 
 function getxDomain(data){
     // get X domain from stacked data
@@ -188,5 +221,4 @@ function getyDomain(data){
         yDomain.push(e.data[1].end); // End always stores the sum of stacks.
     })
     return [0, d3.max(yDomain)];
-    
 }

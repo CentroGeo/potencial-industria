@@ -11,7 +11,6 @@ var idToName = {
 };
 //r update_axes;
 
-
 // Set basic functions for styling the map
 var rateById = d3.map(); // will hold the map from ids to property values
 var colors5 = ['#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026']; // 5 color scheme
