@@ -17,6 +17,7 @@ var rateById = d3.map(); // will hold the map from ids to property values
 var colors5 = ['#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026']; // 5 color scheme
 var quantile = d3.scaleQuantile() 
     .range(d3.range(5).map(function(i) { return colors5[i]; })); // quantile scale with 5 classes
+var regionColors = d3.scaleOrdinal().domain([1, 7]).range(d3.schemeCategory10);
 
 // map and base layer
 var map = L.map('mapdiv', {attributionControl: false}).setView([23.75, -101.9], 5);
@@ -214,7 +215,8 @@ function makeMap(regiones, ciudades){
                 color: "#999",
                 opacity: 1,
                 fillOpacity: 0.8,
-                fillColor: quantile(rateById.get(feature.properties.id))
+                //fillColor: quantile(rateById.get(feature.properties.id))
+                fillColor: regionColors(swap(idToName)[feature.properties.zona])
             };
         },
         interactive: false
@@ -490,4 +492,12 @@ function getBarData(stackVariables){
                          });
     });
     return stackedData;
+}
+
+function swap(json){
+    var ret = {};
+    for(var key in json){
+        ret[json[key]] = key;
+    }
+    return ret;
 }
