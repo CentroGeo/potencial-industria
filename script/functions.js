@@ -76,7 +76,8 @@ q.defer(d3.json, "data/regiones.geojson")
                 // Populate the map
                 rateById.set(e.properties.id, +e.properties.grado_total);
             });
-            properties = []
+            properties = [];
+            var allNames = [];
             ciudades.features.forEach(function(e) {
                 // Populate the map
                 var dict = {};
@@ -87,6 +88,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 dict.grado_total = e.properties.grado_total;
                 dict.zona = e.properties.zona;
                 properties.push(dict);
+                allNames.push(e.properties.nom_ciudad);
             });
             avgCarr = d3.mean(properties,function(d) {
                     return d.grado_carretera;
@@ -140,16 +142,26 @@ q.defer(d3.json, "data/regiones.geojson")
                 {
                     "name": "National Average",
                     "axes": [
-                        {"axis": "sis_dere", "value":imcoAvgs.sis_dere},
-                        {"axis": "man_ambi", "value":imcoAvgs.man_ambi},
-                        {"axis": "soc_incl", "value":imcoAvgs.soc_incl},
-                        {"axis": "gob_efic", "value":imcoAvgs.gob_efic},
-                        {"axis": "merc_fac", "value":imcoAvgs.merc_fac},
-                        {"axis": "eco_esta", "value":imcoAvgs.eco_esta},
-                        {"axis": "precur", "value":imcoAvgs.precur},
-                        {"axis": "rela_inte", "value":imcoAvgs.rela_inte},
-                        {"axis": "inno_eco", "value":imcoAvgs.inno_eco},
-                        {"axis": "sis_poli", "value":imcoAvgs.sis_poli}
+                        {"axis": "sis_dere", "value":imcoAvgs.sis_dere,
+                         "name": "National Average"},
+                        {"axis": "man_ambi", "value":imcoAvgs.man_ambi,
+                        "name": "National Average"},
+                        {"axis": "soc_incl", "value":imcoAvgs.soc_incl,
+                        "name": "National Average"},
+                        {"axis": "gob_efic", "value":imcoAvgs.gob_efic,
+                        "name": "National Average"},
+                        {"axis": "merc_fac", "value":imcoAvgs.merc_fac,
+                        "name": "National Average"},
+                        {"axis": "eco_esta", "value":imcoAvgs.eco_esta,
+                        "name": "National Average"},
+                        {"axis": "precur", "value":imcoAvgs.precur,
+                        "name": "National Average"},
+                        {"axis": "rela_inte", "value":imcoAvgs.rela_inte,
+                        "name": "National Average"},
+                        {"axis": "inno_eco", "value":imcoAvgs.inno_eco,
+                        "name": "National Average"},
+                        {"axis": "sis_poli", "value":imcoAvgs.sis_poli,
+                        "name": "National Average"}
                         
                     ]
                 }
@@ -173,14 +185,14 @@ q.defer(d3.json, "data/regiones.geojson")
 	        margin: { top: 40, right: 75, bottom: 60, left: 75},
 	        levels: 5,
 	        roundStrokes: true,
-	        color: d3.scaleOrdinal().range(d3.schemeCategory20),
+	        color: d3.scaleOrdinal().domain(allNames).range(d3.schemeCategory20),
 	        format: '.0f',
                 opacityArea: 0.05,
                 labelFactor: 1.35,
                 strokeWidth: 1.2,
                 opacityCircles: 0.05,
                 dotRadius: 3,
-                legend: { title: 'aaa', translateX: 100, translateY: 0 }
+                legend: { title: '', translateX: 100, translateY: 0 }
 	    };
 
 	    // Draw the chart, get a reference the created svg element :
@@ -296,7 +308,7 @@ function layerClick(event){
         $(".icon-next .fas").addClass("fa-chevron-right");
         $(".icon-previous").css( "display", "none" );
     }
-    map.on("moveend", function(){
+    map.once("moveend", function(){
         updateChart("#barChart",
                 getBarData(["grado_carretera", "grado_ferrocarril"]));
         updateRadar("#radarChart", getRadarData());
@@ -320,7 +332,7 @@ $("#restart, .fas.fa-reply").on('click', function(){
     $(".icon-next .fas").addClass("fa-chevron-right");
     $(".icon-previous").css( "display", "none" );
     currentRegion = 0;
-    map.on("moveend", function(){
+    map.once("moveend", function(){
         updateChart("#barChart",
                 getBarData(["grado_carretera", "grado_ferrocarril"]));
         updateRadar("#radarChart", getRadarData());
@@ -411,16 +423,26 @@ function getRadarData(){
                 {
                     "name": d.nom_ciudad,
                     "axes": [
-                        {"axis": "sis_dere", "value":d.sis_dere},
-                        {"axis": "man_ambi", "value":d.man_ambi},
-                        {"axis": "soc_incl", "value":d.soc_incl},
-                        {"axis": "gob_efic", "value":d.gob_efic},
-                        {"axis": "merc_fac", "value":d.merc_fac},
-                        {"axis": "eco_esta", "value":d.eco_esta},
-                        {"axis": "precur", "value":d.precur},
-                        {"axis": "rela_inte", "value":d.rela_inte},
-                        {"axis": "inno_eco", "value":d.inno_eco},
-                        {"axis": "sis_poli", "value":d.sis_poli}   
+                        {"axis": "sis_dere", "value":d.sis_dere,
+                         "name": d.nom_ciudad},
+                        {"axis": "man_ambi", "value":d.man_ambi,
+                        "name": d.nom_ciudad},
+                        {"axis": "soc_incl", "value":d.soc_incl,
+                        "name": d.nom_ciudad},
+                        {"axis": "gob_efic", "value":d.gob_efic,
+                        "name": d.nom_ciudad},
+                        {"axis": "merc_fac", "value":d.merc_fac,
+                        "name": d.nom_ciudad},
+                        {"axis": "eco_esta", "value":d.eco_esta,
+                        "name": d.nom_ciudad},
+                        {"axis": "precur", "value":d.precur,
+                        "name": d.nom_ciudad},
+                        {"axis": "rela_inte", "value":d.rela_inte,
+                        "name": d.nom_ciudad},
+                        {"axis": "inno_eco", "value":d.inno_eco,
+                        "name": d.nom_ciudad},
+                        {"axis": "sis_poli", "value":d.sis_poli,
+                        "name": d.nom_ciudad}   
                     ]
                 }
             )

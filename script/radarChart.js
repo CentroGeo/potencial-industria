@@ -12,7 +12,8 @@ const HALF_PI = Math.PI / 2;
 var radarLine,
     radarCfg,
     wrap,
-    radarLegend;
+    radarLegend,
+    pos;
 var imcoVarsDict = {
     "sis_dere": "Legal System",
     "sis_poli": "Political System",
@@ -224,7 +225,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	.append("path")
 	.attr("class", "radarArea")
 	.attr("d", d => radarLine(d.axes))
-	.style("fill", (d,i) => radarCfg.color(i))
+	.style("fill", (d,i) => radarCfg.color(d))
 	.style("fill-opacity", radarCfg.opacityArea)
 	.on('mouseover', function(d, i) {
 	    //Dim all blobs
@@ -248,7 +249,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	.attr("class", "radarStroke")
 	.attr("d", function(d,i) { return radarLine(d.axes); })
 	.style("stroke-width", radarCfg.strokeWidth + "px")
-	.style("stroke", (d,i) => radarCfg.color(i))
+	.style("stroke", (d,i) => radarCfg.color(d))
 	.style("fill", "none")
 	.style("filter" , "url(#glow)");
 
@@ -261,7 +262,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	.attr("r", radarCfg.dotRadius)
 	.attr("cx", (d,i) => rScale(d.value) * cos(angleSlice * i - HALF_PI))
 	.attr("cy", (d,i) => rScale(d.value) * sin(angleSlice * i - HALF_PI))
-	.style("fill", (d) => radarCfg.color(d.id))
+	.style("fill", (d) => radarCfg.color(d))
 	.style("fill-opacity", 0.8);
 
     /////////////////////////////////////////////////////////
@@ -307,51 +308,56 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	  .attr("dy", "0.35em");
 
     if (radarCfg.legend !== false && typeof radarCfg.legend === "object") {
-	let legendZone = svg.append('g').attr("id", "legendZone");
-	let names = data.map(el => el.name);
-	if (radarCfg.legend.title) {
-	    let title = legendZone.append("text")
-		.attr("class", "title")
-		.attr('transform', `translate(${radarCfg.legend.translateX},${radarCfg.legend.translateY})`)
-		.attr("x", radarCfg.w - 70)
-		.attr("y", 10)
-		.attr("font-size", "12px")
-		.attr("fill", "#404040")
-		.text(radarCfg.legend.title);
-	}
-	radarLegend = legendZone.append("g")
+        let legendZone = svg.append('g').attr("id", "legendZone");
+        let names = data.map(el => el.name);
+        pos  = d3.scaleBand().rangeRound([0, radarCfg.h]);
+        pos.domain(names);
+        if (radarCfg.legend.title) {
+            let title = legendZone.append("text")
+        	.attr("class", "title")
+        	.attr('transform', `translate(${radarCfg.legend.translateX},${radarCfg.legend.translateY})`)
+        	.attr("x", radarCfg.w - 70)
+        	.attr("y", 10)
+        	.attr("font-size", "12px")
+        	.attr("fill", "#404040")
+        	.text(radarCfg.legend.title);
+        }
+        radarLegend = legendZone.append("g")
             .attr("id", "radarLegend")
-	    .attr("class", "legend")
-	    .attr("height", 100)
-	    .attr("width", 200)
-	    .attr('transform', `translate(${radarCfg.legend.translateX},${radarCfg.legend.translateY + 20})`);
+            .attr("class", "legend")
+            .attr("height", 100)
+            .attr("width", 200)
+            .attr('transform', `translate(${radarCfg.legend.translateX},${radarCfg.legend.translateY + 20})`);
         
-	// Create rectangles markers
-	radarLegend.selectAll('rect')
-	    .data(names)
-	    .enter()
-	    .append("rect")
-	    .attr("x", radarCfg.w - 65)
-	    .attr("y", (d,i) => i * 20)
-	    .attr("width", 10)
-	    .attr("height", 10)
-	    .style("fill", (d,i) => radarCfg.color(i));
-	// Create labels
-	radarLegend.selectAll('text')
-	    .data(names)
-	    .enter()
-	    .append("text")
-	    .attr("x", radarCfg.w - 52)
-	    .attr("y", (d,i) => i * 20 + 9)
-	    .attr("font-size", "11px")
-	    .attr("fill", "#737373")
-	    .text(d => d);
+        // Create rectangles markers
+        radarLegend.selectAll('rect')
+            .data(names, function(d){return d;})
+            .enter()
+            .append("rect")
+            //.attr("x", radarCfg.w - 65)
+            //.attr("y", (d,i) => i * 20)
+            .attr("x", radarCfg.w - 55)
+	    .attr("y", function(d){return pos(d)-9;})
+            .attr("width", 10)
+            .attr("height", 10)
+            .style("fill", (d,i) => radarCfg.color(d));
+        // Create labels
+        radarLegend.selectAll('text')
+            .data(names, function(d){return d;})
+            .enter()
+            .append("text")
+            //.attr("x", radarCfg.w - 52)
+            //.attr("y", (d,i) => i * 20 + 9)
+            .attr("x", radarCfg.w - 40)
+	    .attr("y", function(d){return pos(d);})
+            .attr("font-size", "11px")
+            .attr("fill", "#737373")
+            .text(d => d);
     }
     return svg;
 }
 
 function updateRadar(parent_selector, data) {
-
     var g = d3.select(parent_selector).select("g");
     const allAxis = data[0].axes.map((i, j) => i.axis),	
 	  total = allAxis.length,
@@ -395,9 +401,7 @@ function updateRadar(parent_selector, data) {
     }
     
     var radarWrapperUpdate = g.selectAll(".radarWrapper")
-	.data(data, function(d){
-              return d.name;
-          });
+	.data(data, function(d){return d.name;});
     //Append the backgrounds
 
     var radarWrapperEnter = radarWrapperUpdate.enter().append("g")
@@ -407,7 +411,7 @@ function updateRadar(parent_selector, data) {
         .transition(500)
 	.attr("class", "radarArea")
 	.attr("d", d => radarLine(d.axes))
-	.style("fill", (d,i) => radarCfg.color(i))
+	.style("fill", d => radarCfg.color(d.name))
 	.style("fill-opacity", radarCfg.opacityArea);
 
     //Create the outlines
@@ -416,10 +420,17 @@ function updateRadar(parent_selector, data) {
 	.attr("class", "radarStroke")
 	.attr("d", function(d,i) { return radarLine(d.axes); })
 	.style("stroke-width", radarCfg.strokeWidth + "px")
-	.style("stroke", (d,i) => radarCfg.color(i))
+	.style("stroke", d => radarCfg.color(d.name))
 	.style("fill", "none")
 	.style("filter" , "url(#glow)");
 
+            // var a = []
+            // d.axes.forEach(function(e){
+            //     a.push([d.name, d.axes])
+            // })
+            // return a;
+
+    
     //Append the circles
     var radarCircleEnter = radarWrapperEnter.selectAll(".radarCircle")
 	.data(d => d.axes)
@@ -430,32 +441,45 @@ function updateRadar(parent_selector, data) {
 	.attr("r", radarCfg.dotRadius)
 	.attr("cx", (d,i) => rScale(d.value) * cos(angleSlice * i - HALF_PI))
 	.attr("cy", (d,i) => rScale(d.value) * sin(angleSlice * i - HALF_PI))
-	.style("fill", (d) => radarCfg.color(d.id))
+	.style("fill", d => radarCfg.color(d.name))
 	.style("fill-opacity", 0.8);
     
     radarWrapperUpdate.exit().remove();
 
     let names = data.map(el => el.name);
+    pos.domain(names);
     
     var radarLegendSquareUpdate = radarLegend.selectAll("rect")
-        .data(names, function(d){ return d;});
+        .data(names, function(d){ return d;})
+        .attr("id", function(d,i){return i;})
+	.attr("x", radarCfg.w - 55)
+	.attr("y", function(d){return pos(d)-9;})
+	.attr("width", 10)
+	.attr("height", 10)
+	.style("fill", (d,i) => radarCfg.color(d));
+    
     var radarLegendTextUpdate = radarLegend.selectAll("text")
-        .data(names, function(d){ return d;});
+        .data(names, function(d){ return d;})
+        .attr("x", radarCfg.w - 40)
+	.attr("y", function(d){return pos(d);})
+	.attr("font-size", "11px")
+	.attr("fill", "#737373")
+	.text(d => d);
 
     var radarLegendSquareEnter = radarLegendSquareUpdate.enter();
     var radarLegendTextEnter = radarLegendTextUpdate.enter();
 
-
     var legendSquares = radarLegendSquareEnter.append("rect")
-	.attr("x", radarCfg.w - 65)
-	.attr("y", (d,i) => (i+1) * 20)
+        .attr("id", function(d,i){return i;})
+	.attr("x", radarCfg.w - 55)
+	.attr("y", function(d){return pos(d)-9;})
 	.attr("width", 10)
 	.attr("height", 10)
-	.style("fill", (d,i) => radarCfg.color(i));
+	.style("fill", (d,i) => radarCfg.color(d));
 
     var legendTexts = radarLegendTextEnter.append("text")
-	.attr("x", radarCfg.w - 52)
-	.attr("y", (d,i) => (i+1) * 20 + 9)
+	.attr("x", radarCfg.w - 40)
+	.attr("y", function(d){return pos(d);})
 	.attr("font-size", "11px")
 	.attr("fill", "#737373")
 	.text(d => d);
