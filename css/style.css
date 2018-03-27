@@ -152,7 +152,7 @@ body {
 .regionZoomed {
     stroke-width: 2;
     stroke-opacity: 0.5;
-    stroke: red;
+    stroke: #81152a;
     fill-opacity: 0.0;
 }
 .bar {
