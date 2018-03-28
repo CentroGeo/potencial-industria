@@ -470,6 +470,7 @@ function updateRadar(parent_selector, data) {
     var radarLegendTextEnter = radarLegendTextUpdate.enter();
 
     var legendSquares = radarLegendSquareEnter.append("rect")
+        .transition(radarCfg.transition_duration)
         .attr("id", function(d,i){return i;})
 	.attr("x", radarCfg.w - 55)
 	.attr("y", function(d){return pos(d)-9;})
@@ -478,13 +479,18 @@ function updateRadar(parent_selector, data) {
 	.style("fill", (d,i) => radarCfg.color(d));
 
     var legendTexts = radarLegendTextEnter.append("text")
-	.attr("x", radarCfg.w - 40)
+        .transition(radarCfg.transition_duration)
+        .attr("x", radarCfg.w - 40)
 	.attr("y", function(d){return pos(d);})
 	.attr("font-size", "11px")
 	.attr("fill", "#737373")
 	.text(d => d);
 
-    radarLegendSquareUpdate.exit().remove();
-    radarLegendTextUpdate.exit().remove();    
+    radarLegendSquareUpdate.exit()
+        .transition(radarCfg.transition_duration)
+        .remove();
+    radarLegendTextUpdate.exit().
+        transition(radarCfg.transition_duration).
+        remove();    
 
 };
