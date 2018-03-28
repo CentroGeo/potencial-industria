@@ -10,23 +10,8 @@ const sin = Math.sin;
 const cos = Math.cos;
 const HALF_PI = Math.PI / 2;
 var radarLine,
-    radarCfg,
     wrap,
-    radarLegend,
     pos;
-var imcoVarsDict = {
-    "sis_dere": "Legal System",
-    "sis_poli": "Political System",
-    "man_ambi": "Environment",
-    "soc_incl": "Inclusive Society",
-    "gob_efic": "Efficient Government",
-    "merc_fac": "Market Factors",
-    "eco_esta": "Economic Stability",
-    "precur": "Infrastructure",
-    "rela_inte": "International Relationships",
-    "inno_eco": "Economic Innovation"
-}
-
 
 const RadarChart = function RadarChart(parent_selector, data, options) {
     //Wraps SVG text - Taken from http://bl.ocks.org/mbostock/7555321
@@ -98,8 +83,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 
     const allAxis = data[0].axes.map((i, j) => i.axis),	//Names of each axis
 	  total = allAxis.length,					//The number of different axes
-	  radius = Math.min(radarCfg.w/2, radarCfg.h/2), 	//Radius of the outermost circle
-	  Format = d3.format(radarCfg.format),			 	//Formatting
+	  radius = Math.min(radarCfg.w/2, radarCfg.h/2), 	//Radius of the outermost circle			 	//Formatting
 	  angleSlice = Math.PI * 2 / total;		//The width in radians of each "slice"
 
     //Scale for the radius
@@ -111,7 +95,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
     //////////// Create the container SVG and g /////////////
     /////////////////////////////////////////////////////////
     const parent = d3.select(parent_selector);
-
+    var Format = d3.format(radarCfg.format);
     //Remove whatever chart with the same id/class was present before
     parent.select("svg").remove();
 
@@ -165,7 +149,10 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	.attr("dy", "0.4em")
 	.style("font-size", "10px")
 	.attr("fill", "#737373")
-	.text(d => Format(maxValue * d / radarCfg.levels) + radarCfg.unit);
+        .text(function(d){
+            return Format((maxValue * d / radarCfg.levels) + radarCfg.unit);
+        });
+	// .text(d => Format(maxValue * d / radarCfg.levels) + radarCfg.unit);
 
     /////////////////////////////////////////////////////////
     //////////////////// Draw the axes //////////////////////
@@ -195,7 +182,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	.attr("dy", "0.35em")
 	.attr("x", (d,i) => rScale(maxValue * radarCfg.labelFactor) * cos(angleSlice * i - HALF_PI))
 	.attr("y", (d,i) => rScale(maxValue * radarCfg.labelFactor) * sin(angleSlice * i - HALF_PI))
-	.text(d => imcoVarsDict[d])
+	.text(d => d)
 	.call(wrap, radarCfg.wrapWidth);
 
     /////////////////////////////////////////////////////////
@@ -308,7 +295,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
 	  .attr("dy", "0.35em");
 
     if (radarCfg.legend !== false && typeof radarCfg.legend === "object") {
-        let legendZone = svg.append('g').attr("id", "legendZone");
+        let legendZone = svg.append('g').attr("id", radarCfg.legendZone);
         let names = data.map(el => el.name);
         pos  = d3.scaleBand().rangeRound([0, radarCfg.h]);
         pos.domain(names);
@@ -322,7 +309,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
         	.attr("fill", "#404040")
         	.text(radarCfg.legend.title);
         }
-        radarLegend = legendZone.append("g")
+        var radarLegend = legendZone.append("g")
             .attr("id", "radarLegend")
             .attr("class", "legend")
             .attr("height", 100)
@@ -357,12 +344,14 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
     return svg;
 }
 
-function updateRadar(parent_selector, data) {
+function updateRadar(parent_selector, data, radarCfg) {
+    var Format = d3.format(radarCfg.format)
     var g = d3.select(parent_selector).select("g");
+    var Format = d3.format(radarCfg.format);
+
     const allAxis = data[0].axes.map((i, j) => i.axis),	
 	  total = allAxis.length,
 	  radius = Math.min(radarCfg.w/2, radarCfg.h/2),
-	  Format = d3.format(radarCfg.format),
 	  angleSlice = Math.PI * 2 / total;
     
     let maxValue = 0;
@@ -382,7 +371,10 @@ function updateRadar(parent_selector, data) {
 
     //Text indicating at what % each level is
     g.selectAll(".axisLabel")
-	.text(d => Format(maxValue * d / radarCfg.levels) + radarCfg.unit).transition();
+	.text(function(d){
+            return Format((maxValue * d / radarCfg.levels) + radarCfg.unit);
+             })
+        .transition();
 
     g.selectAll(".axis line")
         .attr("x1", 0)
@@ -393,7 +385,7 @@ function updateRadar(parent_selector, data) {
     g.selectAll(".axis text")
         .attr("x", (d,i) => rScale(maxValue * radarCfg.labelFactor) * cos(angleSlice * i - HALF_PI))
 	.attr("y", (d,i) => rScale(maxValue * radarCfg.labelFactor) * sin(angleSlice * i - HALF_PI))
-	.text(d => imcoVarsDict[d])
+	.text(d => d)
 	.call(wrap, radarCfg.wrapWidth);
     
     if (radarCfg.roundStrokes) {
@@ -423,13 +415,6 @@ function updateRadar(parent_selector, data) {
 	.style("stroke", d => radarCfg.color(d.name))
 	.style("fill", "none")
 	.style("filter" , "url(#glow)");
-
-            // var a = []
-            // d.axes.forEach(function(e){
-            //     a.push([d.name, d.axes])
-            // })
-            // return a;
-
     
     //Append the circles
     var radarCircleEnter = radarWrapperEnter.selectAll(".radarCircle")
@@ -446,9 +431,13 @@ function updateRadar(parent_selector, data) {
     
     radarWrapperUpdate.exit().remove();
 
+    
+    // let legendZone = svg.append('g').attr("id", radarCfg.legendZone)
+    // radarLegend = legendZone.append("g")
+    var radarLegend = d3.select("#" + radarCfg.legendZone).select("g")
     let names = data.map(el => el.name);
     pos.domain(names);
-    
+
     var radarLegendSquareUpdate = radarLegend.selectAll("rect")
         .data(names, function(d){ return d;})
         .attr("id", function(d,i){return i;})

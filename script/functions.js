@@ -58,16 +58,21 @@ function offsetGlobal (center, zoom, refMap, tgtMap) {
 }
 
 // Load json data
-var properties; // properties for each city
-var averages; // store average values
-var imcoAvgsRadar;
-var varsImco;
-var svgBar;
+var properties, // properties for each city
+    averages, // store average values
+    imcoAvgsRadar,
+    varsImco,
+    varsCh = [],
+    svgBar,
+    radarImcoOptions,
+    radarChOptions;
+
 var q = d3.queue();
 q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.json, "data/ciudades.geojson")
     .defer(d3.csv, "data/variables-potencial-industrial.csv")
-    .await(function(error, regiones, ciudades, variables) {
+    .defer(d3.csv, "data/capital-humano-zonas.csv")
+    .await(function(error, regiones, ciudades, variables, varsChZonas) {
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
         } else {
@@ -105,34 +110,34 @@ q.defer(d3.json, "data/regiones.geojson")
             };
             
             var imcoAvgs = {
-                "sis_dere": d3.mean(variables,function(d) {
+                "Legal System": d3.mean(variables,function(d) {
                     return d.sis_dere;
                 }),
-                "man_ambi": d3.mean(variables,function(d) {
+                "Political System": d3.mean(variables,function(d) {
                     return d.man_ambi;
                 }),
-                "soc_incl": d3.mean(variables,function(d) {
+                "Environment": d3.mean(variables,function(d) {
                     return d.soc_incl;
                 }),
-                "sis_poli": d3.mean(variables,function(d) {
+                "Inclusive Society": d3.mean(variables,function(d) {
                     return d.sis_poli;
                 }),
-                "gob_efic": d3.mean(variables,function(d) {
+                "Efficient Government": d3.mean(variables,function(d) {
                     return d.gob_efic;
                 }),
-                "merc_fac": d3.mean(variables,function(d) {
+                "Market Factors": d3.mean(variables,function(d) {
                     return d.merc_fac;
                 }),
-                "eco_esta": d3.mean(variables,function(d) {
+                "Economic Stability": d3.mean(variables,function(d) {
                     return d.eco_esta;
                 }),
-                "precur": d3.mean(variables,function(d) {
+                "Infrastructure": d3.mean(variables,function(d) {
                     return d.precur;
                 }),
-                "rela_inte": d3.mean(variables,function(d) {
+                "International Relationships": d3.mean(variables,function(d) {
                     return d.rela_inte;
                 }),
-                "inno_eco": d3.mean(variables,function(d) {
+                "Economic Innovation": d3.mean(variables,function(d) {
                     return d.inno_eco;
                 })  
             };
@@ -141,30 +146,70 @@ q.defer(d3.json, "data/regiones.geojson")
                 {
                     "name": "National Average",
                     "axes": [
-                        {"axis": "sis_dere", "value":imcoAvgs.sis_dere,
+                        {"axis": "Legal System", "value":imcoAvgs["Legal System"],
                          "name": "National Average"},
-                        {"axis": "man_ambi", "value":imcoAvgs.man_ambi,
+                        {"axis": "Environment", "value":imcoAvgs["Environment"],
                         "name": "National Average"},
-                        {"axis": "soc_incl", "value":imcoAvgs.soc_incl,
+                        {"axis": "Inclusive Society",
+                         "value":imcoAvgs["Inclusive Society"],
                         "name": "National Average"},
-                        {"axis": "gob_efic", "value":imcoAvgs.gob_efic,
+                        {"axis": "Efficent Government",
+                         "value":imcoAvgs["Efficient Government"],
                         "name": "National Average"},
-                        {"axis": "merc_fac", "value":imcoAvgs.merc_fac,
+                        {"axis": "Market Factors", "value":imcoAvgs["Market Factors"],
                         "name": "National Average"},
-                        {"axis": "eco_esta", "value":imcoAvgs.eco_esta,
+                        {"axis": "Economic Stability",
+                         "value":imcoAvgs["Economic Stability"],
                         "name": "National Average"},
-                        {"axis": "precur", "value":imcoAvgs.precur,
+                        {"axis": "Infrastructure", "value":imcoAvgs["Infrastructure"],
                         "name": "National Average"},
-                        {"axis": "rela_inte", "value":imcoAvgs.rela_inte,
+                        {"axis": "International Relationships",
+                         "value":imcoAvgs["International Relationships"],
                         "name": "National Average"},
-                        {"axis": "inno_eco", "value":imcoAvgs.inno_eco,
+                        {"axis": "Economic Innovation",
+                         "value":imcoAvgs["Economic Innovation"],
                         "name": "National Average"},
-                        {"axis": "sis_poli", "value":imcoAvgs.sis_poli,
+                        {"axis": "Political System",
+                         "value":imcoAvgs["Political System"],
                         "name": "National Average"}
                         
                     ]
                 }
             ];
+            
+            varsChZonas.forEach(function(e){
+                var element = {
+                    "name": e.zona,
+                    "axes": [
+                        {
+                            "axis": "CEOs", "value": +e.CEOs,
+                            "name": e.zona
+                        }, {
+                            "axis": "Marketing and Finance", "value": +e["Marketing and finance"],
+                            "name": e.zona
+                        }, {
+                            "axis": "R&D", "value": +e["R&D"],
+                            "name": e.zona
+                        }, {
+                            "axis": "Engineering", "value": +e.Engineering,
+                            "name": e.zona
+                        }, {
+                            "axis": "ITC", "value": +e.ITC,
+                            "name": e.zona
+                        }, {
+                            "axis": "Creatives", "value": +e.Creatives,
+                            "name": e.zona
+                        }, {
+                            "axis": "Education", "value": +e.Education,
+                            "name": e.zona
+                        }, {
+                            "axis": "Health", "value": +e.Health,
+                            "name": e.zona
+                        }
+                    ]};
+                varsCh.push(element);
+            });
+            
             varsImco = variables;
             makeMap(regiones, ciudades);
             var barChartOptions ={
@@ -177,7 +222,7 @@ q.defer(d3.json, "data/regiones.geojson")
             svgBar = initChart("#barConectividad", barData,
                                ["grado_carretera", "grado_ferrocarril"],
                                barChartOptions);
-            var radarChartOptions = {
+            radarImcoOptions = {
                 w: 250,
                 h: 200,
                 maxValue: 100,
@@ -191,11 +236,35 @@ q.defer(d3.json, "data/regiones.geojson")
                 strokeWidth: 1.2,
                 opacityCircles: 0.05,
                 dotRadius: 3,
-                legend: { title: '', translateX: 100, translateY: 0 }
+                legend: { title: '', translateX: 100, translateY: 0 },
+                legendZone: "imcoLegendZone",
+                unit: ''
             };
 
             // Draw the chart, get a reference the created svg element :
-            var svgRadar = RadarChart("#radarImco", imcoAvgsRadar, radarChartOptions);
+            var svgRadarImco = RadarChart("#radarImco", imcoAvgsRadar, radarImcoOptions);
+
+            radarChOptions = {
+                w: 250,
+                h: 200,
+                maxValue: 2,
+                margin: { top: 40, right: 75, bottom: 60, left: 75},
+                levels: 5,
+                roundStrokes: true,
+                color: d3.scaleOrdinal().domain(d3.values(idToName))
+                    .range(d3.schemeCategory20),
+                format: '.1f',
+                opacityArea: 0.05,
+                labelFactor: 1.35,
+                strokeWidth: 1.2,
+                opacityCircles: 0.05,
+                dotRadius: 3,
+                legend: { title: '', translateX: 100, translateY: 0 },
+                legendZone: "chLegendZone",
+                unit: ''
+            };
+            
+            var svgRadarCh = RadarChart("#radarCH", varsCh, radarChOptions);
         }
     });
 
@@ -311,7 +380,7 @@ function layerClick(event){
     map.once("moveend", function(){
         updateChart("#barConectividad",
                 getBarData(["grado_carretera", "grado_ferrocarril"]));
-        updateRadar("#radarImco", getRadarData());
+        updateRadar("#radarImco", getRadarData(), radarImcoOptions);
     });
 
 }
@@ -335,7 +404,7 @@ $(".menu, .fas.fa-reply").on('click', function(){
     map.once("moveend", function(){
         updateChart("#barConectividad",
                 getBarData(["grado_carretera", "grado_ferrocarril"]));
-        updateRadar("#radarImco", getRadarData());
+        updateRadar("#radarImco", getRadarData(), radarImcoOptions);
     });
 });
 
@@ -369,7 +438,7 @@ $(".icon-next").on('click', function(){
         $("#title").html('México');
         updateChart("#barConectividad",
                     getBarData(["grado_carretera", "grado_ferrocarril"]));
-        updateRadar("#radarImco", getRadarData());
+        updateRadar("#radarImco", getRadarData(), radarImcoOptions);
     }
 });
 
@@ -401,7 +470,7 @@ $(".icon-previous").on('click', function(){
         $("#title").html('México');
         updateChart("#barConectividad",
                     getBarData(["grado_carretera", "grado_ferrocarril"]));
-        updateRadar("#radarImco", getRadarData());
+        updateRadar("#radarImco", getRadarData(), radarImcoOptions);
     }
 });
 
@@ -420,25 +489,25 @@ function getRadarData(){
                 {
                     "name": d.nom_ciudad,
                     "axes": [
-                        {"axis": "sis_dere", "value":d.sis_dere,
+                        {"axis": "Legal System", "value":d.sis_dere,
                          "name": d.nom_ciudad},
-                        {"axis": "man_ambi", "value":d.man_ambi,
+                        {"axis": "Environment", "value":d.man_ambi,
                         "name": d.nom_ciudad},
-                        {"axis": "soc_incl", "value":d.soc_incl,
+                        {"axis": "Inclusive Society", "value":d.soc_incl,
                         "name": d.nom_ciudad},
-                        {"axis": "gob_efic", "value":d.gob_efic,
+                        {"axis": "Efficent Government", "value":d.gob_efic,
                         "name": d.nom_ciudad},
-                        {"axis": "merc_fac", "value":d.merc_fac,
+                        {"axis": "Market Factors", "value":d.merc_fac,
                         "name": d.nom_ciudad},
-                        {"axis": "eco_esta", "value":d.eco_esta,
+                        {"axis": "Economic Stability", "value":d.eco_esta,
                         "name": d.nom_ciudad},
-                        {"axis": "precur", "value":d.precur,
+                        {"axis": "Infrastructure", "value":d.precur,
                         "name": d.nom_ciudad},
-                        {"axis": "rela_inte", "value":d.rela_inte,
+                        {"axis": "International Relationships", "value":d.rela_inte,
                         "name": d.nom_ciudad},
-                        {"axis": "inno_eco", "value":d.inno_eco,
+                        {"axis": "Economic Innovation", "value":d.inno_eco,
                         "name": d.nom_ciudad},
-                        {"axis": "sis_poli", "value":d.sis_poli,
+                        {"axis": "Political System", "value":d.sis_poli,
                         "name": d.nom_ciudad}   
                     ]
                 }
