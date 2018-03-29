@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="css/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <div id="chart"> </div>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-queue.v3.min.js"></script>
+    <script src="script/reusableBar.js"></script>
+    <script>
+      var bar = stackedBarChart()
+          .width(400)
+          .height(400)
+          .stackVariables(["grado_ferrocarril", "grado_carretera"])
+          .displayName("nom_ciudad")
+          .id("id");
+
+      d3.csv("data/variables-potencial-industrial.csv",
+             function(error, vars){
+                 if (error) throw error;
+                 data = [];
+                 vars.forEach(function(d) {
+                     data.push({
+                         id: d.id, 
+                         nom_ciudad: d.nom_ciudad, // lowercase
+                         grado_carretera: +d.grado_carretera, 
+                         grado_ferrocarril: +d.grado_ferrocarril,
+                         grado_total: +d.grado_total
+                     });
+                 });
+                 console.log(data);
+                 var chartData = data.sort(function(x,y){
+                     return d3.descending(+x.grado_total, +y.grado_total);
+                 }).slice(0, 14);
+                 d3.select("#chart")
+                     .datum(chartData) // Bind data to div
+                     .call(bar); // Draw chart in selected div
+             })
+    </script>
+
+  </body>
+</html>
