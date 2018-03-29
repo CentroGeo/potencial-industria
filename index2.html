@@ -5,21 +5,27 @@
     <link href="css/style.css" rel="stylesheet">
   </head>
   <body>
+    <button type="button" onclick="actualiza()">actualiza</button>
     <div id="chart"> </div>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/d3-queue.v3.min.js"></script>
     <script src="script/reusableBar.js"></script>
     <script>
+      var currentRegion = 0,
+          allData;
+      
       var bar = stackedBarChart()
           .width(400)
           .height(400)
           .stackVariables(["grado_ferrocarril", "grado_carretera"])
           .displayName("nom_ciudad")
           .id("id");
+          
 
       d3.csv("data/variables-potencial-industrial.csv",
              function(error, vars){
                  if (error) throw error;
+                 // Parse data as numbers
                  data = [];
                  vars.forEach(function(d) {
                      data.push({
@@ -27,17 +33,25 @@
                          nom_ciudad: d.nom_ciudad, // lowercase
                          grado_carretera: +d.grado_carretera, 
                          grado_ferrocarril: +d.grado_ferrocarril,
-                         grado_total: +d.grado_total
+                         grado_total: +d.grado_total,
+                         zona: d.zona
                      });
                  });
-                 console.log(data);
+                 allData = data;
+
                  var chartData = data.sort(function(x,y){
                      return d3.descending(+x.grado_total, +y.grado_total);
                  }).slice(0, 14);
+                 bar.data(chartData); // bind data to chart object
                  d3.select("#chart")
-                     .datum(chartData) // Bind data to div
                      .call(bar); // Draw chart in selected div
-             })
+             });
+      function actualiza(){
+          currentRegion ++;
+          newData = allData.filter(function(el){
+            return el.zona == "Peninsula";})
+          bar.data(newData);
+      }
     </script>
 
   </body>

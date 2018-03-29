@@ -1,15 +1,17 @@
 
 function stackedBarChart(){
     
-    var width = 400,
+    var data = [],
+        width = 400,
         height = 400,
-        margin = {top: 10, right: 10, bottom: 10, left: 50},
-        //margin: {top: 100, right: 30, bottom: 30, left: 45}
+        //margin = {top: 10, right: 10, bottom: 10, left: 50},
+        margin = {top: 100, right: 30, bottom: 30, left: 45},
         stackColors = ['#d8b365','#5ab4ac'], // colour scheme
         stackVariables, // Which variables to stack in bars
         id,  // variable in data to use as identifier
         displayName, // variable in data to use as display name for each bar
         floatFormat = d3.format('.1f'),
+        updateData,
         
         x = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1),
         y = d3.scaleLinear().rangeRound([height - margin.top, 0]);
@@ -39,8 +41,6 @@ function stackedBarChart(){
             var stack = d3.stack();
             var stackedData = [];
             data.forEach(function(e){
-                console.log(e[displayName], (e[stackVariables[1]] +
-                              e[stackVariables[0]]));
                 stackedData.push({"id": e[id],
                                   "stacks":[{"id": e[id],
                                              "name": e[displayName],
@@ -59,7 +59,7 @@ function stackedBarChart(){
         }
 
         
-        selection.each(function(data){
+        selection.each(function(){
             // Draw chart
             // append svg to selection
             var svg = selection.append("svg")
@@ -82,7 +82,7 @@ function stackedBarChart(){
                 .tickSizeOuter(0)
                 .scale(y);
             var bar = svg.select(".bars")
-                .datum(data);
+                .data(data);
             
                 bar.selectAll("g")
                 .data(stackedData, function(d){ return d.id;})
@@ -143,6 +143,81 @@ function stackedBarChart(){
                 .attr("dx", "-2em")
                 .attr("text-anchor", "start")
                 .text("Degree");
+
+            updateData = function(){
+                var stackedData = getStackedBarData(data, stackVariables);
+                x.domain(getxDomain(stackedData));
+                y.domain(getyDomain(stackedData));
+
+                var barsUpdate = d3.select(".bars").selectAll(".stack")
+                    .data(stackedData, function(d){return d.id;}),
+                    xAxisUpdate = d3.select(".axis--x"),
+                    yAxisUpdate = d3.select(".axis--y");
+                
+
+                var t = barsUpdate.transition()
+                    .duration(500);
+
+                var barsEnter= barsUpdate.enter()
+                    .append("g")
+                    .attr("id", function(d){return d.id;})
+                    .attr("class", "stack")
+                    .selectAll("rect")
+                    .data(function(d){return d.stacks;}, function(d){return d.id;})
+                    .enter()
+                    .append("rect")
+                    .transition(t)
+                    .attr("class", "bar")
+                    .attr("x", function(d) {return x(d.name);})
+                    .attr("y", function(d, i) {return y(d.end);})
+                    .attr("fill", function(d,i) {return stackColors[i];})
+                    .attr("width", x.bandwidth())
+                    .attr("height", function(d,i) {return y(d.start) - y(d.end);});
+
+                barsUpdate.selectAll("rect")
+                    .transition(t)
+                    .attr("x", function(d) {return x(d.name);})
+                    .attr("y", function(d, i) {return y(d.end);})
+                    .attr("fill", function(d,i) {return stackColors[i];})
+                    .attr("width", x.bandwidth())
+                    .attr("height", function(d,i) {return y(d.start) - y(d.end);})
+                    .attr("stroke-dasharray", function(d, i){
+                        if(d.id == -1){
+                            if (i == 1){ // if top bar
+                                return (x.bandwidth() + y(d.start) - y(d.end) +
+                                        ", " + (x.bandwidth()));
+                            } else if (i == 0){ //if bottom bar
+                                return ("0, " + x.bandwidth() + ", " +
+                                        2 * (y(d.start) - y(d.end) + (x.bandwidth())));
+                            }
+                        } else{
+                            return "none";
+                        }
+                    })
+                    .attr("stroke", function(d){
+                        if(d.id == -1){
+                            return "blue";
+                        } else{
+                            return "none";
+                        }
+                    })
+                    .attr("stroke-width", 2);
+
+                yAxisUpdate.transition(t).call(yAxis);
+                
+                xAxisUpdate.transition(t).call(xAxis)
+                    .selectAll("text")
+                    .style("text-anchor", "start")
+                    .attr("dx", "0em")
+                    .attr("dy", "2em")
+                    .attr("transform", "rotate(45)");
+                
+                barsUpdate.exit().style('opacity', 1)
+                    .transition(t)
+                    .style('opacity', 0)
+                    .remove();
+
+            }
             
             
 
@@ -188,7 +263,14 @@ function stackedBarChart(){
         displayName = value;
         return chart;
     };
-    
+    chart.data = function(value) {
+        
+        if (!arguments.length) return data;
+        data = value;
+        if (typeof updateData === 'function') updateData();
+        return chart;
+    };
+
     return chart;
 
 }
