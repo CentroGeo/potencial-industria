@@ -118,6 +118,7 @@ function stackedBarChart(){
                     }
                 })
                 .attr("stroke-width", 2)
+                .attr("class", "bar")
                 .attr("x", function(d) {return x(d.name);})
                 .attr("y", function(d) {return y(d.end);})
                 .attr("fill", function(d,i) { return stackColors[i];})
@@ -145,6 +146,27 @@ function stackedBarChart(){
                 .attr("dx", "-2em")
                 .attr("text-anchor", "start")
                 .text("Degree");
+
+            var legend = bar.selectAll(".legend")
+                .data(stackVariables.reverse())
+                .enter().append("g")
+                .attr("class", "legend")
+                .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
+                .style("font", "10px sans-serif");
+
+            legend.append("rect")
+                .attr("x", width - 95)
+                .attr("width", 18)
+                .attr("height", 18)
+                .attr("fill", function(d,i){ return stackColors[i];});
+
+            legend.append("text")
+                .attr("x", width - 70)
+                .attr("y", 9)
+                .attr("dy", ".35em")
+                .attr("text-anchor", "start")
+                .text(function(d) { return d; });
+
 
             updateData = function(){
                 var stackedData = getStackedBarData(data, stackVariables);
