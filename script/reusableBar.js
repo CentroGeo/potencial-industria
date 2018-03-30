@@ -4,7 +4,6 @@ function stackedBarChart(){
     var data = [],
         width = 350,
         height = 350,
-        //margin = {top: 10, right: 10, bottom: 10, left: 50},
         margin = {top: 100, right: 30, bottom: 30, left: 45},
         stackColors = ['#d8b365','#5ab4ac'], // colour scheme
         stackVariables, // Which variables to stack in bars
@@ -18,7 +17,6 @@ function stackedBarChart(){
         var x = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1);
         var y = d3.scaleLinear().rangeRound([height - margin.top, 0]);
 
-        console.log(width)
         // Utility functions
         function getxDomain(data){
             // get X domain from stacked data

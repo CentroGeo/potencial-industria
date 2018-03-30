@@ -108,7 +108,7 @@ const RadarChart = function RadarChart(parent_selector, data, options) {
     //Append a g element
     let g = svg.append("g")
 	.attr("transform", "translate(" + (radarCfg.w/2 + radarCfg.margin.left) + "," + (radarCfg.h/2 + radarCfg.margin.top) + ")");
-
+    
     /////////////////////////////////////////////////////////
     ////////// Glow filter for some extra pizzazz ///////////
     /////////////////////////////////////////////////////////
