@@ -63,9 +63,9 @@ var properties, // properties for each city
     imcoAvgsRadar,
     varsImco,
     varsCh = [],
-    svgBar,
     radarImcoOptions,
-    radarChOptions;
+    radarChOptions,
+    connectivityBar;
 
 var q = d3.queue();
 q.defer(d3.json, "data/regiones.geojson")
@@ -80,29 +80,42 @@ q.defer(d3.json, "data/regiones.geojson")
                 // Populate the map
                 rateById.set(e.properties.id, +e.properties.grado_total);
             });
-            properties = [];
+            // properties = [];
             var cityNames = [];
             ciudades.features.forEach(function(e) {
                 // Populate the map
-                var dict = {};
-                dict.id = e.properties.id;
-                dict.nombre = e.properties.nom_ciudad;
-                dict.grado_carretera = e.properties.grado_carretera;
-                dict.grado_ferrocarril = e.properties.grado_ferrocarril;
-                dict.grado_total = e.properties.grado_total;
-                dict.zona = e.properties.zona;
-                properties.push(dict);
+                // var dict = {};
+                // dict.id = e.properties.id;
+                // dict.nombre = e.properties.nom_ciudad;
+                // dict.grado_carretera = e.properties.grado_carretera;
+                // dict.grado_ferrocarril = e.properties.grado_ferrocarril;
+                // dict.grado_total = e.properties.grado_total;
+                // dict.zona = e.properties.zona;
+                // properties.push(dict);
                 cityNames.push(e.properties.nom_ciudad);
             });
-            avgCarr = d3.mean(properties,function(d) {
+            // Parse connectivity data as numbers
+            connectivityData = [];
+            variables.forEach(function(d) {
+                connectivityData.push({
+                    id: d.id, 
+                    nom_ciudad: d.nom_ciudad, // lowercase
+                    grado_carretera: +d.grado_carretera, 
+                    grado_ferrocarril: +d.grado_ferrocarril,
+                    grado_total: +d.grado_total,
+                    zona: d.zona
+                });
+            });
+            // calculate national averages
+            avgCarr = d3.mean(connectivityData, function(d) {
                     return d.grado_carretera;
             });
-            avgFerr = d3.mean(properties,function(d) {
+            avgFerr = d3.mean(connectivityData, function(d) {
                     return d.grado_ferrocarril;
             });
-            averages = {
+            connectivityAverages = {
                 "id": -1,
-                "nombre": "National Average",
+                "nom_ciudad": "National Average",
                 "grado_carretera": avgCarr,
                 "grado_ferrocarril": avgFerr,
                 "grado_total": avgCarr + avgFerr,
@@ -212,16 +225,17 @@ q.defer(d3.json, "data/regiones.geojson")
             
             varsImco = variables;
             makeMap(regiones, ciudades);
-            var barChartOptions ={
-                "width": 350,
-                "height": 300,
-                "margin": {top: 100, right: 30, bottom: 30, left: 45},
-                "transition_duration": 500
-            };
-            var barData = getBarData(["grado_carretera", "grado_ferrocarril"]);
-            svgBar = initChart("#barConectividad", barData,
-                               ["grado_carretera", "grado_ferrocarril"],
-                               barChartOptions);
+            connectivityBar = stackedBarChart()
+                .width(350)
+                .height(300)
+                .stackVariables(["grado_ferrocarril", "grado_carretera"])
+                .displayName("nom_ciudad")
+                .transitionTime(500)
+                .id("id");
+            connectivityBar.data(getBarData(["grado_carretera", "grado_ferrocarril"]));
+            d3.select("#barConectividad")
+                .call(connectivityBar); // Draw chart in selected div
+
             radarImcoOptions = {
                 w: 250,
                 h: 200,
@@ -378,8 +392,7 @@ function layerClick(event){
         $(".icon-previous").css( "display", "none" );
     }
     map.once("moveend", function(){
-        updateChart("#barConectividad",
-                getBarData(["grado_carretera", "grado_ferrocarril"]));
+        connectivityBar.data(getBarData(["grado_carretera", "grado_ferrocarril"]));
         updateRadar("#radarImco", getRadarData(), radarImcoOptions);
     });
 
@@ -402,8 +415,7 @@ $(".menu, .fas.fa-reply").on('click', function(){
     // $(".icon-previous").css( "display", "none" );
     currentRegion = 0;
     map.once("moveend", function(){
-        updateChart("#barConectividad",
-                getBarData(["grado_carretera", "grado_ferrocarril"]));
+        connectivityBar.data(getBarData(["grado_carretera", "grado_ferrocarril"]));
         updateRadar("#radarImco", getRadarData(), radarImcoOptions);
     });
 });
@@ -436,8 +448,8 @@ $(".icon-next").on('click', function(){
         regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
         $("#title").html('México');
-        updateChart("#barConectividad",
-                    getBarData(["grado_carretera", "grado_ferrocarril"]));
+
+        connectivityBar.data(getBarData(["grado_carretera", "grado_ferrocarril"]));
         updateRadar("#radarImco", getRadarData(), radarImcoOptions);
     }
 });
@@ -468,8 +480,7 @@ $(".icon-previous").on('click', function(){
         regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
         $("#title").html('México');
-        updateChart("#barConectividad",
-                    getBarData(["grado_carretera", "grado_ferrocarril"]));
+        connectivityBar.data(getBarData(["grado_carretera", "grado_ferrocarril"]));
         updateRadar("#radarImco", getRadarData(), radarImcoOptions);
     }
 });
@@ -522,40 +533,25 @@ function getBarData(stackVariables){
     // Stack variables: array
     if (currentRegion == 0){
         // at the national extent, display only top 15 values
-        var chartData = properties.sort(function(x,y){
+        var chartData = connectivityData.sort(function(x,y){
             return d3.descending(x.grado_total, y.grado_total);
         }).slice(0, 14);
         
-        chartData.push(averages);
+        chartData.push(connectivityAverages);
         chartData.sort(function(x,y){
             return d3.descending(x.grado_total, y.grado_total);
         });
         
     } else {
-        var filtered = properties.filter(function(el){
+        var filtered = connectivityData.filter(function(el){
             return el.zona == idToName[currentRegion];
         });
-        filtered.push(averages);
+        filtered.push(connectivityAverages);
         var chartData = filtered.sort(function(x,y){
             return d3.descending(x.grado_total, y.grado_total);
         });   
     }
-    var stack = d3.stack();
-    var stackedData = [];
-    chartData.forEach(function(e){
-        stackedData.push({"id":e.id,
-                          "data":[{"id": e.id,
-                                   "nombre": e.nombre,
-                                   "start": 0,
-                                   "end": e[stackVariables[0]]
-                                  },
-                                  {"id": e.id,
-                                   "nombre": e.nombre,
-                                   "start": e[stackVariables[0]],
-                                   "end": e[stackVariables[1]] + e[stackVariables[0]]}]
-                         });
-    });
-    return stackedData;
+    return chartData;
 }
 
 function swap(json){

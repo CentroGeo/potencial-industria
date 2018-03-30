@@ -2,21 +2,23 @@
 function stackedBarChart(){
     
     var data = [],
-        width = 400,
-        height = 400,
+        width = 350,
+        height = 350,
         //margin = {top: 10, right: 10, bottom: 10, left: 50},
         margin = {top: 100, right: 30, bottom: 30, left: 45},
         stackColors = ['#d8b365','#5ab4ac'], // colour scheme
         stackVariables, // Which variables to stack in bars
         id,  // variable in data to use as identifier
         displayName, // variable in data to use as display name for each bar
+        transitionTime = 250,
         floatFormat = d3.format('.1f'),
-        updateData,
+        updateData;
         
-        x = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1),
-        y = d3.scaleLinear().rangeRound([height - margin.top, 0]);
-
     function chart(selection) {
+        var x = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1);
+        var y = d3.scaleLinear().rangeRound([height - margin.top, 0]);
+
+        console.log(width)
         // Utility functions
         function getxDomain(data){
             // get X domain from stacked data
@@ -156,7 +158,7 @@ function stackedBarChart(){
                 
 
                 var t = barsUpdate.transition()
-                    .duration(500);
+                    .duration(transitionTime);
 
                 var barsEnter= barsUpdate.enter()
                     .append("g")
@@ -263,6 +265,13 @@ function stackedBarChart(){
         displayName = value;
         return chart;
     };
+
+    chart.transitionTime = function(value) {
+        if (!arguments.length) return transitionTime;
+        transitionTime = value;
+        return chart;
+    };
+
     chart.data = function(value) {
         
         if (!arguments.length) return data;
