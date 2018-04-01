@@ -57,7 +57,7 @@ function offsetGlobal (center, zoom, refMap, tgtMap) {
     return refMap.unproject(pt, zoom);
 }
 
-// Load json data
+
 var properties, // properties for each city
     connectivityBar,
     connectivityData,
@@ -66,6 +66,8 @@ var properties, // properties for each city
     chRadar,
     chData;
 
+
+// Load data
 var q = d3.queue();
 q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.json, "data/ciudades.geojson")
@@ -86,123 +88,16 @@ q.defer(d3.json, "data/regiones.geojson")
             ciudades.features.forEach(function(e) {
                 cityNames.push(e.properties.nom_ciudad);
             });
-            // Parse connectivity data as numbers
-            connectivityData = [];
-            variables.forEach(function(d) {
-                connectivityData.push({
-                    id: d.id, 
-                    nom_ciudad: d.nom_ciudad, // lowercase
-                    grado_carretera: +d.grado_carretera, 
-                    grado_ferrocarril: +d.grado_ferrocarril,
-                    grado_total: +d.grado_total,
-                    zona: d.zona
-                });
-            });
-            // calculate national averages
-            avgCarr = d3.mean(connectivityData, function(d) {
-                    return d.grado_carretera;
-            });
-            avgFerr = d3.mean(connectivityData, function(d) {
-                    return d.grado_ferrocarril;
-            });
-            connectivityAverages = {
-                "id": -1,
-                "nom_ciudad": "National Average",
-                "grado_carretera": avgCarr,
-                "grado_ferrocarril": avgFerr,
-                "grado_total": avgCarr + avgFerr,
-                "zona": "Nacional"
-            };
-
-            imcoData = [];
-            variables.forEach(function(d) {
-                     imcoData.push({
-                         id: d.id, 
-                         nom_ciudad: d.nom_ciudad,
-                         zona: d.zona,
-                         "Legal System": +d.sis_dere,
-                         "Environment": +d.man_ambi,
-                         "Inclusive Society": +d.soc_incl,
-                         "Efficent Government": +d.gob_efic,
-                         "Market Factors": +d.merc_fac,
-                         "Economic Stability": +d.eco_esta,
-                         "Infrastructure": +d.precur,
-                         "International Relationships": +d.rela_inte,
-                         "Economic Innovation": +d.inno_eco,
-                         "Political System": +d.sis_poli
-                     });
-                 });
+            // Read connectivity from variables csv
+            var connectivityData = parseConnectivity(variables);
+            // Read imco variables from csv
+            var imcoData = parseImcoData(variables);
+            // Read human capital data from capital-humano.csv
+            var chData = parseChData(varsChZonas);
+            // Read zone names
+            var regionNames = getZonesNames(varsChZonas);
             
-            var imcoAvgs = {
-                "id": -1,
-                "nom_ciudad": "National Averages",
-                "zona": "National Averages",
-                "Legal System": d3.mean(variables,function(d) {
-                    return d.sis_dere;
-                }),
-                "Political System": d3.mean(variables,function(d) {
-                    return d.man_ambi;
-                }),
-                "Environment": d3.mean(variables,function(d) {
-                    return d.soc_incl;
-                }),
-                "Inclusive Society": d3.mean(variables,function(d) {
-                    return d.sis_poli;
-                }),
-                "Efficient Government": d3.mean(variables,function(d) {
-                    return d.gob_efic;
-                }),
-                "Market Factors": d3.mean(variables,function(d) {
-                    return d.merc_fac;
-                }),
-                "Economic Stability": d3.mean(variables,function(d) {
-                    return d.eco_esta;
-                }),
-                "Infrastructure": d3.mean(variables,function(d) {
-                    return d.precur;
-                }),
-                "International Relationships": d3.mean(variables,function(d) {
-                    return d.rela_inte;
-                }),
-                "Economic Innovation": d3.mean(variables,function(d) {
-                    return d.inno_eco;
-                })  
-            };
-
             chData = [];
-            varsChZonas.forEach(function(e){
-                regionNames.push(e.zona);
-/*                var element = {
-                    "name": e.zona,
-                    "axes": [
-                        {
-                            "axis": "CEOs", "value": +e.CEOs,
-                            "name": e.zona
-                        }, {
-                            "axis": "Marketing and Finance", "value": +e["Marketing and finance"],
-                            "name": e.zona
-                        }, {
-                            "axis": "R&D", "value": +e["R&D"],
-                            "name": e.zona
-                        }, {
-                            "axis": "Engineering", "value": +e.Engineering,
-                            "name": e.zona
-                        }, {
-                            "axis": "ITC", "value": +e.ITC,
-                            "name": e.zona
-                        }, {
-                            "axis": "Creatives", "value": +e.Creatives,
-                            "name": e.zona
-                        }, {
-                            "axis": "Education", "value": +e.Education,
-                            "name": e.zona
-                        }, {
-                            "axis": "Health", "value": +e.Health,
-                            "name": e.zona
-                        }
-                    ]};
-                chData.push(element);
-*/            });
             
             makeMap(regiones, ciudades);
             
@@ -253,27 +148,6 @@ q.defer(d3.json, "data/regiones.geojson")
                 .call(chRadar); // Draw chart in selected div
 
 
-/*            radarChOptions = {
-                w: 250,
-                h: 200,
-                maxValue: 2,
-                margin: { top: 40, right: 75, bottom: 60, left: 75},
-                levels: 5,
-                roundStrokes: true,
-                color: d3.scaleOrdinal().domain(d3.values(idToName))
-                    .range(d3.schemeCategory20),
-                format: '.1f',
-                opacityArea: 0.05,
-                labelFactor: 1.35,
-                strokeWidth: 1.2,
-                opacityCircles: 0.05,
-                dotRadius: 3,
-                legend: { title: '', translateX: 100, translateY: 0 },
-                legendZone: "chLegendZone",
-                unit: ''
-            };
- */           
-            //var svgRadarCh = RadarChart("#radarCH", varsCh, radarChOptions);
         }
     });
 
@@ -479,6 +353,14 @@ $(".icon-previous").on('click', function(){
     }
 });
 
+//////////////////////////////////////////////////
+/// 
+/// Utilty functions
+///
+///
+/////////////////////////////////////////////////
+
+// Update data for Imco chart
 function getRadarData(){
     if (currentRegion == 0) {
         // at the national extent, display only averages
@@ -493,6 +375,7 @@ function getRadarData(){
     return filtered;
 }
 
+// Update data for Connectivity chart
 function getBarData(stackVariables){
     // Stack variables: array
     if (currentRegion == 0){
@@ -518,10 +401,131 @@ function getBarData(stackVariables){
     return chartData;
 }
 
+
+// Swap keys with values in object
 function swap(json){
     var ret = {};
     for(var key in json){
         ret[json[key]] = key;
     }
     return ret;
+}
+
+
+// Parse connectivity data
+// Coerce strings to numbers, compute averages
+// Return array of row objects. Average has id = -1
+function parseConnectivity(rows){
+    // Parse connectivity data as numbers
+    connectivityData = [];
+    rows.forEach(function(d) {
+        connectivityData.push({
+            id: d.id, 
+            nom_ciudad: d.nom_ciudad,
+            grado_carretera: +d.grado_carretera, 
+            grado_ferrocarril: +d.grado_ferrocarril,
+            grado_total: +d.grado_total,
+            zona: d.zona
+        });
+    });
+    // calculate national averages
+    var avgCarr = d3.mean(connectivityData, function(d) {
+        return d.grado_carretera;
+    });
+    var avgFerr = d3.mean(connectivityData, function(d) {
+        return d.grado_ferrocarril;
+    });
+    var connectivityAverages = {
+        "id": -1,
+        "nom_ciudad": "National Average",
+        "grado_carretera": avgCarr,
+        "grado_ferrocarril": avgFerr,
+        "grado_total": avgCarr + avgFerr,
+        "zona": "Nacional"
+    };
+    connectivityData.push(connectivityAverages);
+    return connectivityData;
+}
+
+
+// Parse imco data
+// Coerce strings to numbers, compute averages
+// Return array of row objects. Average has id = -1
+function parseImcoData(rows){
+    var imcoData = [];
+    rows.forEach(function(d) {
+        imcoData.push({
+            "id": d.id, 
+            "nom_ciudad": d.nom_ciudad,
+            "zona": d.zona,
+            "Legal System": +d.sis_dere,
+            "Environment": +d.man_ambi,
+            "Inclusive Society": +d.soc_incl,
+            "Efficent Government": +d.gob_efic,
+            "Market Factors": +d.merc_fac,
+            "Economic Stability": +d.eco_esta,
+            "Infrastructure": +d.precur,
+            "International Relationships": +d.rela_inte,
+            "Economic Innovation": +d.inno_eco,
+            "Political System": +d.sis_poli
+        });
+    });
+    
+    var imcoAvgs = {
+        "id": -1,
+        "nom_ciudad": "National Averages",
+        "zona": "National Averages",
+        "Legal System": d3.mean(variables,function(d) {
+            return d.sis_dere;
+        }),
+        "Political System": d3.mean(variables,function(d) {
+            return d.man_ambi;
+        }),
+        "Environment": d3.mean(variables,function(d) {
+            return d.soc_incl;
+        }),
+        "Inclusive Society": d3.mean(variables,function(d) {
+            return d.sis_poli;
+        }),
+        "Efficient Government": d3.mean(variables,function(d) {
+            return d.gob_efic;
+        }),
+        "Market Factors": d3.mean(variables,function(d) {
+            return d.merc_fac;
+        }),
+        "Economic Stability": d3.mean(variables,function(d) {
+            return d.eco_esta;
+        }),
+        "Infrastructure": d3.mean(variables,function(d) {
+            return d.precur;
+        }),
+        "International Relationships": d3.mean(variables,function(d) {
+            return d.rela_inte;
+        }),
+        "Economic Innovation": d3.mean(variables,function(d) {
+            return d.inno_eco;
+        })  
+    };
+    imcoData.push(imcoAvgs);
+    return imcoData;
+}
+
+
+// Parse imco data
+// Coerce strings to numbers, compute averages
+// Return array of row objects. Average has id = -1
+function parseChData(rows){
+    // TODO: we only have regional averages at the moment
+    return rows
+}
+
+
+// Get all zones names
+// Parse zone names (in english) from human capital data
+function getZonesNames(rowsCh){
+    var names = [];
+    rowsCh.forEach(function(e){
+        names.push(e.zona)
+    });
+    return names;
 }
