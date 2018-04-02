@@ -61,6 +61,9 @@ function offsetGlobal (center, zoom, refMap, tgtMap) {
 var properties, // properties for each city
     connectivityBar,
     connectivityData,
+    imcoData,
+    chData,
+    regionNames,
     imcoRadar,
     imcoData,
     chRadar,
@@ -89,16 +92,15 @@ q.defer(d3.json, "data/regiones.geojson")
                 cityNames.push(e.properties.nom_ciudad);
             });
             // Read connectivity from variables csv
-            var connectivityData = parseConnectivity(variables);
+            connectivityData = parseConnectivity(variables);
             // Read imco variables from csv
-            var imcoData = parseImcoData(variables);
+            imcoData = parseImcoData(variables);
             // Read human capital data from capital-humano.csv
-            var chData = parseChData(varsChZonas);
+            chData = parseChData(varsChZonas);
             // Read zone names
-            var regionNames = getZonesNames(varsChZonas);
-            
-            chData = [];
-            
+            regionNames = getZonesNames(varsChZonas);
+
+            // Make map
             makeMap(regiones, ciudades);
             
             connectivityBar = stackedBarChart()
@@ -109,7 +111,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 .transitionTime(500)
                 .id("id");
             
-            connectivityBar.data(getBarData(["grado_carretera", "grado_ferrocarril"]));
+            connectivityBar.data(getBarData());
             d3.select("#barConectividad")
                 .call(connectivityBar); // Draw chart in selected div
 
@@ -125,10 +127,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 .legendContainer('imcoLegend')
                 .maxValue(100);
 
-            
-            imcoData.push(imcoAvgs);
-            
-            imcoRadar.data([imcoAvgs]); // bind data to chart object
+            imcoRadar.data(getRadarData()); // bind data to chart object
                  d3.select("#radarImco")
                 .call(imcoRadar); // Draw chart in selected div
 
@@ -143,7 +142,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 .legendContainer('chLegend')
                 .maxValue(2);
 
-            chRadar.data(varsChZonas); // bind data to chart object
+            chRadar.data(chData); // bind data to chart object
                  d3.select("#radarCH")
                 .call(chRadar); // Draw chart in selected div
 
@@ -260,7 +259,7 @@ function layerClick(event){
         $(".icon-previous").css( "display", "none" );
     }
     map.once("moveend", function(){
-        connectivityBar.data(getBarData(["grado_carretera", "grado_ferrocarril"]));
+        connectivityBar.data(getBarData());
         imcoRadar.data(getRadarData());
     });
 
@@ -283,7 +282,7 @@ $(".menu, .fas.fa-reply").on('click', function(){
     // $(".icon-previous").css( "display", "none" );
     currentRegion = 0;
     map.once("moveend", function(){
-        connectivityBar.data(getBarData(["grado_carretera", "grado_ferrocarril"]));
+        connectivityBar.data(getBarData());
         imcoRadar.data(getRadarData());
     });
 });
@@ -317,7 +316,7 @@ $(".icon-next").on('click', function(){
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
         $("#title").html('México');
 
-        connectivityBar.data(getBarData(["grado_carretera", "grado_ferrocarril"]));
+        connectivityBar.data(getBarData());
         imcoRadar.data(getRadarData());
     }
 });
@@ -348,7 +347,7 @@ $(".icon-previous").on('click', function(){
         regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
         $("#title").html('México');
-        connectivityBar.data(getBarData(["grado_carretera", "grado_ferrocarril"]));
+        connectivityBar.data(getBarData());
         imcoRadar.data(getRadarData());
     }
 });
@@ -376,24 +375,23 @@ function getRadarData(){
 }
 
 // Update data for Connectivity chart
-function getBarData(stackVariables){
+function getBarData(){
     // Stack variables: array
+    var avg = connectivityData.filter(function(el){
+        return el.zona === "Nacional"
+    });
     if (currentRegion == 0){
-        // at the national extent, display only top 15 values
         var chartData = connectivityData.sort(function(x,y){
             return d3.descending(x.grado_total, y.grado_total);
         }).slice(0, 14);
-        
-        chartData.push(connectivityAverages);
-        chartData.sort(function(x,y){
-            return d3.descending(x.grado_total, y.grado_total);
-        });
-        
+        chartData.push(avg[0]);
+        // var chartData = connectivityData.sort(function(x,y){
+        //     return d3.descending(x.grado_total, y.grado_total);
+        // });
     } else {
         var filtered = connectivityData.filter(function(el){
-            return el.zona == idToName[currentRegion];
+            return el.zona === idToName[currentRegion] || el.zona === "Nacional";
         });
-        filtered.push(connectivityAverages);
         var chartData = filtered.sort(function(x,y){
             return d3.descending(x.grado_total, y.grado_total);
         });   
@@ -448,6 +446,21 @@ function parseConnectivity(rows){
 }
 
 
+function getImcoData(){
+    if (currentRegion == 0){
+        var chartData = imcoData.filter(function(el){
+            return el.nom_ciudad === "National Average";
+        });
+    } else {
+        var chartData = imcoData.filter(function(el){
+            return el.zona === idToName[currentRegion] || el.nom_ciudad === "National Average";
+        });
+    }
+    return chartData;
+    
+}
+
+
 // Parse imco data
 // Coerce strings to numbers, compute averages
 // Return array of row objects. Average has id = -1
@@ -475,34 +488,34 @@ function parseImcoData(rows){
         "id": -1,
         "nom_ciudad": "National Averages",
         "zona": "National Averages",
-        "Legal System": d3.mean(variables,function(d) {
+        "Legal System": d3.mean(rows,function(d) {
             return d.sis_dere;
         }),
-        "Political System": d3.mean(variables,function(d) {
+        "Political System": d3.mean(rows,function(d) {
             return d.man_ambi;
         }),
-        "Environment": d3.mean(variables,function(d) {
+        "Environment": d3.mean(rows,function(d) {
             return d.soc_incl;
         }),
-        "Inclusive Society": d3.mean(variables,function(d) {
+        "Inclusive Society": d3.mean(rows,function(d) {
             return d.sis_poli;
         }),
-        "Efficient Government": d3.mean(variables,function(d) {
+        "Efficient Government": d3.mean(rows,function(d) {
             return d.gob_efic;
         }),
-        "Market Factors": d3.mean(variables,function(d) {
+        "Market Factors": d3.mean(rows,function(d) {
             return d.merc_fac;
         }),
-        "Economic Stability": d3.mean(variables,function(d) {
+        "Economic Stability": d3.mean(rows,function(d) {
             return d.eco_esta;
         }),
-        "Infrastructure": d3.mean(variables,function(d) {
+        "Infrastructure": d3.mean(rows,function(d) {
             return d.precur;
         }),
-        "International Relationships": d3.mean(variables,function(d) {
+        "International Relationships": d3.mean(rows,function(d) {
             return d.rela_inte;
         }),
-        "Economic Innovation": d3.mean(variables,function(d) {
+        "Economic Innovation": d3.mean(rows,function(d) {
             return d.inno_eco;
         })  
     };
