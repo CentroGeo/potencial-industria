@@ -57,7 +57,6 @@ function stackedBarChart(){
             });
             return stackedData;
         }
-
         
         selection.each(function(){
             // Draw chart
@@ -66,7 +65,6 @@ function stackedBarChart(){
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
-                //.attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
             
             // g element to keep elements within svg modular
@@ -149,8 +147,8 @@ function stackedBarChart(){
                 .data(stackVariables.reverse())
                 .enter().append("g")
                 .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
-                .style("font", "10px sans-serif");
+                .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+                //.style("font", "10px sans-serif");
 
             legend.append("rect")
                 .attr("x", width - 95)
@@ -240,13 +238,8 @@ function stackedBarChart(){
                     .remove();
 
             }
-            
-            
-
         });
     }
-
-
 
     // Getters and setters
 
