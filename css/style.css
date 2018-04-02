@@ -63,15 +63,15 @@ body {
 }
 
 .icon-previous{
-    /* color: #333; */
+    /* color: #333;
     font-style: normal;
     font-weight: 400;
     font-variant: normal;
     text-transform: none;
-    line-height: 1;
+    line-height: 1;*/
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-size: 32px;
+    /*font-size: 32px;*/
     margin-bottom: 5px;
     /* border-bottom-right-radius: 7px; */
     /* border-top-right-radius: 7px; */
@@ -89,15 +89,15 @@ body {
     transition: text-shadow 1s;
 }
 .icon-next{
-    /* color: #333; */
+    /* color: #333;
     font-style: normal;
     font-weight: 400;
     font-variant: normal;
     text-transform: none;
-    line-height: 1;
+    line-height: 1;*/
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-size: 32px;
+    /*font-size: 32px;*/
     margin-bottom: 5px;
     /* border-bottom-left-radius: 7px; */
     /* border-top-left-radius: 7px; */
