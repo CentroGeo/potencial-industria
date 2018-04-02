@@ -110,13 +110,14 @@ body {
     z-index: 2;
 }
 
-.icon-next:hover:enabled, .icon-previous:hover:enabled{
-    color: red;
-    /* background-color: #f4f4f4; */
+.icon-next:hover, .icon-previous:hover{
+    color: #81152a;
 }
-/* .disabled{ */
-/*     color: #000000; */
-/* } */
+
+.icon-disabled {
+    cursor: default;
+}
+
 .menu {
     font-size: 14px;
     padding: 6px 12px 6px 12px;
@@ -130,14 +131,16 @@ body {
     position: absolute;
     z-index: 3;
     right: 0px;
-    top: 0px;
+    top: -32px;
     text-align: left;
     overflow: hidden;
     /*border-bottom: 1px solid #e6e6e6;
     border-right: 1px solid #e6e6e6;
     border-left: 1px solid #e6e6e6;*/
-    border-bottom-right-radius: 7px;
-    border-bottom-left-radius: 7px;
+    /*border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;*/
+    border-top-right-radius: 7px;
+    border-top-left-radius: 7px;
 }
 .menu:hover {
     /*background: #c34528;*/

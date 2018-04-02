@@ -9,7 +9,6 @@ var idToName = {
     6 : "Centro Norte",
     7 : "Peninsula"
 };
-//r update_axes;
 
 // Set basic functions for styling the map
 var rateById = d3.map(); // will hold the map from ids to property values
@@ -20,17 +19,19 @@ var regionColors = d3.scaleOrdinal().domain([1, 7]).range(d3.schemeCategory10);
 
 // map and base layer
 var map = L.map('mapdiv', {attributionControl: false}).setView([23.75, -101.9], 5);
-L.control.attribution({position: 'bottomleft'}).addTo(map);
+//L.control.attribution({position: 'bottomleft'}).addTo(map);
 
 var overlay = new L.map('overlaydiv', {
     zoomControl: false,
-   // inertia: false,
+    //inertia: false,
     keyboard: false,
-//    dragging: false,
+    //dragging: false,
     scrollWheelZoom: false,
-    attributionControl:false,
-    zoomAnimation:false
+    attributionControl: false,
+    zoomAnimation: false
 }).setView([23.75, -101.9], 5);
+
+L.control.attribution({position: 'bottomright'}).addTo(overlay);
 
 var mapBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
@@ -57,7 +58,6 @@ function offsetGlobal (center, zoom, refMap, tgtMap) {
     return refMap.unproject(pt, zoom);
 }
 
-
 var properties, // properties for each city
     connectivityBar,
     connectivityData,
@@ -68,7 +68,6 @@ var properties, // properties for each city
     imcoData,
     chRadar,
     chData;
-
 
 // Load data
 var q = d3.queue();
@@ -115,7 +114,6 @@ q.defer(d3.json, "data/regiones.geojson")
             d3.select("#barConectividad")
                 .call(connectivityBar); // Draw chart in selected div
 
-
             imcoRadar = radarChart()
                 .width(250)
                 .height(200)
@@ -145,8 +143,6 @@ q.defer(d3.json, "data/regiones.geojson")
             chRadar.data(chData); // bind data to chart object
                  d3.select("#radarCH")
                 .call(chRadar); // Draw chart in selected div
-
-
         }
     });
 
@@ -204,7 +200,6 @@ function layerClick(event){
                };
     if (feature.properties.is_clicked == false){ // feature not clicked, so zoom in
         if (lastClickedLayer){ // when a region is clicked and you click another, reset previous one
-            //regionesLyr.resetStyle(lastClickedLayer);
             lastClickedLayer.feature.properties.is_clicked = false;
             $(lastClickedLayer.getElement()).removeClass("regionZoomed");
             $(lastClickedLayer.getElement()).addClass("regionStyle");
@@ -217,7 +212,7 @@ function layerClick(event){
                 l.setStyle(noStyle);
             } 
         });
-        if (currentRegion == 1){ // if first region, change button icon
+        /*if (currentRegion == 1){ // if first region, change button icon
             $(".icon-previous .fas").removeClass("fa-chevron-left");
             $(".icon-previous .fas").addClass("fa-reply");
             $(".icon-next .fas").removeClass("fa-reply");
@@ -232,9 +227,10 @@ function layerClick(event){
             $(".icon-previous .fas").addClass("fa-chevron-left");
             $(".icon-next .fas").removeClass("fa-reply");
             $(".icon-next .fas").addClass("fa-chevron-right");
-        }
+        }*/
         if (currentRegion > 0){ // if first region, show back button
-            //$(".icon-previous").css( "display", "block" );
+            $(".icon-previous").removeClass("text-muted");
+            $(".icon-previous").removeClass("icon-disabled");
         }
         
         $("#title").html(feature.properties.zona);
@@ -246,7 +242,6 @@ function layerClick(event){
         feature.properties.is_clicked = true;
     } else if (feature.properties.is_clicked == true){ // feature already clicked, so zoom out
         map.flyTo([23.75, -101.9], 5);
-        //regionesLyr.resetStyle(layer);
         regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);})
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
         $(layer.getElement()).removeClass("regionZoomed");
@@ -256,18 +251,17 @@ function layerClick(event){
         currentRegion = 0;
         $(".icon-next .fas").removeClass("fa-reply");
         $(".icon-next .fas").addClass("fa-chevron-right");
-        $(".icon-previous").css( "display", "none" );
+        $(".icon-previous").addClass("text-muted");
+        $(".icon-previous").addClass("icon-disabled");
     }
     map.once("moveend", function(){
         connectivityBar.data(getBarData());
         imcoRadar.data(getRadarData());
     });
-
 }
 
 $(".menu, .fas.fa-reply").on('click', function(){ 
     if (lastClickedLayer){
-        //regionesLyr.resetStyle(lastClickedLayer);
         regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);})
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
         $(lastClickedLayer.getElement()).removeClass("regionZoomed");
@@ -277,9 +271,10 @@ $(".menu, .fas.fa-reply").on('click', function(){
     lastClickedLayer = null;
     $("#title").html('México');
     map.flyTo([23.75, -101.9], 5);
-    $(".icon-next .fas").removeClass("fa-reply");
-    $(".icon-next .fas").addClass("fa-chevron-right");
-    // $(".icon-previous").css( "display", "none" );
+    /*$(".icon-next .fas").removeClass("fa-reply");
+    $(".icon-next .fas").addClass("fa-chevron-right");*/
+    $(".icon-previous").addClass("text-muted");
+    $(".icon-previous").addClass("icon-disabled");
     currentRegion = 0;
     map.once("moveend", function(){
         connectivityBar.data(getBarData());
@@ -295,22 +290,23 @@ $(".icon-next").on('click', function(){
     }
     currentRegion++;
     if (currentRegion > 0 && currentRegion < regionesLyr.getLayers().length){ // cycle to next region
-        if (currentRegion > 1) {
+        /*if (currentRegion > 1) {
             $(".icon-previous .fas").removeClass("fa-reply");
             $(".icon-previous .fas").addClass("fa-chevron-left");   
-        }
+        }*/
         regionesLyr._layers[currentRegion].fire('click');
     } else if (currentRegion == regionesLyr.getLayers().length){ // if last region
         regionesLyr._layers[currentRegion].fire('click');
-        $(".icon-next .fas").removeClass("fa-chevron-right");
+        /*$(".icon-next .fas").removeClass("fa-chevron-right");
         $(".icon-next .fas").addClass("fa-reply");
         $(".icon-previous .fas").removeClass("fa-reply");
-        $(".icon-previous .fas").addClass("fa-chevron-left");
+        $(".icon-previous .fas").addClass("fa-chevron-left");*/
     } else { // return to overview
         map.flyTo([23.75, -101.9], 5);
-        $(".icon-next .fas").removeClass("fa-reply");
-        $(".icon-next .fas").addClass("fa-chevron-right");
-        $(".icon-previous").css( "display", "none" );
+        /*$(".icon-next .fas").removeClass("fa-reply");
+        $(".icon-next .fas").addClass("fa-chevron-right");*/
+        $(".icon-previous").addClass("text-muted");
+        $(".icon-previous").addClass("icon-disabled");
         currentRegion = 0;
         regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
@@ -330,23 +326,25 @@ $(".icon-previous").on('click', function(){
     currentRegion--;
     if (currentRegion > 1 && currentRegion < regionesLyr.getLayers().length){ // cycle to previous region
         regionesLyr._layers[currentRegion].fire('click');
-        $(".icon-next .fas").removeClass("fa-reply");
-        $(".icon-next .fas").addClass("fa-chevron-right");
+        /*$(".icon-next .fas").removeClass("fa-reply");
+        $(".icon-next .fas").addClass("fa-chevron-right");*/
     } else if (currentRegion == 1){ // if first region
         regionesLyr._layers[currentRegion].fire('click');
-        $(".icon-next .fas").removeClass("fa-reply");
+        /*$(".icon-next .fas").removeClass("fa-reply");
         $(".icon-next .fas").addClass("fa-chevron-right");
         $(".icon-previous .fas").removeClass("fa-chevron-left");
-        $(".icon-previous .fas").addClass("fa-reply");
+        $(".icon-previous .fas").addClass("fa-reply");*/
     } else { // return to overview
         map.flyTo([23.75, -101.9], 5);
-        $(".icon-previous .fas").removeClass("fa-reply");
-        $(".icon-previous .fas").addClass("fa-chevron-left");
-        $(".icon-previous").css( "display", "none" );
+        /*$(".icon-previous .fas").removeClass("fa-reply");
+        $(".icon-previous .fas").addClass("fa-chevron-left");*/
+        $(".icon-previous").addClass("text-muted");
+        $(".icon-previous").addClass("icon-disabled");
         currentRegion = 0;
         regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
         $("#title").html('México');
+        
         connectivityBar.data(getBarData());
         imcoRadar.data(getRadarData());
     }
@@ -399,7 +397,6 @@ function getBarData(){
     return chartData;
 }
 
-
 // Swap keys with values in object
 function swap(json){
     var ret = {};
@@ -408,7 +405,6 @@ function swap(json){
     }
     return ret;
 }
-
 
 // Parse connectivity data
 // Coerce strings to numbers, compute averages
@@ -445,7 +441,6 @@ function parseConnectivity(rows){
     return connectivityData;
 }
 
-
 function getImcoData(){
     if (currentRegion == 0){
         var chartData = imcoData.filter(function(el){
@@ -459,7 +454,6 @@ function getImcoData(){
     return chartData;
     
 }
-
 
 // Parse imco data
 // Coerce strings to numbers, compute averages
@@ -523,7 +517,6 @@ function parseImcoData(rows){
     return imcoData;
 }
 
-
 // Parse imco data
 // Coerce strings to numbers, compute averages
 // Return array of row objects. Average has id = -1
@@ -531,7 +524,6 @@ function parseChData(rows){
     // TODO: we only have regional averages at the moment
     return rows
 }
-
 
 // Get all zones names
 // Parse zone names (in english) from human capital data
