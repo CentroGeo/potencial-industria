@@ -103,8 +103,8 @@ q.defer(d3.json, "data/regiones.geojson")
             makeMap(regiones, ciudades);
             
             connectivityBar = stackedBarChart()
-                .width(350)
-                .height(300)
+                .width(300)
+                .height(250)
                 .stackVariables(["grado_ferrocarril", "grado_carretera"])
                 .displayName("nom_ciudad")
                 .transitionTime(500)

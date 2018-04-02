@@ -8,20 +8,19 @@ function radarChart(){
         displayName, // variable in data to use as display name for each bar
         transitionTime = 250,
 //        possibleNames, // all possible names for legend
-
         levels = 3, //How many levels of inner circles to draw
         maxValue = 0, //Max value of outer circle
         labelFactor = 1.35, //How much farther than the radius of the outer circle should the labels be placed
-	wrapWidth = 60, //Number of pixels after which a label needs to be given a new line
-	opacityArea = 0.05, //Opacity of the area of the blob
-	dotRadius = 3, //Size of the colored circles of each blob
-	opacityCircles = 0.05, //Opacity of the circles of each blob
-	strokeWidth = 1.2, //Width of the stroke around each blob
-	roundStrokes = true, //If true the area and stroke will follow a round path (2cardinal-closed)
-	color = d3.scaleOrdinal(d3.schemeCategory10),	//Color function,
-	format = '.0f',
-	unit = '',
-	legend = { title: '', translateX: 100, translateY: 0 },
+        wrapWidth = 60, //Number of pixels after which a label needs to be given a new line
+        opacityArea = 0.05, //Opacity of the area of the blob
+        dotRadius = 3, //Size of the colored circles of each blob
+        opacityCircles = 0.05, //Opacity of the circles of each blob
+        strokeWidth = 1.2, //Width of the stroke around each blob
+        roundStrokes = true, //If true the area and stroke will follow a round path (2cardinal-closed)
+        color = d3.scaleOrdinal(d3.schemeCategory10),	//Color function,
+        format = '.0f',
+        unit = '',
+        legend = { title: '', translateX: 100, translateY: 0 },
         legendContainer = 'legendZone',
         updateData;
 

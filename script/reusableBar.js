@@ -4,7 +4,8 @@ function stackedBarChart(){
     var data = [],
         width = 350,
         height = 350,
-        margin = {top: 100, right: 30, bottom: 30, left: 45},
+        //margin = {top: 100, right: 30, bottom: 30, left: 45},
+        margin = {top: 40, right: 75, bottom: 60, left: 75},
         stackColors = ['#d8b365','#5ab4ac'], // colour scheme
         stackVariables, // Which variables to stack in bars
         id,  // variable in data to use as identifier
