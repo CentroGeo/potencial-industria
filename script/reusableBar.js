@@ -67,11 +67,11 @@ function stackedBarChart(){
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
             
-            // g element to keep elements within svg modular
-            svg.append("g").attr("class", "bars"); 
             var stackedData = getStackedBarData(data, stackVariables);
             x.domain(getxDomain(stackedData));
             y.domain(getyDomain(stackedData));
+            
+            // draw axes first so bars are on top of them
             xAxis = d3.axisTop()
                 .tickSizeInner(0) // the inner ticks will be of size 0
                 .tickSizeOuter(0)
@@ -79,10 +79,37 @@ function stackedBarChart(){
             yAxis = d3.axisLeft()
                 .tickSizeOuter(0)
                 .scale(y);
-            var bar = svg.select(".bars")
-                .data(data);
+
+            // g element to keep elements within svg modular
+            svg.append("g")
+                .attr("class", "axis axis--x")
+                .attr("transform", "translate(0," +  (height -
+                                                      margin.top) + ")")
+                .call(xAxis)
+                .selectAll("text")    
+                .style("text-anchor", "start")
+                .attr("dx", "0em")
+                .attr("dy", "2em")
+                .attr("transform", "rotate(45)");
+
+            svg.append("g")
+                .attr("class", "axis axis--y")
+                .call(yAxis.ticks())
+                .append("text")
+                .attr("x", 2)
+                .attr("y", y(y.ticks().pop()))
+                .attr("dy", "-2em")
+                .attr("dx", "-2em")
+                .attr("text-anchor", "start")
+                .text("Degree");
             
-                bar.selectAll("g")
+            // g element to contain bars
+            svg.append("g").attr("class", "bars"); 
+            
+            var bar = svg.select(".bars")
+                .data(stackedData);
+            
+            bar.selectAll("g")
                 .data(stackedData, function(d){ return d.id;})
                 .enter().append("g")
                 .attr("id", function(d){return d.id;})
@@ -121,28 +148,6 @@ function stackedBarChart(){
                 .attr("width", x.bandwidth())
                 .attr("height", function(d,i) {return y(d.start) - y(d.end);});
 
-            bar.append("g")
-                .attr("class", "axis axis--x")
-                .attr("transform", "translate(0," +  (height -
-                                                      margin.top) + ")")
-                .call(xAxis)
-                .selectAll("text")    
-                .style("text-anchor", "start")
-                .attr("dx", "0em")
-                .attr("dy", "2em")
-                .attr("transform", "rotate(45)");
-
-            bar.append("g")
-                .attr("class", "axis axis--y")
-                .call(yAxis.ticks())
-                .append("text")
-                .attr("x", 2)
-                .attr("y", y(y.ticks().pop()))
-                .attr("dy", "-2em")
-                .attr("dx", "-2em")
-                .attr("text-anchor", "start")
-                .text("Degree");
-
             var legend = bar.selectAll(".legend")
                 .data(stackVariables.reverse())
                 .enter().append("g")
@@ -163,9 +168,9 @@ function stackedBarChart(){
                 .attr("text-anchor", "start")
                 .text(function(d) { return d; });
 
-
             updateData = function(){
                 var stackedData = getStackedBarData(data, stackVariables);
+                
                 x.domain(getxDomain(stackedData));
                 y.domain(getyDomain(stackedData));
 
@@ -173,7 +178,15 @@ function stackedBarChart(){
                     .data(stackedData, function(d){return d.id;}),
                     xAxisUpdate = d3.select(".axis--x"),
                     yAxisUpdate = d3.select(".axis--y");
+
+                yAxisUpdate.transition(t).call(yAxis);
                 
+                xAxisUpdate.transition(t).call(xAxis)
+                    .selectAll("text")
+                    .style("text-anchor", "start")
+                    .attr("dx", "0em")
+                    .attr("dy", "2em")
+                    .attr("transform", "rotate(45)");                    
 
                 var t = barsUpdate.transition()
                     .duration(transitionTime);
@@ -222,21 +235,11 @@ function stackedBarChart(){
                         }
                     })
                     .attr("stroke-width", 2);
-
-                yAxisUpdate.transition(t).call(yAxis);
-                
-                xAxisUpdate.transition(t).call(xAxis)
-                    .selectAll("text")
-                    .style("text-anchor", "start")
-                    .attr("dx", "0em")
-                    .attr("dy", "2em")
-                    .attr("transform", "rotate(45)");
                 
                 barsUpdate.exit().style('opacity', 1)
                     .transition(t)
                     .style('opacity', 0)
                     .remove();
-
             }
         });
     }
