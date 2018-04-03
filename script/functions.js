@@ -179,22 +179,21 @@ function makeMap(regiones, ciudades, cpis){
         onEachFeature: onEachFeatureRegiones
     }).addTo(map);
     
-    cpisLayer = new L.LayerGroup();
-    
-    var centros = [];
-    cpis.features.forEach(function(c) {
-        var latlng = L.latLng(c.properties.lat, c.properties.lng);
-        fill = c.properties.main ? "#e81b44" : "#1ba3e8"; // if sede is null paint red, else, blue.
-        radius = c.properties.main ? "5" : "3"; // if sede, radius is 4 (larger), else, 3 (smaller).
-        
-        var centro = L.circleMarker( latlng, 
-                    {opacity:.75,weight:1,fillColor:fill, color: "#03f", fillOpacity: .75})
-				.setRadius(radius)
-				.on("mouseover", function(event){muestraCPI(event,c);})
-				.on("mouseout", ocultaInfo);
-			cpisLayer.addLayer(centro);
-    });
-    cpisLayer.addTo(map);
+    cpisLayer = L.geoJSON([cpis], {
+       pointToLayer: function(feature, latlng){
+           var geojsonMarkerOptions = {
+               opacity: .75,
+               weight: 1,
+               fillColor: feature.properties.main ? "#e81b44" : "#1ba3e8", // if sede is null paint red, else, blue. 
+               color: "#03f", 
+               fillOpacity: .75,
+               radius: feature.properties.main ? "5" : "3" // if sede, radius is 4 (larger), else, 3 (smaller).
+           }           
+           return L.circleMarker(latlng, geojsonMarkerOptions)
+            .on("mouseover", function(event){muestraCPI(event, feature);})
+            .on("mouseout", ocultaInfo);
+       }
+    }).addTo(map);
 };
 
 function onEachFeatureRegiones(feature, layer){
@@ -207,17 +206,17 @@ function onEachFeatureRegiones(feature, layer){
     layer.on('click', layerClick);
 }
 
-function muestraCPI(event,c){
-    var topics = c.properties.topics.split(";");
+function muestraCPI(e, f){
+    var topics = f.properties.topics.split(";");
     topicsText = "<ul>";
     topics.forEach(function(t){
         topicsText += "<li>" + t + "</li>";
     });
     topicsText += "</ul>";
-    $("#probe").html(c.properties.name + "<br/>" + c.properties.shortname + "<br/>Area: " + 
-                    c.properties.area + "<br/>Research lines:<br/>" + topicsText);
+    $("#probe").html(f.properties.name + "<br/>" + f.properties.shortname + "<br/>Area: " + 
+                    f.properties.area + "<br/>Research lines:<br/>" + topicsText);
                     
-    var container = event.containerPoint;
+    var container = e.containerPoint;
     $("#probe").css({
         display: "block",
         left: Math.min(container.x + 10, $(window).width() - $("#probe").outerWidth() - 10) + "px",
