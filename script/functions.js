@@ -73,9 +73,10 @@ var properties, // properties for each city
 var q = d3.queue();
 q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.json, "data/ciudades.geojson")
+    .defer(d3.json, "data/cpis_en.geojson")
     .defer(d3.csv, "data/variables-potencial-industrial.csv")
     .defer(d3.csv, "data/capital-humano-zonas.csv")
-    .await(function(error, regiones, ciudades, variables, varsChZonas) {
+    .await(function(error, regiones, ciudades, cpis, variables, varsChZonas) {
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
         } else {
@@ -100,7 +101,7 @@ q.defer(d3.json, "data/regiones.geojson")
             regionNames = getZonesNames(varsChZonas);
 
             // Make map
-            makeMap(regiones, ciudades);
+            makeMap(regiones, ciudades, cpis);
             
             connectivityBar = stackedBarChart()
                 .width(300)
@@ -149,9 +150,10 @@ q.defer(d3.json, "data/regiones.geojson")
 var currentRegion = 0,
     lastClickedLayer = null,
     regionesLyr,
-    ciudadesLyr;
+    ciudadesLyr,
+    cpisLayer;
 
-function makeMap(regiones, ciudades){  
+function makeMap(regiones, ciudades, cpis){  
     quantile.domain(rateById.values())
     ciudadesLyr = L.geoJSON([ciudades], {
         style: function(feature){
@@ -175,7 +177,24 @@ function makeMap(regiones, ciudades){
                 className: 'regionStyle'
                },
         onEachFeature: onEachFeatureRegiones
-    }).addTo(map);      
+    }).addTo(map);
+    
+    cpisLayer = new L.LayerGroup();
+    
+    var centros = [];
+    cpis.features.forEach(function(c) {
+        var latlng = L.latLng(c.properties.lat, c.properties.lng);
+        fill = c.properties.main ? "#e81b44" : "#1ba3e8"; // if sede is null paint red, else, blue.
+        radius = c.properties.main ? "5" : "3"; // if sede, radius is 4 (larger), else, 3 (smaller).
+        
+        var centro = L.circleMarker( latlng, 
+                    {opacity:.75,weight:1,fillColor:fill, color: "#03f", fillOpacity: .75})
+				.setRadius(radius)
+				.on("mouseover", function(event){muestraCPI(event,c);})
+				.on("mouseout", ocultaInfo);
+			cpisLayer.addLayer(centro);
+    });
+    cpisLayer.addTo(map);
 };
 
 function onEachFeatureRegiones(feature, layer){
@@ -186,6 +205,28 @@ function onEachFeatureRegiones(feature, layer){
     // assign each layer an id that makes sense
     layer._leaflet_id = feature.properties.id_0;
     layer.on('click', layerClick);
+}
+
+function muestraCPI(event,c){
+    var topics = c.properties.topics.split(";");
+    topicsText = "<ul>";
+    topics.forEach(function(t){
+        topicsText += "<li>" + t + "</li>";
+    });
+    topicsText += "</ul>";
+    $("#probe").html(c.properties.name + "<br/>" + c.properties.shortname + "<br/>Area: " + 
+                    c.properties.area + "<br/>Research lines:<br/>" + topicsText);
+                    
+    var container = event.containerPoint;
+    $("#probe").css({
+        display: "block",
+        left: Math.min(container.x + 10, $(window).width() - $("#probe").outerWidth() - 10) + "px",
+        top: Math.max(5, container.y - $("#probe").outerHeight() + 100) + "px"
+    });
+}
+    
+function ocultaInfo(){
+    $("#probe").css("display","none");
 }
 
 function layerClick(event){
