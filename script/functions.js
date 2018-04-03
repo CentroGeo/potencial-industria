@@ -190,8 +190,8 @@ function makeMap(regiones, ciudades, cpis){
                radius: feature.properties.main ? "5" : "3" // if sede, radius is 4 (larger), else, 3 (smaller).
            }           
            return L.circleMarker(latlng, geojsonMarkerOptions)
-            .on("mouseover", function(event){muestraCPI(event, feature);})
-            .on("mouseout", ocultaInfo);
+            .on("mouseover", function(event){showPRC(event, feature);})
+            .on("mouseout", hidePRC);
        }
     }).addTo(map);
 };
@@ -206,7 +206,7 @@ function onEachFeatureRegiones(feature, layer){
     layer.on('click', layerClick);
 }
 
-function muestraCPI(e, f){
+function showPRC(e, f){
     var topics = f.properties.topics.split(";");
     topicsText = "<ul>";
     topics.forEach(function(t){
@@ -224,7 +224,7 @@ function muestraCPI(e, f){
     });
 }
     
-function ocultaInfo(){
+function hidePRC(){
     $("#probe").css("display","none");
 }
 
