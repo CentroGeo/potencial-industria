@@ -23,12 +23,12 @@ var map = L.map('mapdiv', {attributionControl: false}).setView([23.75, -101.9], 
 
 var overlay = new L.map('overlaydiv', {
     zoomControl: false,
-    //inertia: false,
+    inertia: false,
     keyboard: false,
     //dragging: false,
-    scrollWheelZoom: false,
+    scrollWheelZoom: true,
     attributionControl: false,
-    zoomAnimation: false
+    zoomAnimation: true
 }).setView([23.75, -101.9], 5);
 
 L.control.attribution({position: 'bottomright'}).addTo(overlay);
@@ -106,8 +106,11 @@ q.defer(d3.json, "data/regiones.geojson")
             connectivityBar = stackedBarChart()
                 .width(300)
                 .height(250)
+                .margin({top: 25, right: 50, bottom: 60, left: 25})
                 .stackVariables(["grado_ferrocarril", "grado_carretera"])
                 .displayName("nom_ciudad")
+                .legend({title: 'Connectivity', translateX: 0, translateY: 0, items:['Highway','Railroad']})
+                .legendContainer('connectivityLegend')
                 .transitionTime(500)
                 .id("id");
             

@@ -20,7 +20,7 @@ function radarChart(){
         color = d3.scaleOrdinal(d3.schemeCategory10),	//Color function,
         format = '.0f',
         unit = '',
-        legend = { title: '', translateX: 100, translateY: 0 },
+        legend = false,//{ title: '', translateX: 100, translateY: 0 },
         legendContainer = 'legendZone',
         updateData;
 
