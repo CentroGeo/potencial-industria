@@ -164,14 +164,14 @@ function stackedBarChart(){
                 
                 if (legend.title) {
                     var title = legendZone.append("text")
-        	        .attr("class", "title")
-        	        .attr('transform',
-                              `translate(${legend.translateX},${legend.translateY})`)
-        	        .attr("x", width - 70)
-        	        .attr("y", 10)
-        	        .attr("font-size", "12px")
-        	        .attr("fill", "#737373")
-        	        .text(legend.title);
+                        .attr("class", "title")
+                        .attr('transform',
+                                  `translate(${legend.translateX},${legend.translateY})`)
+                        .attr("x", width - 70)
+                        .attr("y", 10)
+                        .attr("font-size", "12px")
+                        .attr("fill", "#737373")
+                        .text(legend.title);
                 }
                 
                 var barLegend = legendZone.append("g")
