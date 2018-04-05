@@ -259,7 +259,7 @@ function radarChart(){
                 .attr("r", dotRadius)
                 .attr("cx", (d,i) => rScale(d.value) * cos(angleSlice * i - HALF_PI))
                 .attr("cy", (d,i) => rScale(d.value) * sin(angleSlice * i - HALF_PI))
-                .style("fill", (d) => color(d))
+                .style("fill", (d) => color(d.name))
                 .style("fill-opacity", 0.8);
 
             // append invisible circles for tooltip

@@ -19,7 +19,6 @@ var regionColors = d3.scaleOrdinal().domain([1, 7]).range(d3.schemeCategory10);
 
 // map and base layer
 var map = L.map('mapdiv', {attributionControl: false}).setView([23.75, -101.9], 5);
-//L.control.attribution({position: 'bottomleft'}).addTo(map);
 
 var overlay = new L.map('overlaydiv', {
     zoomControl: false,
@@ -569,7 +568,23 @@ function parseImcoData(rows){
 // Return array of row objects. Average has id = -1
 function parseChData(rows){
     // TODO: we only have regional averages at the moment
-    return rows
+    
+    /*var chData = [];
+    rows.forEach(function(d) {
+        chData.push({
+            "CEOs": +d["CEOs"],
+            "Creatives": +d["Creatives"],
+            "Education": +d["Education"],
+            "Engineering": +d["Engineering"],
+            "Health": +d["Health"],
+            "ITC": +d["ITC"],
+            "Marketing and finance": +d["Marketing and finance"],
+            "R&D": +d["R&D"],
+            "region": d.region
+        });
+    });
+    return chData;*/
+    return rows;
 }
 
 // Get all zones names
@@ -577,7 +592,7 @@ function parseChData(rows){
 function getZonesNames(rowsCh){
     var names = [];
     rowsCh.forEach(function(e){
-        names.push(e.zona)
+        names.push(e.region)
     });
     return names;
 }
