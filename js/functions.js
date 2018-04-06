@@ -451,7 +451,6 @@ function getBarData(){
         // });
     } else {
         var filtered = connectivityData.filter(function(el){
-            console.log(idToName[currentRegion])
             return el.zona === idToName[currentRegion] || el.zona === "Nacional";
         });
         var chartData = filtered.sort(function(x,y){
@@ -587,7 +586,7 @@ function parseImcoData(rows){
 function parseChData(rows){
     // TODO: we only have regional averages at the moment
     
-    var chData = [];
+    /*var chData = [];
     rows.forEach(function(d) {
         chData.push({
             "CEOs": +d["CEOs"],
@@ -598,13 +597,11 @@ function parseChData(rows){
             "ITC": +d["ITC"],
             "Marketing and finance": +d["Marketing and finance"],
             "R&D": +d["R&D"],
-            "region": d.region,
-            //"id": 
-            "highlighted": false
+            "region": d.region
         });
     });
-    return chData;
-    //return rows;
+    return chData;*/
+    return rows;
 }
 
 // Get all zones names
