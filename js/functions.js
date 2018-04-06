@@ -1,13 +1,13 @@
 // Setup stuff for the bar chart
 
 var idToName = {
-    1 : "Noreste",
-    2 : "Centro-Occidente",
+    1 : "Northeast",
+    2 : "Center-west",
     3 : "Megalopolis",
-    4 : "Noroeste",
-    5 : "Golfo Oriente",
-    6 : "Centro Norte",
-    7 : "Peninsula"
+    4 : "Northwest",
+    5 : "Gulf-east",
+    6 : "Center-north",
+    7 : "Yucatán peninsula"
 };
 
 // Set basic functions for styling the map
@@ -296,8 +296,8 @@ function layerClick(event){
         $("#title").html('México');
         feature.properties.is_clicked = false;
         currentRegion = 0;
-        $(".icon-next .fas").removeClass("fa-reply");
-        $(".icon-next .fas").addClass("fa-chevron-right");
+        /*$(".icon-next .fas").removeClass("fa-reply");
+        $(".icon-next .fas").addClass("fa-chevron-right");*/
         $(".icon-previous").addClass("text-muted");
         $(".icon-previous").addClass("icon-disabled");
     }
@@ -427,11 +427,11 @@ function getRadarData(){
 // Update data for ch Radar
 function getChRadarData(){
     if (currentRegion == 0){
-        console.log("Nacional");
+        //console.log("Nacional");
     } else {
-        console.log(idToName[currentRegion]);
+        //console.log(idToName[currentRegion]);
     }
-    console.log(chData)
+    //console.log(chData)
     return chData;
 }
 
@@ -451,6 +451,7 @@ function getBarData(){
         // });
     } else {
         var filtered = connectivityData.filter(function(el){
+            console.log(idToName[currentRegion])
             return el.zona === idToName[currentRegion] || el.zona === "Nacional";
         });
         var chartData = filtered.sort(function(x,y){
@@ -586,7 +587,7 @@ function parseImcoData(rows){
 function parseChData(rows){
     // TODO: we only have regional averages at the moment
     
-    /*var chData = [];
+    var chData = [];
     rows.forEach(function(d) {
         chData.push({
             "CEOs": +d["CEOs"],
@@ -597,11 +598,13 @@ function parseChData(rows){
             "ITC": +d["ITC"],
             "Marketing and finance": +d["Marketing and finance"],
             "R&D": +d["R&D"],
-            "region": d.region
+            "region": d.region,
+            //"id": 
+            "highlighted": false
         });
     });
-    return chData;*/
-    return rows;
+    return chData;
+    //return rows;
 }
 
 // Get all zones names
