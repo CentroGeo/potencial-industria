@@ -147,7 +147,8 @@ q.defer(d3.json, "data/regiones.geojson")
                 .legendContainer('chLegend')
                 .maxValue(2);
 
-            chRadar.data(chData); // bind data to chart object
+            //chRadar.data(chData); // bind data to chart object
+            chRadar.data(getChRadarData());
                  d3.select("#radarCH")
                 .call(chRadar); // Draw chart in selected div
         }
@@ -303,6 +304,7 @@ function layerClick(event){
     map.once("moveend", function(){
         connectivityBar.data(getBarData());
         imcoRadar.data(getRadarData());
+        chRadar.data(getChRadarData());
     });
 }
 
@@ -325,6 +327,7 @@ $(".menu, .fas.fa-reply").on('click', function(){
     map.once("moveend", function(){
         connectivityBar.data(getBarData());
         imcoRadar.data(getRadarData());
+        chRadar.data(getChRadarData());
     });
 });
 
@@ -360,6 +363,7 @@ $(".icon-next").on('click', function(){
 
         connectivityBar.data(getBarData());
         imcoRadar.data(getRadarData());
+        chRadar.data(getChRadarData());
     }
 });
 
@@ -393,6 +397,7 @@ $(".icon-previous").on('click', function(){
         
         connectivityBar.data(getBarData());
         imcoRadar.data(getRadarData());
+        chRadar.data(getChRadarData());
     }
 });
 
@@ -416,6 +421,18 @@ function getRadarData(){
         });
     }
     return filtered;
+}
+
+
+// Update data for ch Radar
+function getChRadarData(){
+    if (currentRegion == 0){
+        console.log("Nacional");
+    } else {
+        console.log(idToName[currentRegion]);
+    }
+    console.log(chData)
+    return chData;
 }
 
 // Update data for Connectivity chart
