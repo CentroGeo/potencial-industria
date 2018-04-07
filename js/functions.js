@@ -15,7 +15,11 @@ var rateById = d3.map(); // will hold the map from ids to property values
 var colors5 = ['#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026']; // 5 color scheme
 var quantile = d3.scaleQuantile() 
     .range(d3.range(5).map(function(i) { return colors5[i]; })); // quantile scale with 5 classes
-var regionColors = d3.scaleOrdinal().domain([1, 7]).range(d3.schemeCategory10);
+
+    // TODO: regionColors domain should match ordered region ids.
+    
+//var regionColors = d3.scaleOrdinal().domain([1, 7]).range(d3.schemeCategory10);
+var regionColors = d3.scaleOrdinal().domain([3,1,2,6,7,4,5]).range(d3.schemeCategory20);
 
 // map and base layer
 var map = L.map('mapdiv', {attributionControl: false}).setView([23.75, -101.9], 5);
@@ -304,7 +308,7 @@ function layerClick(event){
     map.once("moveend", function(){
         connectivityBar.data(getBarData());
         imcoRadar.data(getRadarData());
-        chRadar.data(getChRadarData());
+        chRadar.data(getChRadarData()).highlight(currentRegion);
     });
 }
 
@@ -327,7 +331,7 @@ $(".menu, .fas.fa-reply").on('click', function(){
     map.once("moveend", function(){
         connectivityBar.data(getBarData());
         imcoRadar.data(getRadarData());
-        chRadar.data(getChRadarData());
+        chRadar.data(getChRadarData()).highlight(currentRegion);
     });
 });
 
@@ -361,9 +365,11 @@ $(".icon-next").on('click', function(){
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
         $("#title").html('México');
 
-        connectivityBar.data(getBarData());
-        imcoRadar.data(getRadarData());
-        chRadar.data(getChRadarData());
+        map.once("moveend", function(){
+            connectivityBar.data(getBarData());
+            imcoRadar.data(getRadarData());
+            chRadar.data(getChRadarData()).highlight(currentRegion);
+        });
     }
 });
 
@@ -395,15 +401,17 @@ $(".icon-previous").on('click', function(){
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
         $("#title").html('México');
         
-        connectivityBar.data(getBarData());
-        imcoRadar.data(getRadarData());
-        chRadar.data(getChRadarData());
+        map.once("moveend", function(){
+            connectivityBar.data(getBarData());
+            imcoRadar.data(getRadarData());
+            chRadar.data(getChRadarData()).highlight(currentRegion);
+        });
     }
 });
 
 //////////////////////////////////////////////////
 /// 
-/// Utilty functions
+/// Utility functions
 ///
 ///
 /////////////////////////////////////////////////
