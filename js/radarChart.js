@@ -130,7 +130,7 @@ function radarChart(){
                       (height/2 + margin.top) + ")");
 
             // glow filter
-            var filter = g.append('defs').append('filter').attr('id','glow'),
+            var filter = g.append('defs').append('filter').attr('id','glow-'+this.id),
                 feGaussianBlur = filter.append('feGaussianBlur')
                     .attr('stdDeviation','2.5')
                     .attr('result','coloredBlur'),
@@ -155,7 +155,7 @@ function radarChart(){
                 .style("fill", "#CDCDCD")
                 .style("stroke", "#CDCDCD")
                 .style("fill-opacity", opacityCircles)
-                .style("filter" , "url(#glow)");
+                .style("filter" , "url(#glow-"+this.id+")");
 
             //Text indicating at what % each level is
             axisGrid.selectAll(".axisLabel")
@@ -258,7 +258,7 @@ function radarChart(){
                 .style("stroke-width", strokeWidth + "px")
                 .style("stroke", (d,i) => color(d.name))
                 .style("fill", "none")
-                .style("filter" , "url(#glow)");
+                .style("filter" , "url(#glow-"+this.id+")");
 
             //Append the circles
             blobWrapper.selectAll(".radarCircle")
@@ -439,7 +439,7 @@ function radarChart(){
                     .style("stroke-width", strokeWidth + "px")
                     .style("stroke", d => color(d.name))
                     .style("fill", "none")
-                    .style("filter" , "url(#glow)");
+                    .style("filter" , "url(#glow-"+this.id+")");
                 
                 //Append the circles
                 var radarCircleEnter = radarWrapperEnter.selectAll(".radarCircle")
