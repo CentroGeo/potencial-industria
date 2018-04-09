@@ -112,7 +112,9 @@ q.defer(d3.json, "data/regiones.geojson")
                 .margin({top: 25, right: 50, bottom: 60, left: 25})
                 .stackVariables(["grado_ferrocarril", "grado_carretera"])
                 .displayName("nom_ciudad")
-                .legend({title: 'Connectivity', translateX: 0, translateY: 0, items:['Highway','Railroad']})
+                .legend({title: 'Connectivity', translateX: 0,
+                         translateY: 0,
+                         itemsBar:['Highway','Railroad']})
                 .legendContainer('connectivityLegend')
                 .transitionTime(500)
                 .id("id");
