@@ -220,7 +220,7 @@ body {
     stroke: var(--main-text-color); 
 }
 
-.axis--y text {
+.axis--y text, .axis-right text {
     fill: var(--main-text-color); 
 }
  

@@ -170,6 +170,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 .lineVariables(["Percentage bachelor", "Percentage grad"])
                 .displayName("name")
                 .barAxisLabel("Population")
+                .lineAxisLabel("Percentage")
                 .legend({title: 'IKOs', translateX: -70, translateY: 0,
                          itemsLine:["Percentage bachelor", "Percentage grad"],
                          itemsBar: ["Pop with bachelor","Pop with grad"]})
