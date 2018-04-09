@@ -79,7 +79,9 @@ q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.json, "data/cpis_en.geojson")
     .defer(d3.csv, "data/variables-potencial-industrial.csv")
     .defer(d3.csv, "data/capital-humano-zonas.csv")
-    .await(function(error, regiones, ciudades, cpis, variables, varsChZonas) {
+    .defer(d3.csv, "data/ikos_data.csv")
+    .await(function(error, regiones, ciudades, cpis, variables,
+                    varsChZonas, varsIKOs) {
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
         } else {
@@ -157,6 +159,27 @@ q.defer(d3.json, "data/regiones.geojson")
             chRadar.data(getChRadarData());
                  d3.select("#radarCH")
                 .call(chRadar); // Draw chart in selected div
+
+            var ikoData = parseIKOData(varsIKOs); 
+            var barIko = stackedBarChart()
+                .width(250)
+                .height(200)
+                .margin({top: 40, right: 60, bottom: 60, left: 60})
+                .stackVariables(["Pop with bachelor",
+                                 "Pop with grad"])
+                .lineVariables(["Percentage bachelor", "Percentage grad"])
+                .displayName("name")
+                .barAxisLabel("Population")
+                .legend({title: 'IKOs', translateX: -70, translateY: 0,
+                         itemsLine:["Percentage bachelor", "Percentage grad"],
+                         itemsBar: ["Pop with bachelor","Pop with grad"]})
+                .id("name");
+            barIko.data(ikoData); // bind data to chart object
+            // Con una selección sobre el contenedor de la gráfica,
+            // se llama al método call(bar) para dibujar la gráfica.
+            d3.select("#barIKO")
+                .call(barIko); // Draw chart in selected div
+
         }
     });
 
@@ -612,6 +635,29 @@ function parseChData(rows){
     });
     return chData;*/
     return rows;
+}
+
+function parseIKOData(rows){
+    data = [];
+    rows.forEach(function(d) {
+        data.push({
+            id: d["name"], 
+            name: d.name, // lowercase
+            region: d.region,
+            "Pop with bachelor":
+                +d["Pop with bachelor"],
+            "Pop with grad":
+                +d["Pop with grad"],
+            "Percentage bachelor":
+                +d["Percentage bachelor"],
+            "Percentage grad":
+                +d["Percentage grad"]
+        });
+    });
+    data = data.filter(function(d){
+        return d.region === "megalopolis"
+    });
+    return data;
 }
 
 // Get all zones names
