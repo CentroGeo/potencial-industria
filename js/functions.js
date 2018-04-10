@@ -163,9 +163,10 @@ q.defer(d3.json, "data/regiones.geojson")
 
             var ikoData = parseIKOData(varsIKOs); 
             var barIko = stackedBarChart()
-                .width(250)
-                .height(200)
-                .margin({top: 40, right: 60, bottom: 60, left: 60})
+                .width(300)
+                .height(250)
+                //.margin({top: 40, right: 60, bottom: 60, left: 60})
+                .margin({top: 30, right: 50, bottom: 60, left:60})
                 .stackVariables(["Pop with bachelor",
                                  "Pop with grad"])
                 .lineVariables(["Percentage bachelor", "Percentage grad"])

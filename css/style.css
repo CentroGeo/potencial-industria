@@ -26,6 +26,10 @@ body {
     color: var(--main-text-color);
 }
 
+#carouselContent {
+    height:100%;
+}
+
 #footer {
     height: 100px;
 }
