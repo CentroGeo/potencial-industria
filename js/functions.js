@@ -114,6 +114,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 .margin({top: 25, right: 50, bottom: 60, left: 25})
                 .stackVariables(["grado_ferrocarril", "grado_carretera"])
                 .displayName("nom_ciudad")
+                .barAxisLabel("Degree")
                 .legend({title: 'Connectivity', translateX: 0,
                          translateY: 0,
                          itemsBar:['Highway','Railroad']})
