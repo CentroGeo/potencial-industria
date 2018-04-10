@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="css/leaflet-1.3.1.css" />
+    <link rel="stylesheet" href="css/fontawesome-5.0.9.css" />
+    <link rel="stylesheet" href="css/fa-solid-5.0.9.css" />
+    <link rel="stylesheet" href="css/bootstrap-4.0.0.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row justify-content-center align-items-center" id="header">
+        <div class="col-7 text-center">
+          <h1>Industrial potential in selected Mexican urban regions</h1>
+        </div>
+      </div>
+      <div class="row" id="middle">
+        <div class="col" id="mapdiv"></div>
+        <div id="probe"></div>
+        <div class="col" id="overlaydiv"> </div>
+        <div class="col" id="story">
+            <div class="menu">
+                <span class="menu-button" id="restart">Restart</span> <i class="fas fa-reply"></i>
+            </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" colspan="2" class="border-0">
+                  <h1>
+                    <span class="icon-previous float-left text-muted icon-disabled"> < </span>
+                    <span id="title"> México </span>
+                    <span class="icon-next float-right"> > </span>
+                  </h1>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="border-right text-center"><div id="barConectividad"></div></td>
+                <td class="text-center"><div id="radarCH"></div></td>
+              </tr>
+              <tr>
+                <td class="border-right border-top-0 text-center"><br><br><div id="radarImco"></div></td>
+                <td class="border-top-0 text-center"><div id="barIKO"></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row align-items-center" id="footer">
+        <div class="col">
+          <span id="logo-conacyt"><a href="http://www.conacyt.gob.mx" target="_blank"><img src="img/conacyt3.png" height="70"></a></span>
+        </div>
+        <div class="col">
+          <span id="logo-cg"><a href="http://www.centrogeo.org.mx" target="_blank"><img src="img/centrogeo.png" height="70"></a></span>
+        </div>
+        <div class="col">
+          <span id="logo-geoint"><img src="img/geoint.png" height="70"></span>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/d3.v4.13.0.min.js"></script>
+    <script src="js/d3-queue-3.0.7.min.js"></script>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/popper-1.12.9.min.js"></script>
+    <script src="js/bootstrap-4.0.0.min.js"></script>
+    <script src="js/leaflet-1.3.1.min.js"></script>
+    <script src="js/Leaflet.Sync.js"></script>
+    <script src="js/stackedBars.js"></script>
+    <script src="js/radarChart.js"></script>
+    <script src="js/barLineChart.js"></script>
+    <script src="js/functions.js"></script>
+  </body>
+</html>
