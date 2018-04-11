@@ -24,29 +24,88 @@
             <div class="menu">
                 <span class="menu-button" id="restart">Restart</span> <i class="fas fa-reply"></i>
             </div>
+            <!-- start initial selection table> initialy shown, hides on click -->
+            <table class="table" id="choose">
+                <thead>
+                  <tr>
+                    <!--<th scope="col" colspan="2" class="border-0">
+                      <h1>
+                        <span class="icon-previous float-left text-muted icon-disabled"> < </span>
+                        <span id="title"> México </span>
+                        <span class="icon-next float-right"> > </span>
+                      </h1>
+                    </th>
+                  </tr>-->
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="border-0 text-center">
+                        <div id="connectivity-div">
+                            Connectivity<br/>
+                            <img src="img/icon_conectividad.jpeg" class="topic-icon"/>
+                        </div>
+                    </td>
+                    <td class="border-0 text-center">
+                        <div id="ch-div">
+                            Human Capital<br/>
+                            <img src="img/icon_ch.jpeg" class="topic-icon"/>
+                        </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border-0 text-center">
+                        <div id="imco-div">
+                            Bussinebility<br/>
+                            <img src="img/icon_indicadores.jpeg" class="topic-icon"/>
+                        </div>
+                    </td>
+                    <td class="border-0 text-center">
+                        <div id="industry-div">
+                            Industries<br/>
+                            <img src="img/icon_empresas.jpeg" class="topic-icon"/>
+                        </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" class="border-0 text-center">
+                        <div id="top5-div">
+                            Top 5<br/>
+                            <img src="img/icon_top5.jpeg" class="topic-icon">
+                        </div>
+                    </td>
+                  </tr>
+                </tbody>
+          </table>
+          <!-- end initial selection table -->
+          <!-- start title and navigation table: initially hidden, shows on click-->
+          <div id="graphs">
+          <table class="table my-0">
+            <thead>
+              <tr>
+                <th scope="col" colspan="2" class="border-0">
+                  <h1>
+                    <span class="icon-previous float-left text-muted icon-disabled"> < </span>
+                    <span id="title"> México </span>
+                    <span class="icon-next float-right"> > </span>
+                  </h1>
+                </th>
+              </tr>
+            </thead>
+            </table>
+            <!-- end title and navigation table -->
+            <!-- start carousel -->
             <div id="carouselContent" class="carousel slide" data-ride="carousel" data-pause="false">
                 <ol class="carousel-indicators">
                     <li data-target="#carouselContent" data-slide-to="0" class="active"></li>
                     <li data-target="#carouselContent" data-slide-to="1"></li>
                 </ol>
                 <div class="carousel-inner" role="listbox">
-                    <div class="carousel-item active text-center p-4">
+                    <div class="carousel-item active text-center p-0">
                         <table class="table">
-                        <thead>
-                          <tr>
-                            <th scope="col" colspan="2" class="border-0">
-                              <h1>
-                                <span class="icon-previous float-left text-muted icon-disabled"> < </span>
-                                <span id="title"> México </span>
-                                <span class="icon-next float-right"> > </span>
-                              </h1>
-                            </th>
-                          </tr>
-                        </thead>
                         <tbody>
                           <tr>
-                            <td class="border-right text-center"><div id="barConectividad"></div></td>
-                            <td class="text-center"><div id="radarCH"></div></td>
+                            <td class="border-right text-center">Connectivity<div id="barConectividad"></div></td>
+                            <td class="text-center">Human Capital<div id="radarCH"></div></td>
                           </tr>
                           <tr>
                             <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>Otro chart</div></td>
@@ -55,19 +114,8 @@
                         </tbody>
                         </table>
                     </div>
-                    <div class="carousel-item text-center p-4">
+                    <div class="carousel-item text-center p-0">
                         <table class="table">
-                        <thead>
-                          <tr>
-                            <th scope="col" colspan="2" class="border-0">
-                              <h1>
-                                <span class="icon-previous float-left text-muted icon-disabled"> < </span>
-                                <span id="title"> México </span>
-                                <span class="icon-next float-right"> > </span>
-                              </h1>
-                            </th>
-                          </tr>
-                        </thead>
                         <tbody>
                           <tr>
                             <td class="border-right text-center"><div id="radarImco"></div></td>
@@ -81,6 +129,8 @@
                         </table>
                     </div>
                 </div>
+            </div>
+            <!-- end carousel -->
             </div>
         </div>
       </div>

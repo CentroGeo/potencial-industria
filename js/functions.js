@@ -1,3 +1,15 @@
+// Change initial icons to carousel on click
+$("#connectivity-div").on('click', function(){
+    $("#choose").css('display', 'none'); 
+    $("#graphs").fadeToggle( "slow", "linear" );
+});
+
+// Change carousel back to initial icons when on click
+$("#title").on('click', function(){
+    $("#graphs").css('display', 'none'); 
+    $("#choose").fadeToggle( "slow", "linear" ); 
+});
+
 // Setup stuff for the bar chart
 
 var idToName = {
