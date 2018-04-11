@@ -1,3 +1,8 @@
+    $(function() {
+        setTimeout(function(){
+            $('body').removeClass('fade-out'); 
+        }, 500);
+    });
 // Change initial icons to carousel on click
 $("#connectivity-div").on('click', function(){
     $("#choose").css('display', 'none'); 
