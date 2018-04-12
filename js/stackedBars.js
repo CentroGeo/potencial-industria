@@ -451,13 +451,13 @@ function stackedBarChart(){
                                        ) 
                     });
 
-                    yLineAxisUpdate = d3.select(".axis-right.axisRed");
+                    yLineAxisUpdate = selection.select(".axis-right.axisRed");
                     yLineAxisUpdate
                         .transition(t)
                         .call(yLineAxis);
 
                     valuelines.forEach(function(v,i){
-                        var lineUpdate = d3.selectAll("path.line" + i.toString())
+                        var lineUpdate = selection.selectAll("path.line" + i.toString())
                             .data([data])
                             .transition(transitionTime)
                             .style("stroke", function(d){
