@@ -97,7 +97,9 @@ var properties, // properties for each city
     imcoRadar,
     imcoData,
     chRadar,
-    chData;
+    chData,
+    logroEBar,
+    logroEData;
 
 // Load data
 var q = d3.queue();
@@ -106,9 +108,9 @@ q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.json, "data/cpis_en.geojson")
     .defer(d3.csv, "data/variables-potencial-industrial.csv")
     .defer(d3.csv, "data/capital-humano-zonas.csv")
-    .defer(d3.csv, "data/ikos_data.csv")
+    .defer(d3.csv, "data/logroeducativo.csv")
     .await(function(error, regiones, ciudades, cpis, variables,
-                    varsChZonas, varsIKOs) {
+                    varsChZonas, varsLogroE) {
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
         } else {
@@ -129,6 +131,8 @@ q.defer(d3.json, "data/regiones.geojson")
             imcoData = parseImcoData(variables);
             // Read human capital data from capital-humano.csv
             chData = parseChData(varsChZonas);
+            // Read educational echievement data from logroeducativo.csv
+            logroEData = parseLogroEData(varsLogroE);
             // Read zone names
             regionNames = getZonesNames(varsChZonas);
 
@@ -188,8 +192,7 @@ q.defer(d3.json, "data/regiones.geojson")
                  d3.select("#radarCH")
                 .call(chRadar); // Draw chart in selected div
 
-            var ikoData = parseIKOData(varsIKOs); 
-            var barIko = stackedBarChart()
+            logroEBar = stackedBarChart()
                 .width(300)
                 .height(250)
                 //.margin({top: 40, right: 60, bottom: 60, left: 60})
@@ -200,15 +203,15 @@ q.defer(d3.json, "data/regiones.geojson")
                 .displayName("name")
                 .barAxisLabel("Population")
                 .lineAxisLabel("Percentage")
-                .legend({title: 'IKOs', translateX: -70, translateY: 0,
+                .legend({title: 'Educational Achievement', translateX: -70, translateY: 0,
                          itemsLine:["Percentage bachelor", "Percentage grad"],
                          itemsBar: ["Pop with bachelor","Pop with grad"]})
                 .id("name");
-            barIko.data(ikoData); // bind data to chart object
+            logroEBar.data(getLogroEData()); // bind data to chart object
             // Con una selección sobre el contenedor de la gráfica,
             // se llama al método call(bar) para dibujar la gráfica.
-            d3.select("#barIKO")
-                .call(barIko); // Draw chart in selected div
+            d3.select("#logroEBar")
+                .call(logroEBar); // Draw chart in selected div
 
         }
     });
@@ -364,6 +367,7 @@ function layerClick(event){
         connectivityBar.data(getBarData());
         imcoRadar.data(getRadarData());
         chRadar.data(getChRadarData()).highlight(currentRegion);
+        logroEBar.data(getLogroEData());
     });
 }
 
@@ -387,6 +391,7 @@ $("#restart").on('click', function(){
         connectivityBar.data(getBarData());
         imcoRadar.data(getRadarData());
         chRadar.data(getChRadarData()).highlight(currentRegion);
+        logroEBar.data(getLogroEData());
     });
 });
 
@@ -424,6 +429,7 @@ $(".icon-next").on('click', function(){
             connectivityBar.data(getBarData());
             imcoRadar.data(getRadarData());
             chRadar.data(getChRadarData()).highlight(currentRegion);
+            logroEBar.data(getLogroEData());
         });
     }
 });
@@ -460,6 +466,7 @@ $(".icon-previous").on('click', function(){
             connectivityBar.data(getBarData());
             imcoRadar.data(getRadarData());
             chRadar.data(getChRadarData()).highlight(currentRegion);
+            logroEBar.data(getLogroEData());
         });
     }
 });
@@ -578,7 +585,6 @@ function getImcoData(){
         });
     }
     return chartData;
-    
 }
 
 // Parse imco data
@@ -667,28 +673,39 @@ function parseChData(rows){
     return rows;
 }
 
-function parseIKOData(rows){
-    data = [];
+function parseLogroEData(rows){
+    logroEData = [];
     rows.forEach(function(d) {
-        data.push({
+        logroEData.push({
             id: d["name"], 
             name: d.name, // lowercase
             region: d.region,
             "Pop with bachelor":
-                +d["Pop with bachelor"],
+            +d["Population aged 25 and older with bachelor's degree"],
             "Pop with grad":
-                +d["Pop with grad"],
+            +d["Population aged 25 and older with graduate degree"],
             "Percentage bachelor":
-                +d["Percentage bachelor"],
+            +d["Percentage of population aged 25 and older with bachelor's degree"],
             "Percentage grad":
-                +d["Percentage grad"]
-        });
+            +d["Percentage of population aged 25 and older with graduate degree"]
+         });
     });
-    data = data.filter(function(d){
-        return d.region === "megalopolis"
-    });
-    return data;
+    return logroEData;
 }
+
+function getLogroEData(){
+    if (currentRegion == 0){
+        var chartData = logroEData.filter(function(el){
+            return el.region === "National";
+        });
+    } else {
+        var chartData = logroEData.filter(function(el){
+            return el.region === idToName[currentRegion];
+        });
+    }
+    return chartData;
+}
+
 
 // Get all zones names
 // Parse zone names (in english) from human capital data
