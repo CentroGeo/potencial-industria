@@ -106,7 +106,6 @@ function stackedBarChart(){
         }
         
         selection.each(function(){
-            
             // Draw chart
             // append svg to selection
             var svg = selection.append("svg")
@@ -121,17 +120,17 @@ function stackedBarChart(){
             
             var stackedData = getStackedBarData(data, stackVariables);
             xBar.domain(getxDomain(stackedData));
-            yBar.domain(getyDomain(stackedData));
+            yBar.domain(getyDomain(stackedData))
             
             // draw axes first so bars are on top of them
-            var xAxis = d3.axisBottom()
+            xAxis = d3.axisTop()
                 .tickSizeInner(0) // the inner ticks will be of size 0
                 .tickSizeOuter(0)
                 .scale(xBar),
-                yAxis = d3.axisLeft()
+            yAxis = d3.axisLeft()
                 .tickSizeOuter(0)
                 .scale(yBar);
-            
+
             // append x axis
             svg.append("g")
                 .attr("class", "axis axis--x")
@@ -352,13 +351,12 @@ function stackedBarChart(){
             }
 
             updateData = function(){
-                
                 var stackedData = getStackedBarData(data, stackVariables);
                 
                 xBar.domain(getxDomain(stackedData));
                 yBar.domain(getyDomain(stackedData));
 
-                var barsUpdate = d3.select(".bars").selectAll(".stack")
+                var barsUpdate = selection.select(".bars").selectAll(".stack")
                     .data(stackedData, function(d){return d.id;}),
                     xAxisUpdate = d3.select(".axis--x"),
                     yAxisUpdate = d3.select(".axis--y");
@@ -370,12 +368,12 @@ function stackedBarChart(){
                     .style("text-anchor", "start")
                     .attr("dx", "0em")
                     .attr("dy", "2em")
-                    .attr("transform", "rotate(45)");
+                    .attr("transform", "rotate(45)");                    
 
                 var t = barsUpdate.transition()
                     .duration(transitionTime);
 
-                var barsEnter= barsUpdate.enter()
+                var barsEnter = barsUpdate.enter()
                     .append("g")
                     .attr("id", function(d){return d.id;})
                     .attr("class", "stack")
@@ -487,7 +485,7 @@ function stackedBarChart(){
                                 return pointColors(i)
                             })
                             .style("stroke-width", 3)
-                            .style("fill", "none")
+  		            .style("fill", "none")
                             .attr("cx", function(d){
                                 return xLine(d[displayName]);
                             })
@@ -497,7 +495,9 @@ function stackedBarChart(){
                             .attr("r", function(d){
                                 return 2.5;
                             });
+                        
                         points.exit().transition(transitionTime).remove();                 
+                        
                     });
                 }
             }
@@ -604,5 +604,4 @@ function stackedBarChart(){
     };
 
     return chart;
-
 }
