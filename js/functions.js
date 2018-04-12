@@ -20,9 +20,9 @@ $(".topic-icon").on('click', function(){
 });
 
 // Change carousel back to initial icons when on click
-$("#title").on('click', function(){
+$("#menu").on('click', function(){
     $("#graphs").css('display', 'none'); 
-    $("#choose").fadeToggle( "slow", "linear" ); 
+    $("#choose").fadeIn( "slow", "linear" ); 
 });
 
 // Setup stuff for the bar chart
@@ -367,7 +367,7 @@ function layerClick(event){
     });
 }
 
-$(".menu, .fas.fa-reply").on('click', function(){ 
+$("#restart").on('click', function(){ 
     if (lastClickedLayer){
         regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);})
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
