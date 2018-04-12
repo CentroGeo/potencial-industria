@@ -99,7 +99,9 @@ var properties, // properties for each city
     chRadar,
     chData,
     logroEBar,
-    logroEData;
+    logroEData,
+    ikaData,
+    ikaBar;
 
 // Load data
 var q = d3.queue();
@@ -109,8 +111,10 @@ q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.csv, "data/variables-potencial-industrial.csv")
     .defer(d3.csv, "data/capital-humano-zonas.csv")
     .defer(d3.csv, "data/logroeducativo.csv")
+    .defer(d3.csv, "data/tamanomercado.csv")
+    
     .await(function(error, regiones, ciudades, cpis, variables,
-                    varsChZonas, varsLogroE) {
+                    varsChZonas, varsLogroE, varsIKA) {
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
         } else {
@@ -133,6 +137,8 @@ q.defer(d3.json, "data/regiones.geojson")
             chData = parseChData(varsChZonas);
             // Read educational echievement data from logroeducativo.csv
             logroEData = parseLogroEData(varsLogroE);
+            // Read IKA data
+            ikaData = parseIkaData(varsIKA);
             // Read zone names
             regionNames = getZonesNames(varsChZonas);
 
@@ -208,11 +214,20 @@ q.defer(d3.json, "data/regiones.geojson")
                          itemsBar: ["Pop with bachelor","Pop with grad"]})
                 .id("name");
             logroEBar.data(getLogroEData()); // bind data to chart object
-            // Con una selección sobre el contenedor de la gráfica,
-            // se llama al método call(bar) para dibujar la gráfica.
-            d3.select("#logroEBar")
+                d3.select("#logroEBar")
                 .call(logroEBar); // Draw chart in selected div
 
+            ikaBar = barLineChart()
+                .width(300)
+                .height(250)
+                .barsVariables(["Labor market size", "IKAs market"])
+                .lineVariables(["IKAs Percentage"])
+                .displayName("name")
+                .id("name");
+            
+            ikaBar.data(getIkaData()); // bind data to chart object
+                d3.select("#ikaBar")
+                .call(ikaBar); // Draw chart in selected div
         }
     });
 
@@ -364,10 +379,7 @@ function layerClick(event){
         $(".icon-previous").addClass("icon-disabled");
     }
     map.once("moveend", function(){
-        connectivityBar.data(getBarData());
-        imcoRadar.data(getRadarData());
-        chRadar.data(getChRadarData()).highlight(currentRegion);
-        logroEBar.data(getLogroEData());
+        updateChartData();
     });
 }
 
@@ -388,10 +400,7 @@ $("#restart").on('click', function(){
     $(".icon-previous").addClass("icon-disabled");
     currentRegion = 0;
     map.once("moveend", function(){
-        connectivityBar.data(getBarData());
-        imcoRadar.data(getRadarData());
-        chRadar.data(getChRadarData()).highlight(currentRegion);
-        logroEBar.data(getLogroEData());
+        updateChartData();
     });
 });
 
@@ -426,10 +435,7 @@ $(".icon-next").on('click', function(){
         $("#title").html('México');
 
         map.once("moveend", function(){
-            connectivityBar.data(getBarData());
-            imcoRadar.data(getRadarData());
-            chRadar.data(getChRadarData()).highlight(currentRegion);
-            logroEBar.data(getLogroEData());
+            updateChartData();
         });
     }
 });
@@ -463,10 +469,7 @@ $(".icon-previous").on('click', function(){
         $("#title").html('México');
         
         map.once("moveend", function(){
-            connectivityBar.data(getBarData());
-            imcoRadar.data(getRadarData());
-            chRadar.data(getChRadarData()).highlight(currentRegion);
-            logroEBar.data(getLogroEData());
+            updateChartData();
         });
     }
 });
@@ -574,6 +577,7 @@ function parseConnectivity(rows){
     return connectivityData;
 }
 
+// update data for imco chart
 function getImcoData(){
     if (currentRegion == 0){
         var chartData = imcoData.filter(function(el){
@@ -673,6 +677,7 @@ function parseChData(rows){
     return rows;
 }
 
+// parse data for logro educatiivo
 function parseLogroEData(rows){
     logroEData = [];
     rows.forEach(function(d) {
@@ -693,6 +698,7 @@ function parseLogroEData(rows){
     return logroEData;
 }
 
+// update logro educativo data
 function getLogroEData(){
     if (currentRegion == 0){
         var chartData = logroEData.filter(function(el){
@@ -706,6 +712,34 @@ function getLogroEData(){
     return chartData;
 }
 
+// parse ika data
+function parseIkaData(rows){
+    ikaData = [];
+    rows.forEach(function(d) {
+        ikaData.push({
+            region: d["region"],
+            name: d["name"],
+            "Labor market size": +d["Labor market size"], 
+            "IKAs market": +d["IKAs market"],
+            "IKAs Percentage": +d["IKAs Percentage"]
+        });
+    });
+    return ikaData;
+}
+
+// update ika data
+function getIkaData() {
+    if (currentRegion == 0){
+        var chartData = ikaData.filter(function(el){
+            return el.region === "National";
+        });
+    } else {
+        var chartData = ikaData.filter(function(el){
+            return el.region === idToName[currentRegion];
+        });
+    }
+    return chartData;
+}
 
 // Get all zones names
 // Parse zone names (in english) from human capital data
@@ -715,4 +749,12 @@ function getZonesNames(rowsCh){
         names.push(e.region)
     });
     return names;
+}
+
+function updateChartData(){
+    connectivityBar.data(getBarData());
+    imcoRadar.data(getRadarData());
+    chRadar.data(getChRadarData()).highlight(currentRegion);
+    logroEBar.data(getLogroEData());
+    ikaBar.data(getIkaData());
 }
