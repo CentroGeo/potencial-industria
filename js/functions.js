@@ -3,10 +3,20 @@
             $('body').removeClass('fade-out'); 
         }, 500);
     });
+
 // Change initial icons to carousel on click
-$("#connectivity-div").on('click', function(){
+$(".topic-icon").on('click', function(){
+    parentContainer = this.parentElement.id;
+    topic = "#" + parentContainer.split("-")[0] + "_carouselContent";
+    $(".topic-icon").each(function(){
+      if (this.parentElement.id != parentContainer){
+          var otherTopic = "#" + this.parentElement.id.split("-")[0] + "_carouselContent";
+          $(otherTopic).css("display", "none");
+      }
+    });
     $("#choose").css('display', 'none'); 
-    $("#graphs").fadeToggle( "slow", "linear" );
+    $("#graphs").fadeToggle("slow", "linear");
+    $(topic).fadeToggle( "slow", "linear" );
 });
 
 // Change carousel back to initial icons when on click

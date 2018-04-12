@@ -36,16 +36,28 @@ body.fade-out {
     color: var(--main-text-color);
 }
 
-#carouselContent {
+#connectivity_carouselContent, 
+#ch_carouselContent, #imco_carouselContent,
+#industry_carouselContent, #top5_carouselContent {
     height: 785px;
 }
 
 .topic-icon{
     width: 240px;
     cursor: pointer;
+    transition: transform 0.5s;
+    -webkit-transition: transform 0.5s;
 }
 
-#graphs {
+.topic-icon:hover {
+    transform: scale(1.15);
+    transition: transform 0.5s;
+    -webkit-transition: transform 0.5s;
+}
+
+#graphs, #connectivity_carouselContent, 
+#ch_carouselContent, #imco_carouselContent,
+#industry_carouselContent, #top5_carouselContent {
     display: none;
 }
 

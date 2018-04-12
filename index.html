@@ -26,15 +26,6 @@
             <!-- start initial selection table> initialy shown, hides on click -->
             <table class="table" id="choose">
                 <thead>
-                  <tr>
-                    <!--<th scope="col" colspan="2" class="border-0">
-                      <h1>
-                        <span class="icon-previous float-left text-muted icon-disabled"> < </span>
-                        <span id="title"> México </span>
-                        <span class="icon-next float-right"> > </span>
-                      </h1>
-                    </th>
-                  </tr>-->
                 </thead>
                 <tbody>
                   <tr>
@@ -78,59 +69,212 @@
           <!-- end initial selection table -->
           <!-- start title and navigation table: initially hidden, shows on click-->
           <div id="graphs">
-          <table class="table my-0">
-            <thead>
-              <tr>
-                <th scope="col" colspan="2" class="border-0">
-                  <h1>
-                    <span class="icon-previous float-left text-muted icon-disabled"> < </span>
-                    <span id="title"> México </span>
-                    <span class="icon-next float-right"> > </span>
-                  </h1>
-                </th>
-              </tr>
-            </thead>
-            </table>
+              <table class="table my-0">
+                <thead>
+                  <tr>
+                    <th scope="col" colspan="2" class="border-0">
+                      <h1>
+                        <span class="icon-previous float-left text-muted icon-disabled"> < </span>
+                        <span id="title"> México </span>
+                        <span class="icon-next float-right"> > </span>
+                      </h1>
+                    </th>
+                  </tr>
+                </thead>
+                </table>
             <!-- end title and navigation table -->
-            <!-- start carousel -->
-            <div id="carouselContent" class="carousel slide" data-ride="carousel" data-pause="false">
-                <ol class="carousel-indicators">
-                    <li data-target="#carouselContent" data-slide-to="0" class="active"></li>
-                    <li data-target="#carouselContent" data-slide-to="1"></li>
-                </ol>
-                <div class="carousel-inner" role="listbox">
-                    <div class="carousel-item active text-center p-0">
-                        <table class="table">
-                        <tbody>
-                          <tr>
-                            <td class="border-right text-center">Connectivity<div id="barConectividad"></div></td>
-                            <td class="text-center">Human Capital<div id="radarCH"></div></td>
-                          </tr>
-                          <tr>
-                            <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>Otro chart</div></td>
-                            <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>otro mas</div></td>
-                          </tr>
-                        </tbody>
-                        </table>
-                    </div>
-                    <div class="carousel-item text-center p-0">
-                        <table class="table">
-                        <tbody>
-                          <tr>
-                            <td class="border-right text-center"><div id="radarImco"></div></td>
-                            <td class="text-center"><div id="barIKO"></div></td>
-                          </tr>
-                          <tr>
-                            <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>algo por aqui</div></td>
-                            <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>y por aca</div></td>
-                          </tr>
-                        </tbody>
-                        </table>
+                <!-- start connectivity carousel -->
+                <div id="connectivity_carouselContent" class="carousel slide" data-ride="carousel" data-pause="false">
+                    <ol class="carousel-indicators">
+                        <li data-target="#connectivity_carouselContent" data-slide-to="0" class="active"></li>
+                        <li data-target="#connectivity_carouselContent" data-slide-to="1"></li>
+                    </ol>
+                    <div class="carousel-inner" role="listbox">
+                        <div class="carousel-item active text-center p-0">
+                            <table class="table">
+                            <tbody>
+                              <tr>
+                                <td class="border-right text-center">Connectivity<div id="barConectividad"></div></td>
+                                <td class="text-center">More connectivity<div></div></td>
+                              </tr>
+                              <tr>
+                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>Otro chart</div></td>
+                                <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>otro mas</div></td>
+                              </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                        <div class="carousel-item text-center p-0">
+                            <table class="table">
+                            <tbody>
+                              <tr>
+                                <td class="border-right text-center">Un chart por aca<div></div></td>
+                                <td class="text-center">poner algo mas<div></div></td>
+                              </tr>
+                              <tr>
+                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>algo por aqui</div></td>
+                                <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>y por aca</div></td>
+                              </tr>
+                            </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+                <!-- end connectivity carousel -->
+                <!-- start human capital carousel -->
+                <div id="ch_carouselContent" class="carousel slide" data-ride="carousel" data-pause="false">
+                    <ol class="carousel-indicators">
+                        <li data-target="#ch_carouselContent" data-slide-to="0" class="active"></li>
+                        <li data-target="#ch_carouselContent" data-slide-to="1"></li>
+                    </ol>
+                    <div class="carousel-inner" role="listbox">
+                        <div class="carousel-item active text-center p-0">
+                            <table class="table">
+                            <tbody>
+                              <tr>
+                                <td class="border-right text-center">CH<div></div></td>
+                                <td class="text-center">Human Capital<div id="radarCH"></div></td>
+                              </tr>
+                              <tr>
+                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>Otro chart</div></td>
+                                <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>otro mas</div></td>
+                              </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                        <div class="carousel-item text-center p-0">
+                            <table class="table">
+                            <tbody>
+                              <tr>
+                                <td class="border-right text-center">More radar CH<div></div></td>
+                                <td class="text-center">Algo mas<div></div></td>
+                              </tr>
+                              <tr>
+                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>algo por aqui</div></td>
+                                <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>y por aca</div></td>
+                              </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- end human capital carousel -->
+                <!-- start imco carousel -->
+                <div id="imco_carouselContent" class="carousel slide" data-ride="carousel" data-pause="false">
+                    <ol class="carousel-indicators">
+                        <li data-target="#imco_carouselContent" data-slide-to="0" class="active"></li>
+                        <li data-target="#imco_carouselContent" data-slide-to="1"></li>
+                    </ol>
+                    <div class="carousel-inner" role="listbox">
+                        <div class="carousel-item active text-center p-0">
+                            <table class="table">
+                            <tbody>
+                              <tr>
+                                <td class="border-right text-center">Title<div></div></td>
+                                <td class="text-center">Indicators<div></div></td>
+                              </tr>
+                              <tr>
+                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>Otro chart</div></td>
+                                <td class="border-top-0 text-center"><div id="radarImco"></div></td>
+                              </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                        <div class="carousel-item text-center p-0">
+                            <table class="table">
+                            <tbody>
+                              <tr>
+                                <td class="border-right text-center">IMCO<div></div></td>
+                                <td class="text-center">Algo mas<div></div></td>
+                              </tr>
+                              <tr>
+                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>algo por aqui</div></td>
+                                <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>y por aca</div></td>
+                              </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- end imco carousel -->
+                <!-- start industries carousel -->
+                <div id="industry_carouselContent" class="carousel slide" data-ride="carousel" data-pause="false">
+                    <ol class="carousel-indicators">
+                        <li data-target="#industry_carouselContent" data-slide-to="0" class="active"></li>
+                        <li data-target="#industry_carouselContent" data-slide-to="1"></li>
+                    </ol>
+                    <div class="carousel-inner" role="listbox">
+                        <div class="carousel-item active text-center p-0">
+                            <table class="table">
+                            <tbody>
+                              <tr>
+                                <td class="border-right text-center">Title<div></div></td>
+                                <td class="text-center">Indicators<div></div></td>
+                              </tr>
+                              <tr>
+                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>Otro chart</div></td>
+                                <td class="border-top-0 text-center"><div></div></td>
+                              </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                        <div class="carousel-item text-center p-0">
+                            <table class="table">
+                            <tbody>
+                              <tr>
+                                <td class="border-right text-center">industrias<div></div></td>
+                                <td class="text-center">Algo mas<div></div></td>
+                              </tr>
+                              <tr>
+                                <td class="border-right border-top-0 text-center"><div id="barIKO"></td>
+                                <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>y por aca</div></td>
+                              </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- end industries carousel -->
+                <!-- start top5 carousel -->
+                <div id="top5_carouselContent" class="carousel slide" data-ride="carousel" data-pause="false">
+                    <ol class="carousel-indicators">
+                        <li data-target="#top5_carouselContent" data-slide-to="0" class="active"></li>
+                        <li data-target="#top5_carouselContent" data-slide-to="1"></li>
+                    </ol>
+                    <div class="carousel-inner" role="listbox">
+                        <div class="carousel-item active text-center p-0">
+                            <table class="table">
+                            <tbody>
+                              <tr>
+                                <td class="border-right text-center">Title<div></div></td>
+                                <td class="text-center">Indicators<div></div></td>
+                              </tr>
+                              <tr>
+                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>Otro chart</div></td>
+                                <td class="border-top-0 text-center">Algo ira aqui<div></div></td>
+                              </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                        <div class="carousel-item text-center p-0">
+                            <table class="table">
+                            <tbody>
+                              <tr>
+                                <td class="border-right text-center">industrias<div></div></td>
+                                <td class="text-center">Algo mas<div></div></td>
+                              </tr>
+                              <tr>
+                                <td class="border-right border-top-0 text-center">Aqui va un chart<div></td>
+                                <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>y por aca</div></td>
+                              </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- end top5 carousel -->
             </div>
-            <!-- end carousel -->
-            </div>
+            <!-- end navigation table -->
         </div>
       </div>
     <div class="row align-items-center" id="footer">
