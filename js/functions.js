@@ -46,15 +46,19 @@ var idToName = {
 };
 
 // Set basic functions for styling the map
-var rateById = d3.map(); // will hold the map from ids to property values
-var colors5 = ['#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026']; // 5 color scheme
-var quantile = d3.scaleQuantile() 
-    .range(d3.range(5).map(function(i) { return colors5[i]; })); // quantile scale with 5 classes
 
     // TODO: regionColors domain should match ordered region ids.
     
 //var regionColors = d3.scaleOrdinal().domain([1, 7]).range(d3.schemeCategory10);
-var regionColors = d3.scaleOrdinal().domain([3,1,2,6,7,4,5]).range(d3.schemeCategory20);
+//var regionColors = d3.scaleOrdinal().domain([3,1,2,6,7,4,5]).range(d3.schemeCategory20);
+
+var colorArray = ["#e62b65","#bb91f9","#dd2229","#4fab47","#8569ad",
+                  "#95c950","#ef5762","#be0040","#a93491","#0f7721"];
+
+myLinearColors = d3.scaleLinear().range(colorArray);
+myOrdinalColors = d3.scaleOrdinal().range(colorArray);
+
+var regionColors = myOrdinalColors.domain([3,1,2,6,7,4,5]);
 
 // map and base layer
 var map = L.map('mapdiv', {attributionControl: false}).setView([23.75, -101.9], 5);
@@ -130,10 +134,6 @@ q.defer(d3.json, "data/regiones.geojson")
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
         } else {
-            ciudades.features.forEach(function(e) {
-                // Populate the map
-                rateById.set(e.properties.id, +e.properties.grado_total);
-            });
             // properties = [];
             var cityNames = [],
                 regionNames = [];
@@ -205,6 +205,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 .height(200)
                 .margin({top: 40, right: 60, bottom: 60, left: 60})
                 .displayName("region")
+                .opacityArea(0)
                 .id("id")
                 .levels(4)
                 .format('.1f')
@@ -291,6 +292,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 .height(200)
                 .margin({top: 40, right: 60, bottom: 60, left: 60})
                 .displayName("nom_ciudad")
+                .opacityArea(0)
                 .id("id")
                 /*.color(d3.scaleOrdinal()
                        .domain(cityNames).range(d3.schemeCategory20))*/
@@ -312,7 +314,6 @@ var currentRegion = 0,
     cpisLayer;
 
 function makeMap(regiones, ciudades, cpis){  
-    quantile.domain(rateById.values())
     ciudadesLyr = L.geoJSON([ciudades], {
         style: function(feature){
             return {
@@ -833,9 +834,3 @@ function updateChartData(){
     ikaBar.data(getIkaData());
     hhRegionBar.highlight(idToName[currentRegion]);
 }
-
-var colorArray = ["#e62b65","#bb91f9","#dd2229","#4fab47","#8569ad",
-                  "#95c950","#ef5762","#be0040","#a93491","#0f7721"];
-
-myLinearColors = d3.scaleLinear().range(colorArray);
-myOrdinalColors = d3.scaleOrdinal().range(colorArray);
