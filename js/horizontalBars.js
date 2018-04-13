@@ -8,7 +8,7 @@ function horizontalBarChart(){
         displayName, // // variable in data to use as x axis labels
         transitionTime = 500,
         barColor = d3.scaleOrdinal(d3.schemeCategory10), //bar Color function
-        axisFormat = d3.format('.1f'),
+        axisFormat = d3.format('.1s'),
         legend = { title: '', translateX: 100, translateY: 0 },
         legendContainer = 'legendZone',
         doHighlight,
@@ -19,7 +19,6 @@ function horizontalBarChart(){
         var svg = selection.append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom);
-
         
         var tooltip = d3.select("body").append("div").attr("class", "toolTip");
         
@@ -28,7 +27,6 @@ function horizontalBarChart(){
 
         var g = svg.append("g")
 	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
 
         selection.each(function(){
             
@@ -41,7 +39,8 @@ function horizontalBarChart(){
       	        .call(d3.axisBottom(x)
                       .ticks(5)
                       .tickFormat(axisFormat)
-                      .tickSizeInner([-height]));
+                      //.tickSizeInner([-height]));
+                      );
 
             g.append("g")
                 .attr("class", "axis--y")
@@ -59,27 +58,24 @@ function horizontalBarChart(){
                 .attr("height", y.bandwidth())
                 .attr("y", function(d) { return y(d[displayName]); })
                 .attr("width", function(d) { return x(d[barsVariable]); })
-                .on("mousemove", function(d){
+                /*.on("mousemove", function(d){
                     tooltip
                         .style("left", d3.event.pageX - 50 + "px")
                         .style("top", d3.event.pageY - 70 + "px")
                         .style("display", "inline-block")
                         .html((d.area) + "<br>" + "£" + (d.value));
                 })
-    		.on("mouseout", function(d){ tooltip.style("display", "none");});
+                .on("mouseout", function(d){ tooltip.style("display", "none");})*/;
 
             doHighlight = function(){
-                //console.log("heeeeey")
                 selection.selectAll(".horizontal-bar")
                     .each(function(){
-                        //console.log("heeeeey")
                         d3.select(this)
-                            //.attr("class", "highlighted-bar")
                             .style("fill", function(d){
                                 return d[displayName] === highlightValue ? "red":
                                     "steelblue" //TODO: this should not be hardcoded
-                            })
-                    })
+                            });
+                    });
             }
             
         })
@@ -143,6 +139,12 @@ function horizontalBarChart(){
     chart.legendContainer = function(value) {
         if (!arguments.length) return legendContainer;
         legendContainer = value;
+        return chart;
+    };
+    
+    chart.axisFormat = function(value) {
+        if (!arguments.length) return axisFormat;
+        axisFormat = value;
         return chart;
     };
 
