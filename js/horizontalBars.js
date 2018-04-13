@@ -162,6 +162,12 @@ function horizontalBarChart(){
         highlightColor = value;
         return chart;
     };
+    
+    chart.barColor = function(value) {
+        if (!arguments.length) return barColor;
+        barColor = value;
+        return chart;
+    };
 
     chart.highlight = function(value) {
         if (!arguments.length) return highlightValue;
