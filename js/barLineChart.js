@@ -167,9 +167,9 @@ function barLineChart(){
                     .data(data, function(d){return d[id]});
 
                 //console.log(barGroups.data())
-                var xAxisUpdate = d3.select(".axis--x"),
-                    leftAxisUpdate = d3.select(".axis-left"),
-                    rightAxisUpdate = d3.select(".axis-right");
+                var xAxisUpdate = selection.select(".axis--x"),
+                    leftAxisUpdate = selection.select(".axis-left"),
+                    rightAxisUpdate = selection.select(".axis-right");
                 
                 leftAxisUpdate
                     .transition(transitionTime)
@@ -188,6 +188,7 @@ function barLineChart(){
 
                 var barGroupsEnter = barGroups.enter()
                     .append("g")
+                    .attr("class", "bars")
                     .attr("id", function(d){
                         return d[displayName]
                     })
@@ -201,7 +202,6 @@ function barLineChart(){
                     })
                     .enter()
                     .append("rect")
-                    .attr("class", "bars")
                     .attr("id", function(d){ return d.key;})
                     .style("stroke", "none")
                     .attr("x", function(d){ return xGroups(d.key); })
@@ -212,12 +212,12 @@ function barLineChart(){
 
                 barGroups.exit().remove();
 
-                var lineUpdate = d3.select(".g-bar").select(".line")
+                var lineUpdate = selection.select(".g-bar").select(".line")
                     .data([data])
                     .transition(transitionTime)
                     .attr("d", valueline);
                 
-                var points = d3.select(".g-bar").selectAll("circle.point")
+                var points = selection.select(".g-bar").selectAll("circle.point")
                     .data(data, function(d){ return d[id]; });
 
                 points
