@@ -8,8 +8,10 @@ function barLineChart(){
         lineVariables = null, // list of variables to display as lines
         displayName, // // variable in data to use as x axis labels
         transitionTime = 500,
-        color = d3.scaleOrdinal(d3.schemeCategory10),	//Color function,
+        //color = d3.scaleOrdinal(d3.schemeCategory10),	//Color function,
         barColor = d3.scaleOrdinal(d3.schemeCategory10), //bar Color function
+        lineColor = "steelblue",
+        pointColor = "steelblue",
         leftAxisFormat = '.2s',
         rightAxisFormat = '.0%',
         legend = { title: '', translateX: 100, translateY: 0 },
@@ -91,7 +93,7 @@ function barLineChart(){
             g.append("path")
                 .data([data])
                 .attr("class", "line")
-                .style("stroke", "steelblue")
+                .style("stroke", lineColor)
                 .attr("fill", "none")
                 .attr("d", valueline);
 
@@ -101,7 +103,7 @@ function barLineChart(){
                 .enter()
                 .append("circle")
                 .attr("class", "point")
-                .style("stroke", "crimson")
+                .style("stroke", pointColor)
                 .style("stroke-width", 3)
                 .style("fill", "none")
                 .attr("cx", function(d){
@@ -231,7 +233,7 @@ function barLineChart(){
                     .append("circle")
                     .transition(transitionTime)
                     .attr("class", "point")
-                    .style("stroke", "crimson")
+                    .style("stroke", pointColor)
                     .style("stroke-width", 3)
                     .style("fill", "none")
                     .attr("cx", function(d){
@@ -327,13 +329,29 @@ function barLineChart(){
         return chart;
     };
 
+    chart.barColor = function(value) {
+        if (!arguments.length) return barColor;
+        barColor = value;
+        return chart;
+    };
+    
+    chart.lineColor = function(value) {
+        if (!arguments.length) return lineColor;
+        lineColor = value;
+        return chart;
+    };
+    
+    chart.pointColor = function(value) {
+        if (!arguments.length) return pointColor;
+        pointColor = value;
+        return chart;
+    };
     
     chart.leftAxisFormat = function(value) {
         if (!arguments.length) return leftAxisFormat;
         leftAxisFormat = value;
         return chart;
     };
-
     
     chart.rightAxisFormat = function(value) {
         if (!arguments.length) return rightAxisFormat;
