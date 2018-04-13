@@ -240,7 +240,8 @@ q.defer(d3.json, "data/regiones.geojson")
                 .barsVariable("index")
                 .displayName("region")
                 .id("id")
-                .axisFormat(d3.format('.0f'));
+                .axisFormat(d3.format('.0f'))
+                .highlightColor('#81152a');
             
             hhRegionData = [];
             varsRegionHH.forEach(function(d) {
@@ -261,7 +262,7 @@ q.defer(d3.json, "data/regiones.geojson")
             hhIkaBar = horizontalBarChart()
                 .width(300)
                 .height(250)
-                .margin({top: 30, right: 50, bottom: 60, left:60})
+                .margin({top: 30, right: 50, bottom: 60, left:120})
                 .barsVariable("index")
                 .displayName("oic")
                 .id("id");
@@ -810,4 +811,6 @@ function updateChartData(){
     chRadar.data(getChRadarData()).highlight(currentRegion);
     logroEBar.data(getLogroEData());
     ikaBar.data(getIkaData());
+    hhRegionBar.highlight(idToName[currentRegion]);
+    
 }
