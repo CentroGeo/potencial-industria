@@ -1,8 +1,11 @@
-    $(function() {
-        setTimeout(function(){
-            $('body').removeClass('fade-out'); 
-        }, 500);
-    });
+// Try this to use hover on touch devices
+//$('body').bind('touchstart', function() {});
+
+$(function() {
+    setTimeout(function(){
+        $('body').removeClass('fade-out'); 
+    }, 500);
+});
 
 // Change initial icons to carousel on click
 $(".topic-icon").on('click', function(){
@@ -154,12 +157,14 @@ q.defer(d3.json, "data/regiones.geojson")
             // Make map
             makeMap(regiones, ciudades, cpis);
             
+            // Connectivity charts
             connectivityBar = stackedBarChart()
                 .width(300)
                 .height(250)
                 .margin({top: 25, right: 50, bottom: 60, left: 25})
                 .stackVariables(["grado_ferrocarril", "grado_carretera"])
                 .displayName("nom_ciudad")
+                .stackColors(["#0F7721","#95C950"])
                 .barAxisLabel("Degree")
                 .legend({title: 'Connectivity', translateX: 0,
                          translateY: 0,
@@ -170,48 +175,17 @@ q.defer(d3.json, "data/regiones.geojson")
             
             connectivityBar.data(getBarData());
             d3.select("#barConectividad")
-                .call(connectivityBar); // Draw chart in selected div
+                .call(connectivityBar);
 
-            imcoRadar = radarChart()
-                .width(250)
-                .height(200)
-                .margin({top: 40, right: 60, bottom: 60, left: 60})
-                .displayName("nom_ciudad")
-                .id("id")
-                .color(d3.scaleOrdinal()
-                       .domain(cityNames).range(d3.schemeCategory20))
-                .legend({ title: '', translateX: 135, translateY: 0 })
-                .legendContainer('imcoLegend')
-                .maxValue(100);
-
-            imcoRadar.data(getRadarData()); // bind data to chart object
-                 d3.select("#radarImco")
-                .call(imcoRadar); // Draw chart in selected div
-
-            chRadar = radarChart()
-                .width(250)
-                .height(200)
-                .margin({top: 40, right: 60, bottom: 60, left: 60})
-                .displayName("region")
-                .id("id")
-                .levels(4)
-                .format('.1f')
-                .color(d3.scaleOrdinal()
-                       .domain(regionNames).range(d3.schemeCategory20))
-                .legend({ title: '', translateX: 135, translateY: 0 })
-                .legendContainer('chLegend')
-                .maxValue(2);
-
-            //chRadar.data(chData); // bind data to chart object
-            chRadar.data(getChRadarData());
-                 d3.select("#radarCH")
-                .call(chRadar); // Draw chart in selected div
-
+                
+            // CH charts
             logroEBar = stackedBarChart()
                 .width(300)
                 .height(250)
-                //.margin({top: 40, right: 60, bottom: 60, left: 60})
                 .margin({top: 30, right: 50, bottom: 60, left:60})
+                .stackColors(["#0F7721","#95C950"])
+                .lineColors(myLinearColors.domain([0,1]))
+                .pointColors(myLinearColors.domain([0,1]))
                 .stackVariables(["Pop with bachelor",
                                  "Pop with grad"])
                 .lineVariables(["Percentage bachelor", "Percentage grad"])
@@ -222,31 +196,52 @@ q.defer(d3.json, "data/regiones.geojson")
                          itemsLine:["Percentage bachelor", "Percentage grad"],
                          itemsBar: ["Pop with bachelor","Pop with grad"]})
                 .id("name");
-            logroEBar.data(getLogroEData()); // bind data to chart object
+            logroEBar.data(getLogroEData());
                 d3.select("#logroEBar")
-                .call(logroEBar); // Draw chart in selected div
+                .call(logroEBar);
+                
+            chRadar = radarChart()
+                .width(250)
+                .height(200)
+                .margin({top: 40, right: 60, bottom: 60, left: 60})
+                .displayName("region")
+                .id("id")
+                .levels(4)
+                .format('.1f')
+                /*.color(d3.scaleOrdinal()
+                       .domain(regionNames).range(d3.schemeCategory20))*/
+                .color(myOrdinalColors.domain(regionNames))
+                .legend({ title: '', translateX: 135, translateY: 0 })
+                .legendContainer('chLegend')
+                .maxValue(2);
 
+            chRadar.data(getChRadarData());
+                 d3.select("#radarCH")
+                .call(chRadar);
+            
             ikaBar = barLineChart()
                 .width(300)
                 .height(250)
                 .barsVariables(["Labor market size", "IKAs market"])
+                .barColor(myOrdinalColors.domain(["Labor market size", "IKAs market"]))
                 .lineVariables(["IKAs Percentage"])
                 .displayName("name")
                 .id("name");
             
-            ikaBar.data(getIkaData()); // bind data to chart object
+            ikaBar.data(getIkaData());
                 d3.select("#ikaBar")
-                .call(ikaBar); // Draw chart in selected div
+                .call(ikaBar);
             
             hhRegionBar = horizontalBarChart()
                 .width(300)
                 .height(250)
                 .margin({top: 30, right: 50, bottom: 60, left:100})
                 .barsVariable("index")
+                .barColor(myOrdinalColors.domain([1]))
                 .displayName("region")
                 .id("id")
                 .axisFormat(d3.format('.0f'))
-                .highlightColor('#81152a');
+                .highlightColor('#E62B65');
             
             hhRegionData = [];
             varsRegionHH.forEach(function(d) {
@@ -269,10 +264,12 @@ q.defer(d3.json, "data/regiones.geojson")
                 .height(250)
                 .margin({top: 30, right: 50, bottom: 60, left:120})
                 .barsVariable("index")
+                .barColor(myOrdinalColors.domain([1]))
                 .displayName("oic")
                 .id("id");
             
             hhIkaData = [];
+            
             varsIkaHH.forEach(function(d) {
                 hhIkaData.push({
                     oic: d["OIC"], 
@@ -287,6 +284,24 @@ q.defer(d3.json, "data/regiones.geojson")
             hhIkaBar.data(hhIkaData);
                 d3.select("#hhIkaBar")
                 .call(hhIkaBar);
+            
+            // IMCO charts
+            imcoRadar = radarChart()
+                .width(250)
+                .height(200)
+                .margin({top: 40, right: 60, bottom: 60, left: 60})
+                .displayName("nom_ciudad")
+                .id("id")
+                /*.color(d3.scaleOrdinal()
+                       .domain(cityNames).range(d3.schemeCategory20))*/
+                .color(myOrdinalColors.domain(regionNames))
+                .legend({ title: '', translateX: 135, translateY: 0 })
+                .legendContainer('imcoLegend')
+                .maxValue(100);
+
+            imcoRadar.data(getRadarData()); // bind data to chart object
+                 d3.select("#radarImco")
+                .call(imcoRadar); // Draw chart in selected div
         }
     });
 
@@ -817,5 +832,10 @@ function updateChartData(){
     logroEBar.data(getLogroEData());
     ikaBar.data(getIkaData());
     hhRegionBar.highlight(idToName[currentRegion]);
-    
 }
+
+var colorArray = ["#e62b65","#bb91f9","#dd2229","#4fab47","#8569ad",
+                  "#95c950","#ef5762","#be0040","#a93491","#0f7721"];
+
+myLinearColors = d3.scaleLinear().range(colorArray);
+myOrdinalColors = d3.scaleOrdinal().range(colorArray);
