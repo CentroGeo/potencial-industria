@@ -101,7 +101,9 @@ var properties, // properties for each city
     logroEBar,
     logroEData,
     ikaData,
-    ikaBar;
+    ikaBar,
+    hhData,
+    hhBar;
 
 // Load data
 var q = d3.queue();
@@ -112,9 +114,10 @@ q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.csv, "data/capital-humano-zonas.csv")
     .defer(d3.csv, "data/logroeducativo.csv")
     .defer(d3.csv, "data/tamanomercado.csv")
+    .defer(d3.csv, "data/HH_index.csv")
     
     .await(function(error, regiones, ciudades, cpis, variables,
-                    varsChZonas, varsLogroE, varsIKA) {
+                    varsChZonas, varsLogroE, varsIKA, varsHH) {
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
         } else {
@@ -228,6 +231,31 @@ q.defer(d3.json, "data/regiones.geojson")
             ikaBar.data(getIkaData()); // bind data to chart object
                 d3.select("#ikaBar")
                 .call(ikaBar); // Draw chart in selected div
+                
+            hhBar = horizontalBarChart()
+                .width(300)
+                .height(250)
+                .margin({top: 30, right: 50, bottom: 60, left:60})
+                .barsVariable("index")
+                .displayName("oic")
+                .id("id");
+            
+            hhData = [];
+                 varsHH.forEach(function(d) {
+                     hhData.push({
+                         oic: d["OIC"], 
+                         index: +d["Agglomeration Index"]
+                     });
+                 });
+                 hhData = hhData.sort(function(x,y){
+                     return d3.descending(x["Agglomeration Index"],
+                                          y["Agglomeration Index"]);
+                 });
+            
+            hhBar.data(hhData);
+                d3.select("#hhBar")
+                .call(hhBar);
+              
         }
     });
 
