@@ -6,8 +6,8 @@
 
 // Change initial icons to carousel on click
 $(".topic-icon").on('click', function(){
-    parentContainer = this.parentElement.id;
-    topic = "#" + parentContainer.split("-")[0] + "_carouselContent";
+    var parentContainer = this.parentElement.id;
+    var topic = "#" + parentContainer.split("-")[0] + "_carouselContent";
     $(".topic-icon").each(function(){
       if (this.parentElement.id != parentContainer){
           var otherTopic = "#" + this.parentElement.id.split("-")[0] + "_carouselContent";
@@ -15,14 +15,19 @@ $(".topic-icon").on('click', function(){
       }
     });
     $("#choose").css('display', 'none'); 
-    $("#graphs").fadeToggle("slow", "linear");
-    $(topic).fadeToggle( "slow", "linear" );
+    $("#graphs").fadeIn("slow", "linear");
+    $(topic).fadeIn( "slow", "linear" );
 });
 
 // Change carousel back to initial icons when on click
 $("#menu").on('click', function(){
     $("#graphs").css('display', 'none'); 
     $("#choose").fadeIn( "slow", "linear" ); 
+    $(".topic-icon").each(function(){
+        var parentContainer = this.parentElement.id;
+        var topic = "#" + parentContainer.split("-")[0] + "_carouselContent";
+        $(topic).css("display", "none");
+    });
 });
 
 // Setup stuff for the bar chart
