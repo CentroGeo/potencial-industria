@@ -61,6 +61,10 @@ body.fade-out {
     display: none;
 }
 
+.carousel-indicators li {
+    cursor: pointer;
+}
+
 #footer {
     height: 100px;
 }
