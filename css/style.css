@@ -69,6 +69,16 @@ body.fade-out {
     text-align:center;
 }
 
+img.grayscale {
+  filter: gray; /* IE6-9 */
+  -webkit-filter: grayscale(100%); /* Chrome 19+ & Safari 6+ */
+}
+
+img.grayscale:hover {
+  filter: none;
+  -webkit-filter: grayscale(0%);
+}
+
 .table > tbody > tr > td {
     vertical-align: middle;
 }
