@@ -8,6 +8,7 @@ function horizontalBarChart(){
         displayName, // // variable in data to use as x axis labels
         transitionTime = 500,
         barColor = d3.scaleOrdinal(d3.schemeCategory10), //bar Color function
+        highlightColor = "red",
         axisFormat = d3.format('.1s'),
         legend = { title: '', translateX: 100, translateY: 0 },
         legendContainer = 'legendZone',
@@ -71,9 +72,10 @@ function horizontalBarChart(){
                 selection.selectAll(".horizontal-bar")
                     .each(function(){
                         d3.select(this)
-                            .style("fill", function(d){
-                                return d[displayName] === highlightValue ? "red":
-                                    "steelblue" //TODO: this should not be hardcoded
+                            .attr("fill", function(d){
+                                return d[displayName] === highlightValue ? 
+                                    highlightColor :
+                                    barColor(0);
                             });
                     });
             }
@@ -154,9 +156,14 @@ function horizontalBarChart(){
         if (typeof updateData === 'function') updateData();
         return chart;
     };
+    
+    chart.highlightColor = function(value) {
+        if (!arguments.length) return highlightColor;
+        highlightColor = value;
+        return chart;
+    };
 
     chart.highlight = function(value) {
-        console.log(value)
         if (!arguments.length) return highlightValue;
         highlightValue = value;
         if (typeof doHighlight === 'function') doHighlight();
