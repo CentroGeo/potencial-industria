@@ -123,11 +123,11 @@ function stackedBarChart(){
             yBar.domain(getyDomain(stackedData))
             
             // draw axes first so bars are on top of them
-            xAxis = d3.axisTop()
+            var xAxis = d3.axisTop()
                 .tickSizeInner(0) // the inner ticks will be of size 0
                 .tickSizeOuter(0)
                 .scale(xBar),
-            yAxis = d3.axisLeft()
+                yAxis = d3.axisLeft()
                 .tickSizeOuter(0)
                 .scale(yBar);
 

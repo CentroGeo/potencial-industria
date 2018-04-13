@@ -118,7 +118,7 @@ function barLineChart(){
             var xAxis = d3.axisBottom(xLine)
             g.append("g")
                 .attr("transform", "translate(0," + height + ")")
-                .attr("class", "x-axis")
+                .attr("class", "axis--x")
                 .call(xAxis)
                 .selectAll("text")    
                 .style("text-anchor", "start")
@@ -162,7 +162,7 @@ function barLineChart(){
                     .data(data, function(d){return d[id]});
 
                 //console.log(barGroups.data())
-                var xAxisUpdate = d3.select(".x-axis"),
+                var xAxisUpdate = d3.select(".axis--x"),
                     leftAxisUpdate = d3.select(".axis-left"),
                     rightAxisUpdate = d3.select(".axis-right");
                 
