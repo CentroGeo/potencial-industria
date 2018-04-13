@@ -114,10 +114,11 @@ q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.csv, "data/capital-humano-zonas.csv")
     .defer(d3.csv, "data/logroeducativo.csv")
     .defer(d3.csv, "data/tamanomercado.csv")
-    .defer(d3.csv, "data/HH_index.csv")
+    .defer(d3.csv, "data/hh_region.csv")
+    .defer(d3.csv, "data/hh_ika.csv")
     
     .await(function(error, regiones, ciudades, cpis, variables,
-                    varsChZonas, varsLogroE, varsIKA, varsHH) {
+                    varsChZonas, varsLogroE, varsIKA, varsRegionHH, varsIkaHH) {
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
         } else {
@@ -231,8 +232,33 @@ q.defer(d3.json, "data/regiones.geojson")
             ikaBar.data(getIkaData()); // bind data to chart object
                 d3.select("#ikaBar")
                 .call(ikaBar); // Draw chart in selected div
+            
+            hhRegionBar = horizontalBarChart()
+                .width(300)
+                .height(250)
+                .margin({top: 30, right: 50, bottom: 60, left:100})
+                .barsVariable("index")
+                .displayName("region")
+                .id("id")
+                .axisFormat(d3.format('.0f'));
+            
+            hhRegionData = [];
+            varsRegionHH.forEach(function(d) {
+                hhRegionData.push({
+                    region: d["region"], 
+                    index: +d["index"]
+                });
+            });
+            hhRegionData = hhRegionData.sort(function(x,y){
+                return d3.descending(x["index"],
+                                     y["index"]);
+            });
+            
+            hhRegionBar.data(hhRegionData);
+                d3.select("#hhRegionBar")
+                .call(hhRegionBar);
                 
-            hhBar = horizontalBarChart()
+            hhIkaBar = horizontalBarChart()
                 .width(300)
                 .height(250)
                 .margin({top: 30, right: 50, bottom: 60, left:60})
@@ -240,22 +266,21 @@ q.defer(d3.json, "data/regiones.geojson")
                 .displayName("oic")
                 .id("id");
             
-            hhData = [];
-                 varsHH.forEach(function(d) {
-                     hhData.push({
-                         oic: d["OIC"], 
-                         index: +d["Agglomeration Index"]
-                     });
-                 });
-                 hhData = hhData.sort(function(x,y){
-                     return d3.descending(x["Agglomeration Index"],
-                                          y["Agglomeration Index"]);
-                 });
+            hhIkaData = [];
+            varsIkaHH.forEach(function(d) {
+                hhIkaData.push({
+                    oic: d["OIC"], 
+                    index: +d["Agglomeration Index"]
+                });
+            });
+            hhIkaData = hhIkaData.sort(function(x,y){
+                return d3.descending(x["Agglomeration Index"],
+                                     y["Agglomeration Index"]);
+            });
             
-            hhBar.data(hhData);
-                d3.select("#hhBar")
-                .call(hhBar);
-              
+            hhIkaBar.data(hhIkaData);
+                d3.select("#hhIkaBar")
+                .call(hhIkaBar);
         }
     });
 
