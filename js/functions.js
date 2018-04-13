@@ -48,17 +48,11 @@ var idToName = {
 // Set basic functions for styling the map
 
     // TODO: regionColors domain should match ordered region ids.
-    
-//var regionColors = d3.scaleOrdinal().domain([1, 7]).range(d3.schemeCategory10);
-//var regionColors = d3.scaleOrdinal().domain([3,1,2,6,7,4,5]).range(d3.schemeCategory20);
 
 var colorArray = ["#e62b65","#bb91f9","#dd2229","#4fab47","#8569ad",
                   "#95c950","#ef5762","#be0040","#a93491","#0f7721"];
 
-myLinearColors = d3.scaleLinear().range(colorArray);
-myOrdinalColors = d3.scaleOrdinal().range(colorArray);
-
-var regionColors = myOrdinalColors.domain([3,1,2,6,7,4,5]);
+var regionColors = d3.scaleOrdinal().range(colorArray).domain([3,1,2,6,7,4,5]);
 
 // map and base layer
 var map = L.map('mapdiv', {attributionControl: false}).setView([23.75, -101.9], 5);
@@ -184,8 +178,8 @@ q.defer(d3.json, "data/regiones.geojson")
                 .height(250)
                 .margin({top: 30, right: 50, bottom: 60, left:60})
                 .stackColors(["#0F7721","#95C950"])
-                .lineColors(myLinearColors.domain([0,1]))
-                .pointColors(myLinearColors.domain([0,1]))
+                .lineColors(d3.scaleLinear().range(colorArray).domain([0,1]))
+                .pointColors(d3.scaleLinear().range(colorArray).domain([0,1]))
                 .stackVariables(["Pop with bachelor",
                                  "Pop with grad"])
                 .lineVariables(["Percentage bachelor", "Percentage grad"])
@@ -209,9 +203,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 .id("id")
                 .levels(4)
                 .format('.1f')
-                /*.color(d3.scaleOrdinal()
-                       .domain(regionNames).range(d3.schemeCategory20))*/
-                .color(myOrdinalColors.domain(regionNames))
+                .color(d3.scaleOrdinal().range(colorArray).domain(regionNames))
                 .legend({ title: '', translateX: 135, translateY: 0 })
                 .legendContainer('chLegend')
                 .maxValue(2);
@@ -224,7 +216,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 .width(300)
                 .height(250)
                 .barsVariables(["Labor market size", "IKAs market"])
-                .barColor(myOrdinalColors.domain(["Labor market size", "IKAs market"]))
+                .barColor(d3.scaleOrdinal().range(colorArray).domain(["Labor market size", "IKAs market"]))
                 .lineVariables(["IKAs Percentage"])
                 .displayName("name")
                 .id("name");
@@ -238,7 +230,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 .height(250)
                 .margin({top: 30, right: 50, bottom: 60, left:100})
                 .barsVariable("index")
-                .barColor(myOrdinalColors.domain([1]))
+                .barColor(d3.scaleOrdinal().range(colorArray).domain([1]))
                 .displayName("region")
                 .id("id")
                 .axisFormat(d3.format('.0f'))
@@ -265,7 +257,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 .height(250)
                 .margin({top: 30, right: 50, bottom: 60, left:120})
                 .barsVariable("index")
-                .barColor(myOrdinalColors.domain([1]))
+                .barColor(d3.scaleOrdinal().range(colorArray).domain([1]))
                 .displayName("oic")
                 .id("id");
             
@@ -294,9 +286,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 .displayName("nom_ciudad")
                 .opacityArea(0)
                 .id("id")
-                /*.color(d3.scaleOrdinal()
-                       .domain(cityNames).range(d3.schemeCategory20))*/
-                .color(myOrdinalColors.domain(regionNames))
+                .color(d3.scaleOrdinal().range(colorArray).domain(regionNames))
                 .legend({ title: '', translateX: 135, translateY: 0 })
                 .legendContainer('imcoLegend')
                 .maxValue(100);
