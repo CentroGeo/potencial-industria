@@ -270,6 +270,8 @@ body.fade-out {
 
 .tick text {
     fill: var(--main-text-color);
+    font-family: "DINMedium";
+    font-size: 11px;
 }
 
 .axis, .axis-right, .axis-left{
