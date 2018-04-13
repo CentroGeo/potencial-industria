@@ -116,6 +116,9 @@ function barLineChart(){
             
             // Add the X Axis
             var xAxis = d3.axisBottom(xLine)
+                .tickSizeInner(0) // the inner ticks will be of size 0
+                .tickSizeOuter(0);
+                
             g.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 .attr("class", "axis--x")
