@@ -519,6 +519,7 @@ function radarChart(){
                                     highlightedStrokeWidth + "px" :
                                     strokeWidth + "px"
                             });
+                        d3.select(".wrapper"+highlightValue).moveToFront();
                     });
             }
         });
@@ -620,3 +621,9 @@ function radarChart(){
 
     return chart;
 }
+
+d3.selection.prototype.moveToFront = function() {
+  return this.each(function(){
+    this.parentNode.appendChild(this);
+  });
+};
