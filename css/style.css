@@ -323,3 +323,23 @@ img.grayscale:hover {
 .axis .legend {
     fill: var(--main-text-color);
 }
+
+.bullet-info {
+    display: inline-block;
+}
+
+.bullet-info-text {
+    margin-bottom: 5px;
+}
+
+.bullet-title {
+    padding: 25px;
+}
+
+.chart-title {
+    padding: 10px;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
