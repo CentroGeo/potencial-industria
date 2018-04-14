@@ -74,9 +74,9 @@
                   <tr>
                     <th scope="col" colspan="2" class="border-0">
                       <h1>
-                        <span class="icon-previous float-left text-muted icon-disabled"> < </span>
+                        <!-- <span class="icon-previous float-left text-muted icon-disabled"> < </span> -->
                         <span id="title"> México </span>
-                        <span class="icon-next float-right"> > </span>
+                        <!-- <span class="icon-next float-right"> > </span> -->
                       </h1>
                     </th>
                   </tr>
@@ -84,191 +84,792 @@
                 </table>
             <!-- end title and navigation table -->
                 <!-- start connectivity carousel -->
-                <div id="connectivity_carouselContent" class="carousel slide" data-ride="carousel" data-pause="hover">
+                <div id="connectivity_carouselContent" class="carousel slide" data-interval="false">
                     <ol class="carousel-indicators">
                         <li data-target="#connectivity_carouselContent" data-slide-to="0" class="active"></li>
                         <li data-target="#connectivity_carouselContent" data-slide-to="1"></li>
                     </ol>
                     <div class="carousel-inner" role="listbox">
                         <div class="carousel-item active text-center p-0">
-                            <table class="table">
-                            <tbody>
-                              <tr>
-                                <td class="border-right text-center">Connectivity<div id="barConectividad"></div></td>
-                                <td class="text-center">More connectivity<div></div></td>
-                              </tr>
-                              <tr>
-                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>Otro chart</div></td>
-                                <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>otro mas</div></td>
-                              </tr>
-                            </tbody>
-                            </table>
+                            <div class="row">
+                              <div class="col-12">
+                                <div class="row border-top">
+                                  <div class="border-right col-6">
+                                     
+                                    <div class="chart-title text-center">
+                                      Connectivity
+                                      <div id="barConectividad" class="overflow-hidden"></div>
+                                    </div>
+
+                                  </div>
+                                  <div class="col-6">
+
+                                    <h5 class="bullet-title">Bullets gráfico izquierda</h5>
+                                      
+                                    <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                      <li class="bullet-info-text">
+                                        Lorem ipsum dolor sit amet.
+                                      </li>
+                                      <li class="bullet-info-text">
+                                        Lorem ipsum dolor sit amet.
+                                      </li>
+                                      <li class="bullet-info-text">
+                                        Lorem ipsum dolor sit amet.
+                                      </li>
+                                      <li class="bullet-info-text">
+                                        Lorem ipsum dolor sit amet.
+                                      </li>
+                                      <li class="bullet-info-text">
+                                        Lorem ipsum dolor sit amet.
+                                      </li>
+                                    </ul>
+
+                                  </div>
+                                  <div class="border-right col-6">
+
+                                    <h5 class="bullet-title">Bullets gráfico derecha</h5>
+                                      
+                                    <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                      <li class="bullet-info-text">
+                                        Lorem ipsum dolor sit amet.
+                                      </li>
+                                      <li class="bullet-info-text">
+                                        Lorem ipsum dolor sit amet.
+                                      </li>
+                                      <li class="bullet-info-text">
+                                        Lorem ipsum dolor sit amet.
+                                      </li>
+                                      <li class="bullet-info-text">
+                                        Lorem ipsum dolor sit amet.
+                                      </li>
+                                      <li class="bullet-info-text">
+                                        Lorem ipsum dolor sit amet.
+                                      </li>
+                                    </ul>
+
+                                  </div>
+                                  <div class="col-6">
+                                      
+                                    <div class="chart-title text-center" class="overflow-hidden">
+                                      Otra grafica
+                                      <div id="otra-grafica"></div>
+                                    </div>
+
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                         </div>
                         <div class="carousel-item text-center p-0">
-                            <table class="table">
-                            <tbody>
-                              <tr>
-                                <td class="border-right text-center">Un chart por aca<div></div></td>
-                                <td class="text-center">poner algo mas<div></div></td>
-                              </tr>
-                              <tr>
-                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>algo por aqui</div></td>
-                                <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>y por aca</div></td>
-                              </tr>
-                            </tbody>
-                            </table>
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+                                <div class="border-right col-6">
+                                  
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Un chart por aca
+                                    <div id="otra-grafica"></div>
+                                  </div>
+
+                                </div>
+                                <div class="col-6">
+
+                                  <h5 class="bullet-title">Bullets gráfico derecha</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="border-right col-6">
+
+                                  <h5 class="bullet-title">Bullets gráfico izquierda</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="col-6">
+
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Otro chart
+                                    <div id="otra-grafica"></div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                     </div>
                 </div>
                 <!-- end connectivity carousel -->
                 <!-- start human capital carousel -->
-                <div id="ch_carouselContent" class="carousel slide" data-ride="carousel" data-pause="hover">
+                <div id="ch_carouselContent" class="carousel slide" data-interval="false">
                     <ol class="carousel-indicators">
                         <li data-target="#ch_carouselContent" data-slide-to="0" class="active"></li>
                         <li data-target="#ch_carouselContent" data-slide-to="1"></li>
+                        <li data-target="#ch_carouselContent" data-slide-to="2"></li>
                     </ol>
                     <div class="carousel-inner" role="listbox">
                         <div class="carousel-item active text-center p-0">
-                            <table class="table">
-                            <tbody>
-                              <tr>
-                                <td class="border-top text-center">CH<div id="logroEBar"></div></td>
-                                <td class="text-center">Human Capital<div id="radarCH"></div></td>
-                              </tr>
-                              <tr>
-                                <td class=" border-top-0 text-center">Knowledge-Intensive Activities<div id="ikaBar"></div></td>
-                                <td class="border-top-0 text-center">IKAs Specialization/Diversification Index by Region<div id="hhRegionBar"></div></td>
-                              </tr>
-                            </tbody>
-                            </table>
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+                                <div class="border-right col-6">
+
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    CH
+                                    <div id="logroEBar"></div>
+                                  </div>
+
+                                </div>
+                                <div class="col-6">
+
+                                  <h5 class="bullet-title">Bullets gráfico izquierda</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+                                  
+                                </div>
+                                <div class="border-right col-6">
+
+                                  <h5 class="bullet-title">Bullets gráfico derecha</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="col-6">
+
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Human Capital
+                                    <div id="radarCH"></div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                         <div class="carousel-item text-center p-0">
-                            <table class="table">
-                            <tbody>
-                              <tr>
-                                <td class="border-right text-center">Specialization/Diversification Index by Activity<div id="hhIkaBar"></div></td>
-                                <td class="text-center">Algo mas<div></div></td>
-                              </tr>
-                              <tr>
-                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>algo por aqui</div></td>
-                                <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>y por aca</div></td>
-                              </tr>
-                            </tbody>
-                            </table>
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+                                <div class="border-right col-6">
+
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Knowledge-Intensive Activities
+                                    <div id="ikaBar"></div>
+                                  </div>
+                                  
+                                </div>
+                                <div class="col-6">
+                                  
+                                  <h5 class="bullet-title">Bullets gráfico izquierda</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="border-right col-6">
+                                  
+                                  <h5 class="bullet-title">Bullets gráfico derecha</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="col-6">
+
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    IKAs Specialization/Diversification Index by Region
+                                    <div id="hhRegionBar"></div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="carousel-item text-center p-0">
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+                                <div class="border-right col-6">
+
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Specialization/Diversification Index by Activity
+                                    <div id="hhIkaBar"></div>
+                                  </div>
+                                  
+                                </div>
+                                <div class="col-6">
+                                  
+                                  <h5 class="bullet-title">Bullets gráfico izquierda</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+
+                              </div>
+                            </div>
+                          </div>
                         </div>
                     </div>
                 </div>
                 <!-- end human capital carousel -->
                 <!-- start imco carousel -->
-                <div id="imco_carouselContent" class="carousel slide" data-ride="carousel" data-pause="hover">
+                <div id="imco_carouselContent" class="carousel slide" data-interval="false">
                     <ol class="carousel-indicators">
                         <li data-target="#imco_carouselContent" data-slide-to="0" class="active"></li>
                         <li data-target="#imco_carouselContent" data-slide-to="1"></li>
                     </ol>
                     <div class="carousel-inner" role="listbox">
                         <div class="carousel-item active text-center p-0">
-                            <table class="table">
-                            <tbody>
-                              <tr>
-                                <td class="border-right text-center">Title<div></div></td>
-                                <td class="text-center">Indicators<div></div></td>
-                              </tr>
-                              <tr>
-                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>Otro chart</div></td>
-                                <td class="border-top-0 text-center"><div id="radarImco"></div></td>
-                              </tr>
-                            </tbody>
-                            </table>
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+                                <div class="border-right col-6">
+
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Chart
+                                    <div id="otra-grafica"></div>
+                                  </div>
+
+                                </div>
+                                <div class="col-6">
+                                  
+                                  <h5 class="bullet-title">Bullets gráfico izquierda</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="border-right col-6">
+                                  
+                                  <h5 class="bullet-title">Bullets gráfico derecha</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="col-6">
+
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Titulo Chart
+                                    <div id="radarImco"></div>
+                                  </div>
+                                  
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                         <div class="carousel-item text-center p-0">
-                            <table class="table">
-                            <tbody>
-                              <tr>
-                                <td class="border-right text-center">IMCO<div></div></td>
-                                <td class="text-center">Algo mas<div></div></td>
-                              </tr>
-                              <tr>
-                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>algo por aqui</div></td>
-                                <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>y por aca</div></td>
-                              </tr>
-                            </tbody>
-                            </table>
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+                                <div class="border-right col-6">
+                                  
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    IMCO
+                                    <div id="otra-grafica"></div>
+                                  </div>
+
+                                </div>
+                                <div class="col-6">
+                                  
+                                  <h5 class="bullet-title">Bullets gráfico izquierda</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="border-right col-6">
+                                  
+                                  <h5 class="bullet-title">Bullets gráfico derecha</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="col-6">
+                                  
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Otra grafica
+                                    <div id="otra-grafica"></div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                     </div>
                 </div>
                 <!-- end imco carousel -->
                 <!-- start industries carousel -->
-                <div id="industry_carouselContent" class="carousel slide" data-ride="carousel" data-pause="hover">
+                <div id="industry_carouselContent" class="carousel slide" data-interval="false">
                     <ol class="carousel-indicators">
                         <li data-target="#industry_carouselContent" data-slide-to="0" class="active"></li>
                         <li data-target="#industry_carouselContent" data-slide-to="1"></li>
                     </ol>
                     <div class="carousel-inner" role="listbox">
                         <div class="carousel-item active text-center p-0">
-                            <table class="table">
-                            <tbody>
-                              <tr>
-                                <td class="border-right text-center"><div></div></td>
-                                <td class="text-center">Indicators<div></div></td>
-                              </tr>
-                              <tr>
-                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>Otro chart</div></td>
-                                <td class="border-top-0 text-center"><div></div></td>
-                              </tr>
-                            </tbody>
-                            </table>
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+                                <div class="border-right col-6">
+
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Chart
+                                    <div id="otra-grafica"></div>
+                                  </div>
+
+                                </div>
+                                <div class="col-6">
+                                  
+                                  <h5 class="bullet-title">Bullets gráfico izquierda</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="border-right col-6">
+                                  
+                                  <h5 class="bullet-title">Bullets gráfico derecha</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="col-6">
+                                  
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Chart
+                                    <div id="otra-grafica"></div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                         <div class="carousel-item text-center p-0">
-                            <table class="table">
-                            <tbody>
-                              <tr>
-                                <td class="border-right text-center">industrias<div></div></td>
-                                <td class="text-center">Algo mas<div></div></td>
-                              </tr>
-                              <tr>
-                                <td class="border-right border-top-0 text-center"><div></td>
-                                <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>y por aca</div></td>
-                              </tr>
-                            </tbody>
-                            </table>
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+                                <div class="border-right col-6">
+                                  
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Chart Industrias
+                                    <div id="otra-grafica"></div>
+                                  </div>
+
+                                </div>
+                                <div class="col-6">
+                                  
+                                  <h5 class="bullet-title">Bullets gráfico izquierda</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="border-right col-6">
+
+                                  <h5 class="bullet-title">Bullets gráfico derecha</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="col-6">
+                                  
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Otro chart
+                                    <div id="otra-grafica"></div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                     </div>
                 </div>
                 <!-- end industries carousel -->
                 <!-- start top5 carousel -->
-                <div id="top5_carouselContent" class="carousel slide" data-ride="carousel" data-pause="hover">
+                <div id="top5_carouselContent" class="carousel slide" data-interval="false">
                     <ol class="carousel-indicators">
                         <li data-target="#top5_carouselContent" data-slide-to="0" class="active"></li>
                         <li data-target="#top5_carouselContent" data-slide-to="1"></li>
                     </ol>
                     <div class="carousel-inner" role="listbox">
                         <div class="carousel-item active text-center p-0">
-                            <table class="table">
-                            <tbody>
-                              <tr>
-                                <td class="border-right text-center">Title<div></div></td>
-                                <td class="text-center">Indicators<div></div></td>
-                              </tr>
-                              <tr>
-                                <td class="border-right border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>Otro chart</div></td>
-                                <td class="border-top-0 text-center">Algo ira aqui<div></div></td>
-                              </tr>
-                            </tbody>
-                            </table>
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+                                <div class="border-right col-6">
+                                  
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Title chart
+                                    <div id="otra-grafica"></div>
+                                  </div>
+
+                                </div>
+                                <div class="col-6">
+                                  
+                                  <h5 class="bullet-title">Bullets gráfico izquierda</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="border-right col-6">
+                                  
+                                  <h5 class="bullet-title">Bullets gráfico derecha</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="col-6">
+                                  
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Otro chart
+                                    <div id="otra-grafica"></div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                         <div class="carousel-item text-center p-0">
-                            <table class="table">
-                            <tbody>
-                              <tr>
-                                <td class="border-right text-center">industrias<div></div></td>
-                                <td class="text-center">Algo mas<div></div></td>
-                              </tr>
-                              <tr>
-                                <td class="border-right border-top-0 text-center">Aqui va un chart<div></td>
-                                <td class="border-top-0 text-center"><div><br/><br/><br/><br/><br/><br/>y por aca</div></td>
-                              </tr>
-                            </tbody>
-                            </table>
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+                                <div class="border-right col-6">
+                                  
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Chart Industrias
+                                    <div id="otra-grafica"></div>
+                                  </div>
+
+                                </div>
+                                <div class="col-6">
+                                  
+                                  <h5 class="bullet-title">Bullets gráfico izquierda</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="border-right col-6">
+                                  
+                                  <h5 class="bullet-title">Bullets gráfico derecha</h5>
+                                  
+                                  <ul class="bullet-info" style="list-style-image: url('img/bullet.png');">
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                    <li class="bullet-info-text">
+                                      Lorem ipsum dolor sit amet.
+                                    </li>
+                                  </ul>
+
+                                </div>
+                                <div class="col-6">
+                                  
+                                  <div class="chart-title text-center" class="overflow-hidden">
+                                    Otro chart
+                                    <div id="otra-grafica"></div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                     </div>
                 </div>
