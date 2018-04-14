@@ -17,6 +17,14 @@ $(".topic-icon").on('click', function(){
           $(otherTopic).css("display", "none");
       }
     });
+
+    //parentContainer de los markers
+    if(parentContainer=="top5-div"){
+        makercpis()
+    }else{
+        makerRegion()
+    }
+
     $("#choose").css('display', 'none'); 
     $("#graphs").fadeIn("slow", "linear");
     $(topic).fadeIn( "slow", "linear" );
@@ -54,8 +62,13 @@ var colorArray = ["#e62b65","#bb91f9","#dd2229","#4fab47","#8569ad",
 
 var regionColors = d3.scaleOrdinal().range(colorArray).domain([3,1,2,6,7,4,5]);
 
+//limites del mapa
+var southWest = L.latLng(3.95, -83),
+    northEast = L.latLng(40.00, -120.67),
+    bounds = L.latLngBounds(southWest, northEast);
+
 // map and base layer
-var map = L.map('mapdiv', {attributionControl: false}).setView([23.75, -101.9], 5);
+var map = L.map('mapdiv', {maxBounds:bounds, zoomControl: false, minZoom: 5, attributionControl: false}).setView([23.75, -101.9], 5);
 
 var overlay = new L.map('overlaydiv', {
     zoomControl: false,
@@ -149,7 +162,7 @@ q.defer(d3.json, "data/regiones.geojson")
             regionNames = getZonesNames(varsChZonas);
 
             // Make map
-            makeMap(regiones, ciudades, cpis);
+            makeMap(regiones, ciudades);
             
             // Connectivity charts
             connectivityBar = stackedBarChart()
@@ -299,6 +312,7 @@ q.defer(d3.json, "data/regiones.geojson")
 
 var currentRegion = 0,
     lastClickedLayer = null,
+    lastClickedMaker = null, //new
     regionesLyr,
     ciudadesLyr,
     cpisLayer;
@@ -313,7 +327,61 @@ var nosede_icon = L.icon({
    "iconSize": [20,20]
 });
 
-function makeMap(regiones, ciudades, cpis){  
+function makercpis(){
+    var q = d3.queue()
+    q.defer(d3.json, "data/cpis_en.geojson")
+    
+    .await(function(error, cpis) {
+        if (error) console.error('Oh dear, something went wrong: ' + error);
+        else {
+            if(ciudadesLyr != undefined && regionesLyr!=undefined){
+                ciudadesLyr.clearLayers();
+                regionesLyr.clearLayers();
+                ciudadesLyr=undefined;
+                regionesLyr=undefined;
+            }
+            if(cpisLayer==undefined){
+                makeMapCpis(cpis)
+            }
+        }
+    })
+    
+}
+
+function makerRegion(){
+    var q = d3.queue()
+    q.defer(d3.json, "data/regiones.geojson")
+    .defer(d3.json, "data/ciudades.geojson")
+    .await(function(error,regiones,ciudades){
+        if(error) console.error('Oh dear, something went wrong: ' + error)
+        else {
+            if(cpisLayer!=undefined){
+                cpisLayer.clearLayers();
+                cpisLayer=undefined;
+            }
+            if(ciudadesLyr == undefined && regionesLyr == undefined){
+                makeMap(regiones,ciudades);
+            }
+        }
+    });
+}
+
+function makeMapCpis(cpis){
+    cpisLayer = L.geoJSON([cpis], {
+       pointToLayer: function(feature, latlng){
+           var geojsonMarkerOptions = {
+               opacity: feature.properties.main ? 1 : .70,
+               icon: feature.properties.main ? sede_icon : nosede_icon,
+           }           
+           return L.marker(latlng, geojsonMarkerOptions)
+            .on("mouseover", function(event){showPRC(event, feature);})
+            .on("mouseout", hidePRC);
+       },
+       onEachFeature: onEachFeatureCpis /*new*/
+    }).addTo(map);
+}
+
+function makeMap(regiones, ciudades){  
     ciudadesLyr = L.geoJSON([ciudades], {
         style: function(feature){
             return {
@@ -337,19 +405,13 @@ function makeMap(regiones, ciudades, cpis){
                },
         onEachFeature: onEachFeatureRegiones
     }).addTo(map);
-    
-    cpisLayer = L.geoJSON([cpis], {
-       pointToLayer: function(feature, latlng){
-           var geojsonMarkerOptions = {
-               opacity: feature.properties.main ? 1 : .70,
-               icon: feature.properties.main ? sede_icon : nosede_icon,
-           }           
-           return L.marker(latlng, geojsonMarkerOptions)
-            .on("mouseover", function(event){showPRC(event, feature);})
-            .on("mouseout", hidePRC);
-       }
-    }).addTo(map);
 };
+
+/*new*/
+function onEachFeatureCpis(feature, layer){
+    feature.properties.is_clicked = false;
+    layer.on('click', makerClick);
+}
 
 function onEachFeatureRegiones(feature, layer){
     // assign bounding box to each feature
@@ -381,6 +443,24 @@ function showPRC(e, f){
     
 function hidePRC(){
     $("#probe").css("display","none");
+}
+
+/*new*/
+function makerClick(event){
+    layer = event.target;
+    feature = layer.feature;
+    
+    if (feature.properties.is_clicked == false){ // feature not clicked, so zoom in
+        if (lastClickedMaker){ // when a region is clicked and you click another, reset previous one
+            lastClickedMaker.feature.properties.is_clicked = false;
+        }
+        lastClickedMaker = layer;
+        map.flyTo(layer.getLatLng(), 13);
+        feature.properties.is_clicked = true;
+    }else if(feature.properties.is_clicked == true){
+        feature.properties.is_clicked = false;
+        map.flyTo([23.75, -101.9], 5);
+    }
 }
 
 function layerClick(event){
@@ -455,6 +535,7 @@ function layerClick(event){
 }
 
 $("#restart").on('click', function(){ 
+    makerRegion(); //default view of map
     if (lastClickedLayer){
         regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);})
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
@@ -476,72 +557,76 @@ $("#restart").on('click', function(){
 });
 
 $(".icon-next").on('click', function(){
-    if (lastClickedLayer){ // if something is clicked, reset style
-            lastClickedLayer.feature.properties.is_clicked = false;
-            $(lastClickedLayer.getElement()).removeClass("regionZoomed");
-            $(lastClickedLayer.getElement()).addClass("regionStyle");
-    }
-    currentRegion++;
-    if (currentRegion > 0 && currentRegion < regionesLyr.getLayers().length){ // cycle to next region
-        /*if (currentRegion > 1) {
+    if(ciudadesLyr != undefined && regionesLyr !=undefined){
+        if (lastClickedLayer){ // if something is clicked, reset style
+                lastClickedLayer.feature.properties.is_clicked = false;
+                $(lastClickedLayer.getElement()).removeClass("regionZoomed");
+                $(lastClickedLayer.getElement()).addClass("regionStyle");
+        }
+        currentRegion++;
+        if (currentRegion > 0 && currentRegion < regionesLyr.getLayers().length){ // cycle to next region
+            /*if (currentRegion > 1) {
+                $(".icon-previous .fas").removeClass("fa-reply");
+                $(".icon-previous .fas").addClass("fa-chevron-left");   
+            }*/
+            regionesLyr._layers[currentRegion].fire('click');
+        } else if (currentRegion == regionesLyr.getLayers().length){ // if last region
+            regionesLyr._layers[currentRegion].fire('click');
+            /*$(".icon-next .fas").removeClass("fa-chevron-right");
+            $(".icon-next .fas").addClass("fa-reply");
             $(".icon-previous .fas").removeClass("fa-reply");
-            $(".icon-previous .fas").addClass("fa-chevron-left");   
-        }*/
-        regionesLyr._layers[currentRegion].fire('click');
-    } else if (currentRegion == regionesLyr.getLayers().length){ // if last region
-        regionesLyr._layers[currentRegion].fire('click');
-        /*$(".icon-next .fas").removeClass("fa-chevron-right");
-        $(".icon-next .fas").addClass("fa-reply");
-        $(".icon-previous .fas").removeClass("fa-reply");
-        $(".icon-previous .fas").addClass("fa-chevron-left");*/
-    } else { // return to overview
-        map.flyTo([23.75, -101.9], 5);
-        /*$(".icon-next .fas").removeClass("fa-reply");
-        $(".icon-next .fas").addClass("fa-chevron-right");*/
-        $(".icon-previous").addClass("text-muted");
-        $(".icon-previous").addClass("icon-disabled");
-        currentRegion = 0;
-        regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
-        ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
-        $("#title").html('México');
+            $(".icon-previous .fas").addClass("fa-chevron-left");*/
+        } else { // return to overview
+            map.flyTo([23.75, -101.9], 5);
+            /*$(".icon-next .fas").removeClass("fa-reply");
+            $(".icon-next .fas").addClass("fa-chevron-right");*/
+            $(".icon-previous").addClass("text-muted");
+            $(".icon-previous").addClass("icon-disabled");
+            currentRegion = 0;
+            regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
+            ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
+            $("#title").html('México');
 
-        map.once("moveend", function(){
-            updateChartData();
-        });
+            map.once("moveend", function(){
+                updateChartData();
+            });
+        }
     }
 });
 
 $(".icon-previous").on('click', function(){    
-    if (lastClickedLayer){ // if something is clicked, reset style
-            lastClickedLayer.feature.properties.is_clicked = false;
-            $(lastClickedLayer.getElement()).removeClass("regionZoomed");
-            $(lastClickedLayer.getElement()).addClass("regionStyle");
-    }
-    currentRegion--;
-    if (currentRegion > 1 && currentRegion < regionesLyr.getLayers().length){ // cycle to previous region
-        regionesLyr._layers[currentRegion].fire('click');
-        /*$(".icon-next .fas").removeClass("fa-reply");
-        $(".icon-next .fas").addClass("fa-chevron-right");*/
-    } else if (currentRegion == 1){ // if first region
-        regionesLyr._layers[currentRegion].fire('click');
-        /*$(".icon-next .fas").removeClass("fa-reply");
-        $(".icon-next .fas").addClass("fa-chevron-right");
-        $(".icon-previous .fas").removeClass("fa-chevron-left");
-        $(".icon-previous .fas").addClass("fa-reply");*/
-    } else { // return to overview
-        map.flyTo([23.75, -101.9], 5);
-        /*$(".icon-previous .fas").removeClass("fa-reply");
-        $(".icon-previous .fas").addClass("fa-chevron-left");*/
-        $(".icon-previous").addClass("text-muted");
-        $(".icon-previous").addClass("icon-disabled");
-        currentRegion = 0;
-        regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
-        ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
-        $("#title").html('México');
-        
-        map.once("moveend", function(){
-            updateChartData();
-        });
+    if(ciudadesLyr != undefined && regionesLyr !=undefined){
+        if (lastClickedLayer){ // if something is clicked, reset style
+                lastClickedLayer.feature.properties.is_clicked = false;
+                $(lastClickedLayer.getElement()).removeClass("regionZoomed");
+                $(lastClickedLayer.getElement()).addClass("regionStyle");
+        }
+        currentRegion--;
+        if (currentRegion > 1 && currentRegion < regionesLyr.getLayers().length){ // cycle to previous region
+            regionesLyr._layers[currentRegion].fire('click');
+            /*$(".icon-next .fas").removeClass("fa-reply");
+            $(".icon-next .fas").addClass("fa-chevron-right");*/
+        } else if (currentRegion == 1){ // if first region
+            regionesLyr._layers[currentRegion].fire('click');
+            /*$(".icon-next .fas").removeClass("fa-reply");
+            $(".icon-next .fas").addClass("fa-chevron-right");
+            $(".icon-previous .fas").removeClass("fa-chevron-left");
+            $(".icon-previous .fas").addClass("fa-reply");*/
+        } else { // return to overview
+            map.flyTo([23.75, -101.9], 5);
+            /*$(".icon-previous .fas").removeClass("fa-reply");
+            $(".icon-previous .fas").addClass("fa-chevron-left");*/
+            $(".icon-previous").addClass("text-muted");
+            $(".icon-previous").addClass("icon-disabled");
+            currentRegion = 0;
+            regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
+            ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
+            $("#title").html('México');
+            
+            map.once("moveend", function(){
+                updateChartData();
+            });
+        }
     }
 });
 
