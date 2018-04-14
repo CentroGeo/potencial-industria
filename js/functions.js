@@ -303,6 +303,16 @@ var currentRegion = 0,
     ciudadesLyr,
     cpisLayer;
 
+var sede_icon = L.icon({
+   "iconUrl": "/img/icon_sede.png",
+   "iconSize": [20,20],
+});
+
+var nosede_icon = L.icon({
+   "iconUrl": "/img/icon_nosede.png",
+   "iconSize": [20,20]
+});
+
 function makeMap(regiones, ciudades, cpis){  
     ciudadesLyr = L.geoJSON([ciudades], {
         style: function(feature){
@@ -331,14 +341,10 @@ function makeMap(regiones, ciudades, cpis){
     cpisLayer = L.geoJSON([cpis], {
        pointToLayer: function(feature, latlng){
            var geojsonMarkerOptions = {
-               opacity: .75,
-               weight: 1,
-               fillColor: feature.properties.main ? "#e81b44" : "#1ba3e8", // if sede is null paint red, else, blue. 
-               color: "#03f", 
-               fillOpacity: .75,
-               radius: feature.properties.main ? "5" : "3" // if sede, radius is 4 (larger), else, 3 (smaller).
+               opacity: feature.properties.main ? 1 : .70,
+               icon: feature.properties.main ? sede_icon : nosede_icon,
            }           
-           return L.circleMarker(latlng, geojsonMarkerOptions)
+           return L.marker(latlng, geojsonMarkerOptions)
             .on("mouseover", function(event){showPRC(event, feature);})
             .on("mouseout", hidePRC);
        }
