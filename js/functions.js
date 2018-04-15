@@ -19,13 +19,35 @@ $(".topic-icon").on('click', function(){
             }
         });
 
-        //parentContainer de los markers
-        if(parentContainer=="top5-div"){
-            makercpis()
-        }else{
-            makerRegion()
-        }
+    switch(parentContainer.split("-")[0]) {
+        case "connectivity":
+            var topic_name = "Connectivity";
+            break;
+        case "ch":
+            var topic_name = "Human Capital";
+            break;
+        case "imco":
+            var topic_name = "Bussinebility";
+            break;
+        case "industry":
+            var topic_name = "Industries";
+            break;
+        case "top5":
+            var topic_name = "Top 5";
+            break;
+        default:
+            break;
+    }
 
+    $("#topic").html(topic_name + ":");
+
+    //parentContainer de los markers
+    if(parentContainer=="top5-div"){
+        makercpis()
+    }else{
+        makerRegion()
+    }
+    
         $("#choose").css('display', 'none'); 
         $("#graphs").fadeIn("slow", "linear");
         $(topic).fadeIn( "slow", "linear" );
