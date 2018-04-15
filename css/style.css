@@ -343,3 +343,17 @@ img.grayscale:hover {
 .overflow-hidden {
     overflow: hidden;
 }
+
+.carousel-control-prev-icon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding-top: 750px;
+}
+
+.carousel-control-next-icon {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding-top: 750px;
+}
