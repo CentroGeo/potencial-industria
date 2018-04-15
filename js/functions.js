@@ -10,24 +10,27 @@ $(function() {
 // Change initial icons to carousel on click
 $(".topic-icon").on('click', function(){
     var parentContainer = this.parentElement.id;
-    var topic = "#" + parentContainer.split("-")[0] + "_carouselContent";
-    $(".topic-icon").each(function(){
-      if (this.parentElement.id != parentContainer){
-          var otherTopic = "#" + this.parentElement.id.split("-")[0] + "_carouselContent";
-          $(otherTopic).css("display", "none");
-      }
-    });
+    $("#"+parentContainer).bind("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd", function(){
+        var topic = "#" + parentContainer.split("-")[0] + "_carouselContent";
+        $(".topic-icon").each(function(){
+            if (this.parentElement.id != parentContainer){
+                var otherTopic = "#" + this.parentElement.id.split("-")[0] + "_carouselContent";
+                $(otherTopic).css("display", "none");
+            }
+        });
 
-    //parentContainer de los markers
-    if(parentContainer=="top5-div"){
-        makercpis()
-    }else{
-        makerRegion()
-    }
+        //parentContainer de los markers
+        if(parentContainer=="top5-div"){
+            makercpis()
+        }else{
+            makerRegion()
+        }
 
-    $("#choose").css('display', 'none'); 
-    $("#graphs").fadeIn("slow", "linear");
-    $(topic).fadeIn( "slow", "linear" );
+        $("#choose").css('display', 'none'); 
+        $("#graphs").fadeIn("slow", "linear");
+        $(topic).fadeIn( "slow", "linear" );
+        $(this).removeClass("iconZoom");
+    }).addClass("iconZoom");
 });
 
 // Change carousel back to initial icons when on click
