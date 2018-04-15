@@ -356,8 +356,28 @@ img.grayscale:hover {
     fill: var(--main-text-color);
 }
 
-.bullet-info {
+div.bullet-section {
+    padding-top: 15%;
+}
+
+ul.no-bullet {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+li.bullet-li {
+    background: url("/img/default_bullet.png") no-repeat left top;
     display: inline-block;
+    padding-left: 30px;
+    padding-bottom: 10px;
+}
+
+li.bullet-top5 {
+    background: url("/img/default_bullet.png") no-repeat left top;
+    display: inline-block;
+    padding-left: 30px;
+    padding-bottom: 10px;
 }
 
 .bullet-info-text {

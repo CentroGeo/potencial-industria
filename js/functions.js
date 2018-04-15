@@ -82,8 +82,10 @@ var idToName = {
 
     // TODO: regionColors domain should match ordered region ids.
 
-var colorArray = ["#e62b65","#bb91f9","#dd2229","#4fab47","#8569ad",
-                  "#95c950","#ef5762","#be0040","#a93491","#0f7721"];
+// var colorArray = ["#e62b65","#bb91f9","#dd2229","#4fab47","#8569ad",
+//                   "#95c950","#ef5762","#be0040","#a93491","#0f7721"];
+var colorArray = ["#eb126f","#8669aa","#e72230","#40ab4e","#b0358f",
+                  "#90c85a","#f95765","#be0040","#a93491","#0f7721"];
 
 var regionColors = d3.scaleOrdinal().range(colorArray).domain([3,1,2,6,7,4,5]);
 
@@ -561,6 +563,39 @@ function layerClick(event){
         }
         
         $("#title").html(feature.properties.zona);
+        var zone = feature.properties.zona;
+
+        switch(zone) {
+            case "Megalopolis":
+                var bullet_name = "megalopolis_bullet.png";
+                break;
+            case "Northeast":
+                var bullet_name = "northeast_bullet.png";
+                break;
+            case "Center-west":
+                var bullet_name = "centerwest_bullet.png";
+                break;
+            case "Center-north":
+                var bullet_name = "centernorth_bullet.png";
+                break;
+            case "Yucatán peninsula":
+                var bullet_name = "yucatan_bullet.png";
+                break;
+            case "Northwest":
+                var bullet_name = "northwest_bullet.png";
+                break;
+            case "Gulf-east":
+                var bullet_name = "gulfeast_bullet.png";
+                break;
+            default:
+                var bullet_name = "default_bullet.png";
+                break;
+        }
+        
+        Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
+            element.style.backgroundImage = "url('/img/" + bullet_name + "')";
+        });
+
         var featBounds = feature.properties.bounds_calculated;
         map.flyToBounds(featBounds);
         regionesLyr.eachLayer(function(l){l.setStyle(noStyle);})
@@ -580,6 +615,10 @@ function layerClick(event){
         $(".icon-next .fas").addClass("fa-chevron-right");*/
         $(".icon-previous").addClass("text-muted");
         $(".icon-previous").addClass("icon-disabled");
+
+        Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
+            element.style.backgroundImage = "url('/img/default_bullet.png')";
+        });
     }
     map.once("moveend", function(){
         updateChartData();
@@ -611,6 +650,10 @@ $("#global").on('click', function(){
         makercpis()
         map.flyTo([23.75, -101.9], 5);
     }
+
+    Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
+        element.style.backgroundImage = "url('/img/default_bullet.png')";
+    });
 });
 
 $(".icon-next").on('click', function(){
