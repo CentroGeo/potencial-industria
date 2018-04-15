@@ -390,6 +390,11 @@ img.grayscale:hover {
   padding-top: 750px;
 }
 
+.radar {
+    width: 540px;
+    height: 350px;
+}
+
 #menu{
     background:
         linear-gradient(45deg,  transparent 10px, #fff 0) bottom left no-repeat;

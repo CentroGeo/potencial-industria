@@ -196,7 +196,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 .margin({top: 25, right: 50, bottom: 110, left: 25})
                 .stackVariables(["grado_ferrocarril", "grado_carretera"])
                 .displayName("nom_ciudad")
-                .stackColors(["#0F7721","#95C950"])
+                .stackColors(["#40ab4e","#e36930"])
                 .barAxisLabel("Degree")
                 .legend({title: 'Connectivity', translateX: 0,
                          translateY: 0,
@@ -210,12 +210,12 @@ q.defer(d3.json, "data/regiones.geojson")
                 .call(connectivityBar);
 
                 
-            // CH charts
+            // Human Capital charts
             logroEBar = stackedBarChart()
                 .width(280)
                 .height(250)
                 .margin({top: 30, right: 50, bottom: 100, left:60})
-                .stackColors(["#0F7721","#95C950"])
+                .stackColors(["#eb126f","#8669aa"])
                 .lineColors(d3.scaleLinear().range(colorArray).domain([0,1]))
                 .pointColors(d3.scaleLinear().range(colorArray).domain([0,1]))
                 .stackVariables(["Pop with bachelor",
@@ -237,7 +237,7 @@ q.defer(d3.json, "data/regiones.geojson")
             chRadar = radarChart()
                 .width(250)
                 .height(200)
-                .margin({top: 40, right: 60, bottom: 40, left: 60})
+                .margin({top: 40, right: 60, bottom: 0, left: 50})
                 .displayName("region")
                 .opacityArea(0)
                 .id("id")
@@ -275,7 +275,7 @@ q.defer(d3.json, "data/regiones.geojson")
                 .displayName("region")
                 .id("id")
                 .axisFormat(d3.format('.0f'))
-                .highlightColor('#E62B65');
+                .highlightColor('#40ab4e');
             
             hhRegionData = [];
             varsRegionHH.forEach(function(d) {
@@ -321,14 +321,14 @@ q.defer(d3.json, "data/regiones.geojson")
             
             // IMCO charts
             imcoRadar = radarChart()
-                .width(250)
-                .height(200)
-                .margin({top: 40, right: 60, bottom: 220, left: 60})
+                .width(200)
+                .height(250)
+                .margin({top: 40, right: 20, bottom: 0, left: 150})
                 .displayName("nom_ciudad")
                 .opacityArea(0)
                 .id("id")
                 .color(d3.scaleOrdinal().range(colorArray).domain(regionNames))
-                .legend({ title: '', translateX: 104, translateY: 232 })
+                .legend({ title: '', translateX: 240, translateY: 70 })
                 .legendContainer('imcoLegend')
                 .maxValue(100);
 
