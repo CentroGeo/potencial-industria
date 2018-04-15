@@ -12,6 +12,8 @@ function stackedBarChart(){
         stackVariables, // Which variables to stack in bars
         lineVariables = null, // list of variables to display as lines
         barAxisLabel = "",
+        barAxisXLabelPos = "-2em",
+        barAxisYLabelPos = "-2em",
         lineAxisLabel = "",
         id,  // variable in data to use as identifier
         displayName, // variable in data to use as x axis labels
@@ -167,8 +169,8 @@ function stackedBarChart(){
                 .append("text")
                 .attr("x", 2)
                 .attr("y", yBar(yBar.ticks().pop()))
-                .attr("dy", "-2em")
-                .attr("dx", "-2em")
+                .attr("dy", barAxisYLabelPos)
+                .attr("dx", barAxisXLabelPos)
                 .attr("text-anchor", "start")
                 .text(barAxisLabel);
             
@@ -589,6 +591,19 @@ function stackedBarChart(){
         barAxisLabel = value;
         return chart;
     };
+
+    chart.barAxisXLabelPos = function(value) {
+        if (!arguments.length) return barAxisXLabelPos;
+        barAxisXLabelPos = value;
+        return chart;
+    };
+
+        chart.barAxisYLabelPos = function(value) {
+        if (!arguments.length) return barAxisYLabelPos;
+        barAxisYLabelPos = value;
+        return chart;
+    };
+
 
     chart.lineAxisLabel = function(value) {
         if (!arguments.length) return lineAxisLabel;

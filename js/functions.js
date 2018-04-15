@@ -168,7 +168,7 @@ q.defer(d3.json, "data/regiones.geojson")
             connectivityBar = stackedBarChart()
                 .width(300)
                 .height(250)
-                .margin({top: 25, right: 50, bottom: 60, left: 25})
+                .margin({top: 25, right: 50, bottom: 110, left: 25})
                 .stackVariables(["grado_ferrocarril", "grado_carretera"])
                 .displayName("nom_ciudad")
                 .stackColors(["#0F7721","#95C950"])
@@ -187,9 +187,9 @@ q.defer(d3.json, "data/regiones.geojson")
                 
             // CH charts
             logroEBar = stackedBarChart()
-                .width(300)
+                .width(280)
                 .height(250)
-                .margin({top: 30, right: 50, bottom: 60, left:60})
+                .margin({top: 30, right: 50, bottom: 100, left:60})
                 .stackColors(["#0F7721","#95C950"])
                 .lineColors(d3.scaleLinear().range(colorArray).domain([0,1]))
                 .pointColors(d3.scaleLinear().range(colorArray).domain([0,1]))
@@ -197,6 +197,8 @@ q.defer(d3.json, "data/regiones.geojson")
                                  "Pop with grad"])
                 .lineVariables(["Percentage bachelor", "Percentage grad"])
                 .displayName("name")
+                .barAxisXLabelPos("-5.5em")
+                .barAxisYLabelPos("-4em")
                 .barAxisLabel("Population")
                 .lineAxisLabel("Percentage")
                 .legend({title: 'Educational Achievement', translateX: -70, translateY: 0,
@@ -210,7 +212,7 @@ q.defer(d3.json, "data/regiones.geojson")
             chRadar = radarChart()
                 .width(250)
                 .height(200)
-                .margin({top: 40, right: 60, bottom: 60, left: 60})
+                .margin({top: 40, right: 60, bottom: 40, left: 60})
                 .displayName("region")
                 .opacityArea(0)
                 .id("id")
@@ -226,8 +228,9 @@ q.defer(d3.json, "data/regiones.geojson")
                 .call(chRadar);
             
             ikaBar = barLineChart()
-                .width(300)
+                .width(250)
                 .height(250)
+                .margin({top: 10, right: 50, bottom: 110, left:60})
                 .barsVariables(["Labor market size", "IKAs market"])
                 .barColor(d3.scaleOrdinal().range(colorArray).domain(["Labor market size", "IKAs market"]))
                 .lineVariables(["IKAs Percentage"])
@@ -239,9 +242,9 @@ q.defer(d3.json, "data/regiones.geojson")
                 .call(ikaBar);
             
             hhRegionBar = horizontalBarChart()
-                .width(300)
+                .width(250)
                 .height(250)
-                .margin({top: 30, right: 50, bottom: 60, left:100})
+                .margin({top: 10, right: 50, bottom: 26, left:100})
                 .barsVariable("index")
                 .barColor(d3.scaleOrdinal().range(colorArray).domain([1]))
                 .displayName("region")
@@ -295,12 +298,12 @@ q.defer(d3.json, "data/regiones.geojson")
             imcoRadar = radarChart()
                 .width(250)
                 .height(200)
-                .margin({top: 40, right: 60, bottom: 60, left: 60})
+                .margin({top: 40, right: 60, bottom: 220, left: 60})
                 .displayName("nom_ciudad")
                 .opacityArea(0)
                 .id("id")
                 .color(d3.scaleOrdinal().range(colorArray).domain(regionNames))
-                .legend({ title: '', translateX: 135, translateY: 0 })
+                .legend({ title: '', translateX: 104, translateY: 232 })
                 .legendContainer('imcoLegend')
                 .maxValue(100);
 
@@ -534,7 +537,7 @@ function layerClick(event){
     });
 }
 
-$("#restart").on('click', function(){ 
+$("#global").on('click', function(){ 
     makerRegion(); //default view of map
     if (lastClickedLayer){
         regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);})
