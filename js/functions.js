@@ -363,12 +363,12 @@ var currentRegion = 0,
     cpisLayer;
 
 var sede_icon = L.icon({
-   "iconUrl": "/img/icon_sede.png",
+   "iconUrl": "img/icon_sede.png",
    "iconSize": [20,20],
 });
 
 var nosede_icon = L.icon({
-   "iconUrl": "/img/icon_nosede.png",
+   "iconUrl": "img/icon_nosede.png",
    "iconSize": [20,20]
 });
 
@@ -608,7 +608,7 @@ function layerClick(event){
         }
         
         Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
-            element.style.backgroundImage = "url('/img/" + bullet_name + "')";
+            element.style.backgroundImage = "url('img/" + bullet_name + "')";
             element.style.backgroundSize = "20px 20px";
         });
 
@@ -633,7 +633,7 @@ function layerClick(event){
         $(".icon-previous").addClass("icon-disabled");
 
         Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
-            element.style.backgroundImage = "url('/img/default_bullet.png')";
+            element.style.backgroundImage = "url('img/default_bullet.png')";
             element.style.backgroundSize = "20px 20px";
         });
     }
@@ -669,7 +669,7 @@ $("#global").on('click', function(){
     }
 
     Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
-        element.style.backgroundImage = "url('/img/default_bullet.png')";
+        element.style.backgroundImage = "url('img/default_bullet.png')";
         element.style.backgroundSize = "20px 20px";
     });
 });
