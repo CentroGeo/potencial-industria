@@ -386,6 +386,8 @@ function makercpis(){
                 regionesLyr=undefined;
             }
             if(cpisLayer==undefined){
+                $(".buttonleft").css('display', 'none');
+                $(".buttonright").css('display', 'none');
                 makeMapCpis(cpis)
                 map.flyTo([23.75, -101.9], 5, { duration: 1});
             }
@@ -406,6 +408,8 @@ function makerRegion(){
                 cpisLayer=undefined;
             }
             if(ciudadesLyr == undefined && regionesLyr == undefined){
+                $(".buttonleft").css('display', 'block');
+                $(".buttonright").css('display', 'block');
                 makeMap(regiones,ciudades);
                 map.flyTo([23.75, -101.9], 5, { duration: 1});
             }
@@ -519,7 +523,7 @@ function makerClick(event){
         setTimeout(function(){
            layer.bindPopup(showpopup(event,feature)).openPopup();
         },300)
-        map.flyTo(layer.getLatLng(), 13, { duration: 1});
+        map.flyTo(layer.getLatLng(), 8, { duration: 1});
         feature.properties.is_clicked = true;
 
     }else if(feature.properties.is_clicked == true){
@@ -720,7 +724,10 @@ $(".icon-previous").on('click', function(){
                 $(lastClickedLayer.getElement()).addClass("regionStyle");
         }
         currentRegion--;
-        if (currentRegion > 1 && currentRegion < regionesLyr.getLayers().length){ // cycle to previous region
+        if(currentRegion<0){
+            currentRegion= regionesLyr.getLayers().length
+        }
+        if (currentRegion > 1 && currentRegion <= regionesLyr.getLayers().length){ // cycle to previous region
             regionesLyr._layers[currentRegion].fire('click');
             /*$(".icon-next .fas").removeClass("fa-reply");
             $(".icon-next .fas").addClass("fa-chevron-right");*/
