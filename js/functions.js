@@ -599,6 +599,7 @@ function layerClick(event){
         
         Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
             element.style.backgroundImage = "url('/img/" + bullet_name + "')";
+            element.style.backgroundSize = "20px 20px";
         });
 
         var featBounds = feature.properties.bounds_calculated;
@@ -623,6 +624,7 @@ function layerClick(event){
 
         Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
             element.style.backgroundImage = "url('/img/default_bullet.png')";
+            element.style.backgroundSize = "20px 20px";
         });
     }
     map.once("moveend", function(){
@@ -658,6 +660,7 @@ $("#global").on('click', function(){
 
     Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
         element.style.backgroundImage = "url('/img/default_bullet.png')";
+        element.style.backgroundSize = "20px 20px";
     });
 });
 
