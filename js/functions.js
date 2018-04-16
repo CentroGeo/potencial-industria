@@ -108,7 +108,7 @@ var overlay = new L.map('overlaydiv', {
     zoomAnimation: true
 }).setView([23.75, -101.9], 5);
 
-//L.control.attribution({position: 'bottomright'}).addTo(overlay);
+L.control.attribution({position: 'bottomright'}).addTo(overlay);
 
 var mapBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
