@@ -229,9 +229,9 @@ q.defer(d3.json, "data/regiones.geojson")
                 .barAxisYLabelPos("-4em")
                 .barAxisLabel("Population")
                 .lineAxisLabel("Percentage")
-                .legend({title: 'Educational Achievement', translateX: -70, translateY: 0,
+                /*.legend({title: 'Educational Achievement', translateX: -70, translateY: 0,
                          itemsLine:["Percentage bachelor", "Percentage grad"],
-                         itemsBar: ["Pop with bachelor","Pop with grad"]})
+                         itemsBar: ["Pop with bachelor","Pop with grad"]})*/
                 .id("name");
             
             logroEBar.data(getLogroEData());
@@ -269,9 +269,9 @@ q.defer(d3.json, "data/regiones.geojson")
                 .barAxisYLabelPos("-2em")
                 .barAxisLabel("Population")
                 .lineAxisLabel("Percentage")
-                .legend({title: '', translateX: -70, translateY: 0,
+                /*.legend({title: '', translateX: -70, translateY: 0,
                          itemsLine:["IKAs Percentage"],
-                         itemsBar: ["Labor market size", "IKAs market"]})
+                         itemsBar: ["Labor market size", "IKAs market"]})*/
                 .legendContainer('ikaBarLegend')
                 .id("name");
             

@@ -18,7 +18,8 @@ function barLineChart(){
         barAxisYLabelPos = "-2em",
         leftAxisFormat = '.2s',
         rightAxisFormat = '.0%',
-        legend = { title: '', translateX: 100, translateY: 0 },
+        legend = false,
+        //legend = {title: 'title', translateX: 100, translateY: 0, items:['item1','item2']}
         legendContainer = 'legendZone',
         updateData;
 
