@@ -579,7 +579,7 @@ function layerClick(event){
             case "Center-north":
                 var bullet_name = "centernorth_bullet.png";
                 break;
-            case "Yucatán peninsula":
+            case "Yucatan peninsula":
                 var bullet_name = "yucatan_bullet.png";
                 break;
             case "Northwest":
@@ -609,7 +609,7 @@ function layerClick(event){
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
         $(layer.getElement()).removeClass("regionZoomed");
         $(layer.getElement()).addClass("regionStyle");
-        $("#title").html('México');
+        $("#title").html('Mexico');
         feature.properties.is_clicked = false;
         currentRegion = 0;
         /*$(".icon-next .fas").removeClass("fa-reply");
@@ -637,7 +637,7 @@ $("#global").on('click', function(){
             lastClickedLayer.feature.properties.is_clicked = false;
         }
         lastClickedLayer = null;
-        $("#title").html('México');
+        $("#title").html('Mexico');
         map.flyTo([23.75, -101.9], 5);
         /*$(".icon-next .fas").removeClass("fa-reply");
         $(".icon-next .fas").addClass("fa-chevron-right");*/
@@ -686,7 +686,7 @@ $(".icon-next").on('click', function(){
             currentRegion = 0;
             regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
             ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
-            $("#title").html('México');
+            $("#title").html('Mexico');
 
             map.once("moveend", function(){
                 updateChartData();
@@ -722,7 +722,7 @@ $(".icon-previous").on('click', function(){
             currentRegion = 0;
             regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
             ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
-            $("#title").html('México');
+            $("#title").html('Mexico');
             
             map.once("moveend", function(){
                 updateChartData();
