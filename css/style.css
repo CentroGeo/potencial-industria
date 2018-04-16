@@ -43,7 +43,7 @@ body.fade-out {
 }
 
 .topic-icon{
-    width: 240px;
+    width: 265px;
     cursor: pointer;
     transition: transform 0.5s;
     -webkit-transition: transform 0.5s;
@@ -88,8 +88,8 @@ body.fade-out {
 }
 
 #graphs, #connectivity_carouselContent, 
-#ch_carouselContent, #imco_carouselContent,
-#industry_carouselContent, #top5_carouselContent {
+#ch_carouselContent, #business_carouselContent,
+#industrie_carouselContent, #conacyt_carouselContent {
     display: none;
 }
 
@@ -373,7 +373,7 @@ li.bullet-li {
     padding-bottom: 10px;
 }
 
-li.bullet-top5 {
+li.bullet-conacyt {
     background: url("/img/default_bullet.png") no-repeat left top;
     display: inline-block;
     padding-left: 30px;

@@ -26,14 +26,14 @@ $(".topic-icon").on('click', function(){
         case "ch":
             var topic_name = "Human Capital";
             break;
-        case "imco":
-            var topic_name = "Bussinebility";
+        case "business":
+            var topic_name = "Doing Business";
             break;
-        case "industry":
+        case "industrie":
             var topic_name = "Industries";
             break;
-        case "top5":
-            var topic_name = "Top 5";
+        case "conacyt":
+            var topic_name = "Conacyt";
             break;
         default:
             break;
@@ -42,7 +42,7 @@ $(".topic-icon").on('click', function(){
     $("#topic").html(topic_name + ":");
 
     //parentContainer de los markers
-    if(parentContainer=="top5-div"){
+    if(parentContainer=="conacyt-div"){
         makercpis()
     }else{
         makerRegion()
@@ -111,15 +111,15 @@ var map = L.map('mapdiv', {maxBounds:bounds, zoomControl: false, minZoom: 5, att
 //L.control.attribution({position: 'bottomright'}).addTo(overlay);
 
 var mapBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-	subdomains: 'abcd',
-	maxZoom: 19
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
 }).addTo(map);
 
 /*var overlayBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-	subdomains: 'abcd',
-	maxZoom: 19
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
 }).addTo(overlay);
 
 map.sync(overlay, {offsetFn: offsetGlobal});
@@ -579,7 +579,7 @@ function layerClick(event){
             case "Center-north":
                 var bullet_name = "centernorth_bullet.png";
                 break;
-            case "Yucatan peninsula":
+            case "Yucatán peninsula":
                 var bullet_name = "yucatan_bullet.png";
                 break;
             case "Northwest":
