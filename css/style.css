@@ -188,6 +188,7 @@ img.grayscale:hover {
     /* top: 300px; */
     /* left: 0px; */
     z-index: 2;
+    opacity: 0.3;
     -webkit-transition: text-shadow 0.5s; /* For Safari 3.1 to 6.0 */
     transition: text-shadow 0.5s;
 }
@@ -198,6 +199,7 @@ img.grayscale:hover {
     font-variant: normal;
     text-transform: none;
     line-height: 1;*/
+    opacity: 0.3;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /*font-size: 32px;*/
@@ -218,7 +220,8 @@ img.grayscale:hover {
 }
 
 .icon-next:hover, .icon-previous:hover{
-    //color: #81152a;
+    opacity: 0.9;
+    /*color: #81152a;*/
     text-shadow: 0 0 10px #e72662;
 }
 
@@ -427,4 +430,17 @@ li.bullet-top5 {
 
 .carousel-control-prev, .carousel-control-next{
     width: 5%;
+}
+
+.buttonleft{
+    position: absolute;
+    left: 1%;
+    top: 180px;
+    z-index: 2;
+}
+.buttonright{
+    position: absolute;
+    left: 49%;
+    top: 180px;
+    z-index: 2;
 }

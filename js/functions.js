@@ -98,7 +98,7 @@ var southWest = L.latLng(3.95, -83),
 // map and base layer
 var map = L.map('mapdiv', {maxBounds:bounds, zoomControl: false, minZoom: 5, attributionControl: false}).setView([23.75, -101.9], 5);
 
-/*var overlay = new L.map('overlaydiv', {
+var overlay = new L.map('overlaydiv', {
     zoomControl: false,
     inertia: false,
     keyboard: false,
@@ -106,7 +106,7 @@ var map = L.map('mapdiv', {maxBounds:bounds, zoomControl: false, minZoom: 5, att
     scrollWheelZoom: true,
     attributionControl: false,
     zoomAnimation: true
-}).setView([23.75, -101.9], 5);*/
+}).setView([23.75, -101.9], 5);
 
 //L.control.attribution({position: 'bottomright'}).addTo(overlay);
 
@@ -116,14 +116,14 @@ var mapBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/da
 	maxZoom: 19
 }).addTo(map);
 
-/*var overlayBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+var overlayBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
 	subdomains: 'abcd',
 	maxZoom: 19
 }).addTo(overlay);
 
 map.sync(overlay, {offsetFn: offsetGlobal});
-*/
+
 function offsetGlobal (center, zoom, refMap, tgtMap) {
     var refC = refMap.getContainer();
     var tgtC = tgtMap.getContainer();
@@ -372,6 +372,8 @@ function makercpis(){
                 regionesLyr=undefined;
             }
             if(cpisLayer==undefined){
+                $(".buttonleft").css('display', 'none');
+                $(".buttonright").css('display', 'none');
                 makeMapCpis(cpis)
                 map.flyTo([23.75, -101.9], 5, { duration: 1});
             }
@@ -392,6 +394,8 @@ function makerRegion(){
                 cpisLayer=undefined;
             }
             if(ciudadesLyr == undefined && regionesLyr == undefined){
+                $(".buttonleft").css('display', 'block');
+                $(".buttonright").css('display', 'block');
                 makeMap(regiones,ciudades);
                 map.flyTo([23.75, -101.9], 5, { duration: 1});
             }
@@ -505,7 +509,7 @@ function makerClick(event){
         setTimeout(function(){
            layer.bindPopup(showpopup(event,feature)).openPopup();
         },300)
-        map.flyTo(layer.getLatLng(), 13, { duration: 1});
+        map.flyTo(layer.getLatLng(), 8, { duration: 1});
         feature.properties.is_clicked = true;
 
     }else if(feature.properties.is_clicked == true){
@@ -703,7 +707,10 @@ $(".icon-previous").on('click', function(){
                 $(lastClickedLayer.getElement()).addClass("regionStyle");
         }
         currentRegion--;
-        if (currentRegion > 1 && currentRegion < regionesLyr.getLayers().length){ // cycle to previous region
+        if(currentRegion<0){
+            currentRegion= regionesLyr.getLayers().length
+        }
+        if (currentRegion > 1 && currentRegion <= regionesLyr.getLayers().length){ // cycle to previous region
             regionesLyr._layers[currentRegion].fire('click');
             /*$(".icon-next .fas").removeClass("fa-reply");
             $(".icon-next .fas").addClass("fa-chevron-right");*/
