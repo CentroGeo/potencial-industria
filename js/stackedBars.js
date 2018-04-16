@@ -21,7 +21,6 @@ function stackedBarChart(){
         floatFormat = d3.format('.1f'),
         leftAxisFormat = '.2s',
         rightAxisFormat = '.0%',
-
         legend = false,
         //legend = {title: 'title', translateX: 100, translateY: 0, items:['item1','item2']}
         legendContainer = 'legendZone',
@@ -336,7 +335,7 @@ function stackedBarChart(){
                         .attr("x", width - 55)
                     // TODO: The start point must be calculated
                         .attr("y", function(d, i){return i * 20 + 60; })
-                        .attr("fill", function(d, i){ return lineColors(i);})
+                        .attr("fill", function(d, i){ return lineColors(i);});
 
                     barLegend.selectAll('text-line')
                         .data(lineVariables.reverse())
@@ -598,12 +597,11 @@ function stackedBarChart(){
         return chart;
     };
 
-        chart.barAxisYLabelPos = function(value) {
+    chart.barAxisYLabelPos = function(value) {
         if (!arguments.length) return barAxisYLabelPos;
         barAxisYLabelPos = value;
         return chart;
     };
-
 
     chart.lineAxisLabel = function(value) {
         if (!arguments.length) return lineAxisLabel;

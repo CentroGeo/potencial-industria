@@ -17,6 +17,18 @@
       </div>
       <div class="row" id="middle">
         <div class="col" id="mapdiv"></div>
+
+        <div class="buttonleft"> 
+          <a class="icon-previous float-left" role="button">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </a>
+        </div>
+        <div class="buttonright">
+          <a class="icon-next float-right" role="button">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </a>
+        </div>
+
         <div id="probe"></div>
         <div class="col" id="overlaydiv"> </div>
         <div class="col" id="story">
@@ -63,7 +75,6 @@
               </div>
             </div>
           </div>
-            
           <!-- end initial selection table -->
           <!-- start title and navigation table: initially hidden, shows on click-->
           <div id="graphs">
@@ -265,7 +276,9 @@
 
                                   <div class="bullet-section">
                                     <h5 class="bullet-title">Bullets gráfico izquierda</h5>
-                                        
+                                        <svg>
+                                            <g id="logroEBar-legendZone" class="legend"><text class="title" transform="translate(-70,0)" x="210" y="10" font-size="12px" fill="#737373">Educational Achievement</text><g id="logroEBar-barLegend" class="legend" height="100" width="200" transform="translate(-70,5)"><rect x="225" y="20" width="10" height="10" fill="#eb126f"></rect><rect x="225" y="40" width="10" height="10" fill="#8669aa"></rect><text x="240" y="20" font-size="11px" fill="#737373" dy=".75em" text-anchor="start">Pop with bachelor</text><text x="240" y="40" font-size="11px" fill="#737373" dy=".75em" text-anchor="start">Pop with grad</text><path d="m 225 65 l 10 0" stroke="rgb(235, 18, 111)"></path><path d="m 225 85 l 10 0" stroke="rgb(134, 105, 170)"></path><circle cx="230" cy="65" r="2.5" x="225" y="60" fill="rgb(235, 18, 111)"></circle><circle cx="230" cy="85" r="2.5" x="225" y="80" fill="rgb(134, 105, 170)"></circle><text x="240" y="60" font-size="11px" fill="#737373" dy=".75em" text-anchor="start">Percentage grad</text><text x="240" y="80" font-size="11px" fill="#737373" dy=".75em" text-anchor="start">Percentage bachelor</text></g></g>
+                                        </svg>
                                     <ul class="no-bullet">
                                       <li class="bullet-li">
                                         Lorem ipsum dolor sit amet.
@@ -330,7 +343,7 @@
                                 <div class="border-right col-6">
 
                                   <div class="chart-title text-center">
-                                    Knowledge-Intensive Activities
+                                    Labor markets
                                     <div id="ikaBar" class="overflow-hidden"></div>
                                   </div>
                                   
@@ -339,7 +352,9 @@
                                   
                                   <div class="bullet-section">
                                     <h5 class="bullet-title">Bullets gráfico izquierda</h5>
-                                        
+                                        <svg>
+                                            <g id="ikaBar-ikaBarLegend" class="legend"><g id="ikaBar-barLegend" class="legend" height="100" width="200" transform="translate(-70,5)"><rect x="195" y="20" width="10" height="10" fill="#8669aa"></rect><rect x="195" y="40" width="10" height="10" fill="#eb126f"></rect><text x="210" y="20" font-size="11px" fill="#737373" dy=".75em" text-anchor="start">Labor market size</text><text x="210" y="40" font-size="11px" fill="#737373" dy=".75em" text-anchor="start">IKAs market</text><path d="m 195 65 l 10 0" stroke="#e72230"></path><circle cx="200" cy="65" r="2.5" x="195" y="60" fill="#e72230"></circle><text x="210" y="60" font-size="11px" fill="#737373" dy=".75em" text-anchor="start">IKAs Percentage</text></g></g>
+                                        </svg>
                                     <ul class="no-bullet">
                                       <li class="bullet-li">
                                         Lorem ipsum dolor sit amet.
@@ -388,7 +403,7 @@
                                 <div class="col-6">
 
                                   <div class="chart-title text-center">
-                                    IKAs Specialization/Diversification Index by Region
+                                    Specialization Index by Region
                                     <div id="hhRegionBar" class="overflow-hidden"></div>
                                   </div>
 
@@ -404,7 +419,7 @@
                                 <div class="border-right col-6">
 
                                   <div class="chart-title text-center">
-                                    Specialization/Diversification Index by Activity
+                                    Specialization Index by Activity
                                     <div id="hhIkaBar" class="overflow-hidden"></div>
                                   </div>
                                   

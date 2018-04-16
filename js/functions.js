@@ -98,7 +98,7 @@ var southWest = L.latLng(3.95, -83),
 // map and base layer
 var map = L.map('mapdiv', {maxBounds:bounds, zoomControl: false, minZoom: 5, attributionControl: false}).setView([23.75, -101.9], 5);
 
-/*var overlay = new L.map('overlaydiv', {
+var overlay = new L.map('overlaydiv', {
     zoomControl: false,
     inertia: false,
     keyboard: false,
@@ -106,9 +106,9 @@ var map = L.map('mapdiv', {maxBounds:bounds, zoomControl: false, minZoom: 5, att
     scrollWheelZoom: true,
     attributionControl: false,
     zoomAnimation: true
-}).setView([23.75, -101.9], 5);*/
+}).setView([23.75, -101.9], 5);
 
-//L.control.attribution({position: 'bottomright'}).addTo(overlay);
+L.control.attribution({position: 'bottomright'}).addTo(overlay);
 
 var mapBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
@@ -116,14 +116,14 @@ var mapBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/da
     maxZoom: 19
 }).addTo(map);
 
-/*var overlayBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-    subdomains: 'abcd',
-    maxZoom: 19
+var overlayBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+	subdomains: 'abcd',
+	maxZoom: 19
 }).addTo(overlay);
 
 map.sync(overlay, {offsetFn: offsetGlobal});
-*/
+
 function offsetGlobal (center, zoom, refMap, tgtMap) {
     var refC = refMap.getContainer();
     var tgtC = tgtMap.getContainer();
@@ -229,10 +229,11 @@ q.defer(d3.json, "data/regiones.geojson")
                 .barAxisYLabelPos("-4em")
                 .barAxisLabel("Population")
                 .lineAxisLabel("Percentage")
-                .legend({title: 'Educational Achievement', translateX: -70, translateY: 0,
+                /*.legend({title: 'Educational Achievement', translateX: -70, translateY: 0,
                          itemsLine:["Percentage bachelor", "Percentage grad"],
-                         itemsBar: ["Pop with bachelor","Pop with grad"]})
+                         itemsBar: ["Pop with bachelor","Pop with grad"]})*/
                 .id("name");
+            
             logroEBar.data(getLogroEData());
                 d3.select("#logroEBar")
                 .call(logroEBar);
@@ -258,11 +259,20 @@ q.defer(d3.json, "data/regiones.geojson")
             ikaBar = barLineChart()
                 .width(250)
                 .height(250)
-                .margin({top: 10, right: 50, bottom: 110, left:60})
+                //.margin({top: 10, right: 50, bottom: 110, left:60})
+                .margin({top: 30, right: 50, bottom: 100, left:60})
                 .barsVariables(["Labor market size", "IKAs market"])
                 .barColor(d3.scaleOrdinal().range(colorArray).domain(["Labor market size", "IKAs market"]))
                 .lineVariables(["IKAs Percentage"])
                 .displayName("name")
+                .barAxisXLabelPos("-4.5em")
+                .barAxisYLabelPos("-2em")
+                .barAxisLabel("Population")
+                .lineAxisLabel("Percentage")
+                /*.legend({title: '', translateX: -70, translateY: 0,
+                         itemsLine:["IKAs Percentage"],
+                         itemsBar: ["Labor market size", "IKAs market"]})*/
+                .legendContainer('ikaBarLegend')
                 .id("name");
             
             ikaBar.data(getIkaData());
@@ -278,7 +288,9 @@ q.defer(d3.json, "data/regiones.geojson")
                 .displayName("region")
                 .id("id")
                 .axisFormat(d3.format('.0f'))
-                .highlightColor('#40ab4e');
+                .highlightColor('#40ab4e')
+                .xOffsetStart(-132)
+                .xOffsetEnd(48);
             
             hhRegionData = [];
             varsRegionHH.forEach(function(d) {
@@ -303,7 +315,9 @@ q.defer(d3.json, "data/regiones.geojson")
                 .barsVariable("index")
                 .barColor(d3.scaleOrdinal().range(colorArray).domain([1]))
                 .displayName("oic")
-                .id("id");
+                .id("id")
+                .xOffsetStart(-201976)
+                .xOffsetEnd(46613);
             
             hhIkaData = [];
             
@@ -372,6 +386,8 @@ function makercpis(){
                 regionesLyr=undefined;
             }
             if(cpisLayer==undefined){
+                $(".buttonleft").css('display', 'none');
+                $(".buttonright").css('display', 'none');
                 makeMapCpis(cpis)
                 map.flyTo([23.75, -101.9], 5, { duration: 1});
             }
@@ -392,6 +408,8 @@ function makerRegion(){
                 cpisLayer=undefined;
             }
             if(ciudadesLyr == undefined && regionesLyr == undefined){
+                $(".buttonleft").css('display', 'block');
+                $(".buttonright").css('display', 'block');
                 makeMap(regiones,ciudades);
                 map.flyTo([23.75, -101.9], 5, { duration: 1});
             }
@@ -505,7 +523,7 @@ function makerClick(event){
         setTimeout(function(){
            layer.bindPopup(showpopup(event,feature)).openPopup();
         },300)
-        map.flyTo(layer.getLatLng(), 13, { duration: 1});
+        map.flyTo(layer.getLatLng(), 8, { duration: 1});
         feature.properties.is_clicked = true;
 
     }else if(feature.properties.is_clicked == true){
@@ -595,6 +613,7 @@ function layerClick(event){
         
         Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
             element.style.backgroundImage = "url('/img/" + bullet_name + "')";
+            element.style.backgroundSize = "20px 20px";
         });
 
         var featBounds = feature.properties.bounds_calculated;
@@ -619,6 +638,7 @@ function layerClick(event){
 
         Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
             element.style.backgroundImage = "url('/img/default_bullet.png')";
+            element.style.backgroundSize = "20px 20px";
         });
     }
     map.once("moveend", function(){
@@ -654,6 +674,7 @@ $("#global").on('click', function(){
 
     Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
         element.style.backgroundImage = "url('/img/default_bullet.png')";
+        element.style.backgroundSize = "20px 20px";
     });
 });
 
@@ -703,7 +724,10 @@ $(".icon-previous").on('click', function(){
                 $(lastClickedLayer.getElement()).addClass("regionStyle");
         }
         currentRegion--;
-        if (currentRegion > 1 && currentRegion < regionesLyr.getLayers().length){ // cycle to previous region
+        if(currentRegion<0){
+            currentRegion= regionesLyr.getLayers().length
+        }
+        if (currentRegion > 1 && currentRegion <= regionesLyr.getLayers().length){ // cycle to previous region
             regionesLyr._layers[currentRegion].fire('click');
             /*$(".icon-next .fas").removeClass("fa-reply");
             $(".icon-next .fas").addClass("fa-chevron-right");*/
