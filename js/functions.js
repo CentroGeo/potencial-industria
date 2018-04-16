@@ -27,13 +27,13 @@ $(".topic-icon").on('click', function(){
             var topic_name = "Human Capital";
             break;
         case "imco":
-            var topic_name = "Bussinebility";
+            var topic_name = "Doing Bussiness";
             break;
         case "industry":
             var topic_name = "Industries";
             break;
         case "top5":
-            var topic_name = "Top 5";
+            var topic_name = "Consortiums";
             break;
         default:
             break;
