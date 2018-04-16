@@ -57,6 +57,7 @@ $(".topic-icon").on('click', function(){
 
 // Change carousel back to initial icons when on click
 $("#menu").on('click', function(){
+    makerRegion()
     $("#graphs").css('display', 'none'); 
     $("#choose").fadeIn( "slow", "linear" ); 
     $(".topic-icon").each(function(){
@@ -372,7 +373,7 @@ function makercpis(){
             }
             if(cpisLayer==undefined){
                 makeMapCpis(cpis)
-                map.flyTo([23.75, -101.9], 5);
+                map.flyTo([23.75, -101.9], 5, { duration: 1});
             }
         }
     })
@@ -392,7 +393,7 @@ function makerRegion(){
             }
             if(ciudadesLyr == undefined && regionesLyr == undefined){
                 makeMap(regiones,ciudades);
-                map.flyTo([23.75, -101.9], 5);
+                map.flyTo([23.75, -101.9], 5, { duration: 1});
             }
         }
     });
@@ -504,12 +505,12 @@ function makerClick(event){
         setTimeout(function(){
            layer.bindPopup(showpopup(event,feature)).openPopup();
         },300)
-        map.flyTo(layer.getLatLng(), 13);
+        map.flyTo(layer.getLatLng(), 13, { duration: 1});
         feature.properties.is_clicked = true;
 
     }else if(feature.properties.is_clicked == true){
         feature.properties.is_clicked = false;
-        map.flyTo([23.75, -101.9], 5);
+        map.flyTo([23.75, -101.9], 5, { duration: 1});
         
         setTimeout(function(){
             lastClickedMaker.closePopup();
@@ -648,7 +649,7 @@ $("#global").on('click', function(){
         });
     }else if(cpisLayer!=undefined){
         makercpis()
-        map.flyTo([23.75, -101.9], 5);
+        map.flyTo([23.75, -101.9], 5, { duration: 1});
     }
 
     Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
