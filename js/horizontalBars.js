@@ -31,21 +31,17 @@ function horizontalBarChart(){
 
         selection.each(function(){
             
-            x.domain([0, d3.max(data, function(d) { return d[barsVariable]; })]);
+            x.domain([d3.min(data, function(d) { return d[barsVariable]; })-132, d3.max(data, function(d) { return d[barsVariable]; })+48]);
             y.domain(data.map(function(d) { return d[displayName]; })).padding(0.1);
 
             g.append("g")
-                .attr("class", "axis--x")
+                .attr("class", "axisHBar--x")
        	        .attr("transform", "translate(0," + height + ")")
       	        .call(d3.axisBottom(x)
                       .ticks(5)
                       .tickFormat(axisFormat)
                       //.tickSizeInner([-height]));
                       );
-
-            g.append("g")
-                .attr("class", "axis--y")
-                .call(d3.axisLeft(y));
 
             g.selectAll(".bar")
                 .data(data)
@@ -68,6 +64,10 @@ function horizontalBarChart(){
                 })
                 .on("mouseout", function(d){ tooltip.style("display", "none");})*/;
 
+            g.append("g")
+                .attr("class", "axis--y")
+                .call(d3.axisLeft(y));
+                
             doHighlight = function(){
                 selection.selectAll(".horizontal-bar")
                     .each(function(){

@@ -325,7 +325,7 @@ img.grayscale:hover {
     font-size: 11px;
 }
 
-.axis--y path, .axis-right path, .axis-left path {
+.axis--y path, .axis-right path, .axis-left path, .axisHBar--x path {
     stroke: var(--main-text-color); 
 }
 
