@@ -229,10 +229,11 @@ q.defer(d3.json, "data/regiones.geojson")
                 .barAxisYLabelPos("-4em")
                 .barAxisLabel("Population")
                 .lineAxisLabel("Percentage")
-                .legend({title: 'Educational Achievement', translateX: -70, translateY: 0,
+                /*.legend({title: 'Educational Achievement', translateX: -70, translateY: 0,
                          itemsLine:["Percentage bachelor", "Percentage grad"],
-                         itemsBar: ["Pop with bachelor","Pop with grad"]})
+                         itemsBar: ["Pop with bachelor","Pop with grad"]})*/
                 .id("name");
+            
             logroEBar.data(getLogroEData());
                 d3.select("#logroEBar")
                 .call(logroEBar);
@@ -258,11 +259,20 @@ q.defer(d3.json, "data/regiones.geojson")
             ikaBar = barLineChart()
                 .width(250)
                 .height(250)
-                .margin({top: 10, right: 50, bottom: 110, left:60})
+                //.margin({top: 10, right: 50, bottom: 110, left:60})
+                .margin({top: 30, right: 50, bottom: 100, left:60})
                 .barsVariables(["Labor market size", "IKAs market"])
                 .barColor(d3.scaleOrdinal().range(colorArray).domain(["Labor market size", "IKAs market"]))
                 .lineVariables(["IKAs Percentage"])
                 .displayName("name")
+                .barAxisXLabelPos("-4.5em")
+                .barAxisYLabelPos("-2em")
+                .barAxisLabel("Population")
+                .lineAxisLabel("Percentage")
+                /*.legend({title: '', translateX: -70, translateY: 0,
+                         itemsLine:["IKAs Percentage"],
+                         itemsBar: ["Labor market size", "IKAs market"]})*/
+                .legendContainer('ikaBarLegend')
                 .id("name");
             
             ikaBar.data(getIkaData());
@@ -278,7 +288,9 @@ q.defer(d3.json, "data/regiones.geojson")
                 .displayName("region")
                 .id("id")
                 .axisFormat(d3.format('.0f'))
-                .highlightColor('#40ab4e');
+                .highlightColor('#40ab4e')
+                .xOffsetStart(-132)
+                .xOffsetEnd(48);
             
             hhRegionData = [];
             varsRegionHH.forEach(function(d) {
@@ -303,7 +315,9 @@ q.defer(d3.json, "data/regiones.geojson")
                 .barsVariable("index")
                 .barColor(d3.scaleOrdinal().range(colorArray).domain([1]))
                 .displayName("oic")
-                .id("id");
+                .id("id")
+                .xOffsetStart(-201976)
+                .xOffsetEnd(46613);
             
             hhIkaData = [];
             
@@ -599,6 +613,7 @@ function layerClick(event){
         
         Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
             element.style.backgroundImage = "url('/img/" + bullet_name + "')";
+            element.style.backgroundSize = "20px 20px";
         });
 
         var featBounds = feature.properties.bounds_calculated;
@@ -623,6 +638,7 @@ function layerClick(event){
 
         Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
             element.style.backgroundImage = "url('/img/default_bullet.png')";
+            element.style.backgroundSize = "20px 20px";
         });
     }
     map.once("moveend", function(){
@@ -658,6 +674,7 @@ $("#global").on('click', function(){
 
     Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
         element.style.backgroundImage = "url('/img/default_bullet.png')";
+        element.style.backgroundSize = "20px 20px";
     });
 });
 

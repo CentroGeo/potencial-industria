@@ -12,6 +12,8 @@ function horizontalBarChart(){
         axisFormat = d3.format('.1s'),
         legend = { title: '', translateX: 100, translateY: 0 },
         legendContainer = 'legendZone',
+        xOffsetStart = 0,
+        xOffsetEnd = 0,
         doHighlight,
         highlightValue,
         updateData;
@@ -31,7 +33,11 @@ function horizontalBarChart(){
 
         selection.each(function(){
             
-            x.domain([d3.min(data, function(d) { return d[barsVariable]; })-132, d3.max(data, function(d) { return d[barsVariable]; })+48]);
+            x.domain([d3.min(data, function(d){
+                        return d[barsVariable]; }) + xOffsetStart,
+                      d3.max(data, function(d) {
+                          return d[barsVariable]; }) + xOffsetEnd]
+            );
             y.domain(data.map(function(d) { return d[displayName]; })).padding(0.1);
 
             g.append("g")
@@ -112,13 +118,11 @@ function horizontalBarChart(){
         return chart;
     };
 
-    
     chart.displayName = function(value) {
         if (!arguments.length) return displayName;
         displayName = value;
         return chart;
     };
-
 
     chart.transitionTime = function(value) {
         if (!arguments.length) return transitionTime;
@@ -147,6 +151,18 @@ function horizontalBarChart(){
     chart.axisFormat = function(value) {
         if (!arguments.length) return axisFormat;
         axisFormat = value;
+        return chart;
+    };
+    
+    chart.xOffsetStart = function(value) {
+        if (!arguments.length) return xOffsetStart;
+        xOffsetStart = value;
+        return chart;
+    };
+    
+    chart.xOffsetEnd = function(value) {
+        if (!arguments.length) return xOffsetEnd;
+        xOffsetEnd = value;
         return chart;
     };
 
