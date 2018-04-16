@@ -278,7 +278,9 @@ q.defer(d3.json, "data/regiones.geojson")
                 .displayName("region")
                 .id("id")
                 .axisFormat(d3.format('.0f'))
-                .highlightColor('#40ab4e');
+                .highlightColor('#40ab4e')
+                .xOffsetStart(-132)
+                .xOffsetEnd(48);
             
             hhRegionData = [];
             varsRegionHH.forEach(function(d) {
@@ -303,7 +305,9 @@ q.defer(d3.json, "data/regiones.geojson")
                 .barsVariable("index")
                 .barColor(d3.scaleOrdinal().range(colorArray).domain([1]))
                 .displayName("oic")
-                .id("id");
+                .id("id")
+                .xOffsetStart(-201976)
+                .xOffsetEnd(46613);
             
             hhIkaData = [];
             
