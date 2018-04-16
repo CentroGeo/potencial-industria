@@ -98,7 +98,7 @@ var southWest = L.latLng(3.95, -83),
 // map and base layer
 var map = L.map('mapdiv', {maxBounds:bounds, zoomControl: false, minZoom: 5, attributionControl: false}).setView([23.75, -101.9], 5);
 
-/*var overlay = new L.map('overlaydiv', {
+var overlay = new L.map('overlaydiv', {
     zoomControl: false,
     inertia: false,
     keyboard: false,
@@ -106,9 +106,9 @@ var map = L.map('mapdiv', {maxBounds:bounds, zoomControl: false, minZoom: 5, att
     scrollWheelZoom: true,
     attributionControl: false,
     zoomAnimation: true
-}).setView([23.75, -101.9], 5);*/
+}).setView([23.75, -101.9], 5);
 
-//L.control.attribution({position: 'bottomright'}).addTo(overlay);
+L.control.attribution({position: 'bottomright'}).addTo(overlay);
 
 var mapBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
@@ -116,14 +116,14 @@ var mapBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/da
 	maxZoom: 19
 }).addTo(map);
 
-/*var overlayBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+var overlayBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
 	subdomains: 'abcd',
 	maxZoom: 19
 }).addTo(overlay);
 
 map.sync(overlay, {offsetFn: offsetGlobal});
-*/
+
 function offsetGlobal (center, zoom, refMap, tgtMap) {
     var refC = refMap.getContainer();
     var tgtC = tgtMap.getContainer();
