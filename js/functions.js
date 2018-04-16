@@ -233,6 +233,7 @@ q.defer(d3.json, "data/regiones.geojson")
                          itemsLine:["Percentage bachelor", "Percentage grad"],
                          itemsBar: ["Pop with bachelor","Pop with grad"]})
                 .id("name");
+            
             logroEBar.data(getLogroEData());
                 d3.select("#logroEBar")
                 .call(logroEBar);
@@ -258,11 +259,19 @@ q.defer(d3.json, "data/regiones.geojson")
             ikaBar = barLineChart()
                 .width(250)
                 .height(250)
-                .margin({top: 10, right: 50, bottom: 110, left:60})
+                //.margin({top: 10, right: 50, bottom: 110, left:60})
+                .margin({top: 30, right: 50, bottom: 100, left:60})
                 .barsVariables(["Labor market size", "IKAs market"])
                 .barColor(d3.scaleOrdinal().range(colorArray).domain(["Labor market size", "IKAs market"]))
                 .lineVariables(["IKAs Percentage"])
                 .displayName("name")
+                .barAxisXLabelPos("-4.5em")
+                .barAxisYLabelPos("-2em")
+                .barAxisLabel("Population")
+                .lineAxisLabel("Percentage")/*
+                .legend({title: '', translateX: -70, translateY: 0,
+                         itemsLine:["% of Intensive Knowledge Activities"],
+                         itemsBar: ["Labor market size","Intensive Knowledge market size"]})*/
                 .id("name");
             
             ikaBar.data(getIkaData());

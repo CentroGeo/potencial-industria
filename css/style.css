@@ -329,7 +329,7 @@ img.grayscale:hover {
     stroke: var(--main-text-color); 
 }
 
-.axis--y text, .axis-right text {
+.axis--y text, .axis-right text, .axis-left text {
     fill: var(--main-text-color); 
 }
  

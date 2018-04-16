@@ -38,7 +38,6 @@ function horizontalBarChart(){
                       d3.max(data, function(d) {
                           return d[barsVariable]; }) + xOffsetEnd]
             );
-            console.log(x.domain())
             y.domain(data.map(function(d) { return d[displayName]; })).padding(0.1);
 
             g.append("g")
@@ -119,13 +118,11 @@ function horizontalBarChart(){
         return chart;
     };
 
-    
     chart.displayName = function(value) {
         if (!arguments.length) return displayName;
         displayName = value;
         return chart;
     };
-
 
     chart.transitionTime = function(value) {
         if (!arguments.length) return transitionTime;

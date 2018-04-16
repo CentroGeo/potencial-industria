@@ -12,6 +12,10 @@ function barLineChart(){
         barColor = d3.scaleOrdinal(d3.schemeCategory10), //bar Color function
         lineColor = "#e72230",
         pointColor = "#e72230",
+        barAxisLabel = "",
+        lineAxisLabel = "",
+        barAxisXLabelPos = "-2em",
+        barAxisYLabelPos = "-2em",
         leftAxisFormat = '.2s',
         rightAxisFormat = '.0%',
         legend = { title: '', translateX: 100, translateY: 0 },
@@ -136,13 +140,27 @@ function barLineChart(){
             // Add the Y0 Axis
             g.append("g")
                 .attr("class", "axis-left axisSteelBlue")
-                .call(leftAxis);
+                .call(leftAxis)
+                .append("text")
+                .attr("x", 2)
+                .attr("y", yBar(yBar.ticks().pop()))
+                .attr("dy", barAxisYLabelPos)
+                .attr("dx", barAxisXLabelPos)
+                .attr("text-anchor", "start")
+                .text(barAxisLabel);
 
             // Add the Y1 Axis
             g.append("g")
                 .attr("class", "axis-right axisRed")
                 .attr("transform", "translate( " + width + ", 0 )")
-                .call(rightAxis);
+                .call(rightAxis)
+                .append("text")
+                .attr("x", 2)
+                .attr("y", yLine(yLine.ticks().pop()))
+                .attr("dy", "-2em")
+                .attr("dx", "-2em")
+                .attr("text-anchor", "start")
+                .text(lineAxisLabel);
 
             updateData = function(){
                 // Scale the range of the data
@@ -362,6 +380,30 @@ function barLineChart(){
     chart.transitionTime = function(value) {
         if (!arguments.length) return transitionTime;
         transitionTime = value;
+        return chart;
+    };
+    
+    chart.barAxisLabel = function(value) {
+        if (!arguments.length) return barAxisLabel;
+        barAxisLabel = value;
+        return chart;
+    };
+
+    chart.barAxisXLabelPos = function(value) {
+        if (!arguments.length) return barAxisXLabelPos;
+        barAxisXLabelPos = value;
+        return chart;
+    };
+
+    chart.barAxisYLabelPos = function(value) {
+        if (!arguments.length) return barAxisYLabelPos;
+        barAxisYLabelPos = value;
+        return chart;
+    };
+
+    chart.lineAxisLabel = function(value) {
+        if (!arguments.length) return lineAxisLabel;
+        lineAxisLabel = value;
         return chart;
     };
 

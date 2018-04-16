@@ -598,12 +598,11 @@ function stackedBarChart(){
         return chart;
     };
 
-        chart.barAxisYLabelPos = function(value) {
+    chart.barAxisYLabelPos = function(value) {
         if (!arguments.length) return barAxisYLabelPos;
         barAxisYLabelPos = value;
         return chart;
     };
-
 
     chart.lineAxisLabel = function(value) {
         if (!arguments.length) return lineAxisLabel;
