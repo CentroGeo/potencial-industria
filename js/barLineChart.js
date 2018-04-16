@@ -65,6 +65,10 @@ function barLineChart(){
                 .attr("transform", "translate(" + margin.right + "," +
                        margin.top + ")");
 
+            // legend container variable
+            var legendContainerId = this.id + "-" + legendContainer,
+                barLegendId = this.id + "-barLegend";
+                       
             // Draw bars
             var rect = g.selectAll("g")
                 .data(data, function(d){ return d[id]; })
@@ -161,6 +165,98 @@ function barLineChart(){
                 .attr("dx", "-2em")
                 .attr("text-anchor", "start")
                 .text(lineAxisLabel);
+                
+            // Draw legend box and items
+            if (legend !== false & typeof legend === "object") {
+                var legendZone = svg.append('g')
+                                .attr("id", legendContainerId)
+                                .attr("class", "legend");
+                
+                if (legend.title) {
+                    var title = legendZone.append("text")
+                        .attr("class", "title")
+                        .attr('transform',
+                                  `translate(${legend.translateX},${legend.translateY})`)
+                        .attr("x", width - 70)
+                        .attr("y", 10)
+                        .attr("font-size", "12px")
+                        .attr("fill", "#737373")
+                        .text(legend.title);
+                }
+                
+                var barLegend = legendZone.append("g")
+                    .attr("id", barLegendId)
+                    .attr("class", "legend")
+                    .attr("height", 100)
+                    .attr("width", 200)
+                    .attr('transform',
+                          `translate(${legend.translateX},${legend.translateY + 5})`);
+                
+                // Create rectangles markers
+                barLegend.selectAll('rect')
+                    .data(legend.itemsBar.reverse())
+                    .enter()
+                    .append("rect")
+                    .attr("x", width - 55)
+                    .attr("y", function(d, i){return i * 20 + 20; })
+                    .attr("width", 10)
+                    .attr("height", 10)
+                    .attr("fill", function(d, i){ return barColor(d);})
+                
+                // Create labels
+                barLegend.selectAll('text')
+                    .data(legend.itemsBar.reverse())
+                    .enter()
+                    .append("text")
+                    .attr("x", width - 40)
+                    .attr("y", function(d, i){return i * 20 + 20; })
+                    .attr("font-size", "11px")
+                    .attr("fill", "#737373")
+                    .attr("dy", ".75em")
+                    .attr("text-anchor", "start")
+                    .text(function(d) { return d; });
+                    
+                if (lineVariables != null){
+                    
+                    barLegend.selectAll('line')
+                        .data(legend.itemsLine.reverse())
+                        .enter()
+                        .append("path")
+                        .attr("d", function(d,i){
+                            return "m " + (width - 55) + " " + (i * 20 + 65) +
+                                " l 10 0"
+                        })
+                        .attr("stroke", lineColor);
+                    
+                    barLegend.selectAll("circle")
+                    .data(legend.itemsLine.reverse())
+                        .enter()
+                        .append("circle")
+                        .attr("cx", function(d,i){
+                            return (width -50);
+                        })
+                        .attr("cy", function(d,i){
+                            return (i * 20 + 65);
+                        })
+                        .attr("r", 2.5)
+                        .attr("x", width - 55)
+                    // TODO: The start point must be calculated
+                        .attr("y", function(d, i){return i * 20 + 60; })
+                        .attr("fill", lineColor);
+
+                    barLegend.selectAll('text-line')
+                        .data(lineVariables.reverse())
+                        .enter()
+                        .append("text")
+                        .attr("x", width - 40)
+                        .attr("y", function(d, i){return i * 20 + 60; })
+                        .attr("font-size", "11px")
+                        .attr("fill", "#737373")
+                        .attr("dy", ".75em")
+                        .attr("text-anchor", "start")
+                        .text(function(d) { return d; });
+                }
+            }
 
             updateData = function(){
                 // Scale the range of the data

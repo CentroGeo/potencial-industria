@@ -268,10 +268,11 @@ q.defer(d3.json, "data/regiones.geojson")
                 .barAxisXLabelPos("-4.5em")
                 .barAxisYLabelPos("-2em")
                 .barAxisLabel("Population")
-                .lineAxisLabel("Percentage")/*
+                .lineAxisLabel("Percentage")
                 .legend({title: '', translateX: -70, translateY: 0,
-                         itemsLine:["% of Intensive Knowledge Activities"],
-                         itemsBar: ["Labor market size","Intensive Knowledge market size"]})*/
+                         itemsLine:["IKAs Percentage"],
+                         itemsBar: ["Labor market size", "IKAs market"]})
+                .legendContainer('ikaBarLegend')
                 .id("name");
             
             ikaBar.data(getIkaData());
