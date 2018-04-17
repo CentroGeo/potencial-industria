@@ -448,7 +448,40 @@ li.bullet-conacyt {
 }
 
 .popups{
+    height: 220px;
+    overflow-y: scroll;
+    overflow-y: auto;
     font-size: 12px;
     margin-top: 10px;
     font-family: 'DINMedium';
+}
+
+.scroll_style_activate::-webkit-scrollbar-track
+{
+  border-radius: 20px;
+}
+
+.scroll_style_activate::-webkit-scrollbar
+{
+  background-color: #ffffff;
+  border-radius: 20px;
+  width: 10px;
+}
+
+.scroll_style_activate::-webkit-scrollbar-thumb
+{
+  background-color: #A6A6A6;
+  border: 2px solid #ffffff;
+  border-radius: 10px;
+}
+
+.PopupContainer .leaflet-popup-content-wrapper{
+  background: white;
+  opacity: 0.9;
+}
+
+.PopupContainer .leaflet-popup-content{
+  /*margin: 0;*/
+  margin-left: 20px;
+  margin-right: 5px;
 }
