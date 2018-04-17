@@ -211,6 +211,7 @@ q.defer(d3.json, "data/regiones.geojson")
                          itemsBar:['Highway','Railroad']})
                 .legendContainer('connectivityLegend')
                 .transitionTime(500)
+                .line(true)
                 .id("id");
             
             connectivityBar.data(getBarData());

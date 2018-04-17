@@ -22,6 +22,7 @@ function stackedBarChart(){
         leftAxisFormat = '.2s',
         rightAxisFormat = '.0%',
         legend = false,
+        line = false,
         //legend = {title: 'title', translateX: 100, translateY: 0, items:['item1','item2']}
         legendContainer = 'legendZone',
         updateData;
@@ -244,7 +245,7 @@ function stackedBarChart(){
                             return pointColors(i)
                         })
                         .style("stroke-width", 3)
-  		        .style("fill", "none")
+                        .style("fill", "none")
                         .attr("cx", function(d){
                             return xLine(d[displayName]);
                         })
@@ -350,6 +351,29 @@ function stackedBarChart(){
                         .text(function(d) { return d; });
                 }
             }
+            
+            if (line){
+                avgLineData = stackedData.filter(function(el){
+                        return el.id == "-1";
+                    });
+                
+                var avgLine = svg.append('g')
+                                .attr("id", "avgLines");
+                
+                avgLine.selectAll("path")
+                .data(avgLineData, function(d){return d.id;})
+                .enter()
+                .selectAll("path")
+                .data(function(d){ return d.stacks;}, function(d){return d.id;})
+                .enter()
+                .append("path")
+                .attr("class", "avg-line")
+                .style("stroke", "#fff")
+                .attr("fill", "none")
+                .attr("d", function(d){ return "m 0 " + yBar(d.end) + 
+                        "l " + (xBar(d.name) + xBar.bandwidth()) + " 0";
+                });
+            }
 
             updateData = function(){
                 var stackedData = getStackedBarData(data, stackVariables);
@@ -358,7 +382,7 @@ function stackedBarChart(){
                 yBar.domain(getyDomain(stackedData));
 
                 var barsUpdate = selection.select(".bars").selectAll(".stack")
-                    .data(stackedData, function(d){return d.id;}),
+                        .data(stackedData, function(d){return d.id;}),
                     xAxisUpdate = selection.select(".axis--x"),
                     yAxisUpdate = selection.select(".axis--y");
 
@@ -486,7 +510,7 @@ function stackedBarChart(){
                                 return pointColors(i)
                             })
                             .style("stroke-width", 3)
-  		            .style("fill", "none")
+                            .style("fill", "none")
                             .attr("cx", function(d){
                                 return xLine(d[displayName]);
                             })
@@ -499,6 +523,14 @@ function stackedBarChart(){
                         
                         points.exit().transition(transitionTime).remove();                 
                         
+                    });
+                }
+                
+                if (line){
+                    selection.select("#avgLines").selectAll(".avg-line")
+                    .transition(transitionTime)
+                    .attr("d", function(d){ return "m 0 " + yBar(d.end) + 
+                            "l " + (xBar(d.name) + xBar.bandwidth()) + " 0";
                     });
                 }
             }
@@ -552,6 +584,12 @@ function stackedBarChart(){
     chart.legendContainer = function(value) {
         if (!arguments.length) return legendContainer;
         legendContainer = value;
+        return chart;
+    };
+
+    chart.line = function(value) {
+        if (!arguments.length) return line;
+        line = value;
         return chart;
     };
     
