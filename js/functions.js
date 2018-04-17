@@ -91,8 +91,8 @@ var colorArray = ["#eb126f","#8669aa","#e72230","#40ab4e","#b0358f",
 var regionColors = d3.scaleOrdinal().range(colorArray).domain([3,1,2,6,7,4,5]);
 
 //limites del mapa
-var southWest = L.latLng(3.95, -83),
-    northEast = L.latLng(40.00, -120.67),
+var southWest = L.latLng(3.95, -80),
+    northEast = L.latLng(40.00, -124.67),
     bounds = L.latLngBounds(southWest, northEast);
 
 // map and base layer
@@ -122,6 +122,7 @@ var overlayBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.ne
 	maxZoom: 19
 }).addTo(overlay);
 
+//$('.leaflet-control-attribution').hide() //oculta la atribucion de leaflet
 map.sync(overlay, {offsetFn: offsetGlobal});
 
 function offsetGlobal (center, zoom, refMap, tgtMap) {
@@ -476,13 +477,14 @@ function onEachFeatureRegiones(feature, layer){
 
 function showpopup(e,f){
     var topics = f.properties.topics.split(";");
-    topicsText = "<ul>";
+    topicsText = "<ul style='padding: 0 0 0 10px;'>";
     topics.forEach(function(t){
-        topicsText += "<li>" + t + "</li>";
+        topicsText += "<li class='bullet-conacyt'>" + t + "</li><br>";
     });
     topicsText += "</ul>";
-    var Text = f.properties.name + "<br/>" + f.properties.shortname + "<br/>Area: " + 
-                    f.properties.area + "<br/>Research lines:<br/>" + topicsText;
+    var Text = "<div class ='popups'>" + f.properties.name + "<br/>" + f.properties.shortname + "<br/>Area: " + 
+                    f.properties.area + "<br/>Research lines:<br/><br/>" + topicsText;
+                "</div>"
     return Text;
 }
 
@@ -669,6 +671,10 @@ $("#global").on('click', function(){
         });
     }else if(cpisLayer!=undefined){
         makercpis()
+        lastClickedMaker.feature.properties.is_clicked = false;
+        setTimeout(function(){
+            lastClickedMaker.closePopup();
+        },300)
         map.flyTo([23.75, -101.9], 5, { duration: 1});
     }
 

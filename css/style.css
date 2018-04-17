@@ -309,13 +309,13 @@ img.grayscale:hover {
 .bar-avg {
     /*stroke: blue;*/
 }
-.bar-avg:hover {
+/*.bar-avg:hover {
     fill: brown;
 }
 
 .bar:hover {
   fill: brown;
-}
+}*/
 
 .tick text {
     fill: var(--main-text-color);
@@ -445,4 +445,10 @@ li.bullet-conacyt {
     left: 49%;
     top: 180px;
     z-index: 2;
+}
+
+.popups{
+    font-size: 12px;
+    margin-top: 10px;
+    font-family: 'DINMedium';
 }
