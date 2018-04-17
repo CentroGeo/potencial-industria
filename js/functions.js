@@ -24,7 +24,7 @@ $(".topic-icon").on('click', function(){
                 var topic_name = "Connectivity";
                 break;
             case "ch":
-                var topic_name = "Human Capital";
+                var topic_name = "Skills and Talent";
                 break;
             case "business":
                 var topic_name = "Doing Business";
@@ -51,6 +51,11 @@ $(".topic-icon").on('click', function(){
         }else{
             makerRegion()
         }
+        
+        // if on Skills and Talent topic, display market regions
+        if (topic_name === "Skills and Talent") {
+            mercadosLyr.addTo(map);
+        }
     
         $("#choose").css('display', 'none'); 
         $("#graphs").fadeIn("slow", "linear");
@@ -69,6 +74,7 @@ $("#menu").on('click', function(){
         var topic = "#" + parentContainer.split("-")[0] + "_carouselContent";
         $(topic).css("display", "none");
     });
+    if (map.hasLayer(mercadosLyr)) mercadosLyr.removeFrom(map);
 });
 
 // Setup stuff for the bar chart
@@ -162,6 +168,7 @@ var q = d3.queue();
 q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.json, "data/ciudades.geojson")
     .defer(d3.json, "data/cpis_en.geojson")
+    .defer(d3.json, "data/mercados_trabajo.geojson")
     .defer(d3.csv, "data/variables-potencial-industrial.csv")
     .defer(d3.csv, "data/capital-humano-zonas.csv")
     .defer(d3.csv, "data/logroeducativo.csv")
@@ -169,7 +176,7 @@ q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.csv, "data/hh_region.csv")
     .defer(d3.csv, "data/hh_ika.csv")
     
-    .await(function(error, regiones, ciudades, cpis, variables,
+    .await(function(error, regiones, ciudades, cpis, mercados, variables,
                     varsChZonas, varsLogroE, varsIKA, varsRegionHH, varsIkaHH) {
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
@@ -195,7 +202,7 @@ q.defer(d3.json, "data/regiones.geojson")
             regionNames = getZonesNames(varsChZonas);
 
             // Make map
-            makeMap(regiones, ciudades);
+            makeMap(regiones, ciudades, mercados);
             
             // Connectivity charts
             connectivityBar = stackedBarChart()
@@ -366,7 +373,8 @@ var currentRegion = 0,
     lastClickedMaker = null, //new
     regionesLyr,
     ciudadesLyr,
-    cpisLayer;
+    cpisLayer,
+    mercadosLyr;
 
 var sede_icon = L.icon({
    "iconUrl": "/img/icon_rdi.png",
@@ -438,7 +446,7 @@ function makeMapCpis(cpis){
     }).addTo(map)
 }
 
-function makeMap(regiones, ciudades){  
+function makeMap(regiones, ciudades, mercados){  // mercados is an optional parameter
     ciudadesLyr = L.geoJSON([ciudades], {
         style: function(feature){
             return {
@@ -462,6 +470,23 @@ function makeMap(regiones, ciudades){
                },
         onEachFeature: onEachFeatureRegiones
     }).addTo(map);
+    
+    mercados = mercados || null;
+    if (mercados != null){
+        mercadosLyr = L.geoJSON([mercados], {
+            style: function(feature){
+                return {
+                    weight: 4,
+                    color: "#aaa",
+                    opacity: 1,
+                    //fillOpacity: 0.8,
+                    //fillColor: regionColors(swap(idToName)[feature.properties.zona])
+                    //fillColor: 'red'
+                };
+            },
+            interactive: false
+        });
+    }
 };
 
 /*new*/
