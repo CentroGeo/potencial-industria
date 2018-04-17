@@ -472,16 +472,18 @@ function makeMap(regiones, ciudades, mercados){  // mercados is an optional para
     }).addTo(map);
     
     mercados = mercados || null;
+    var mercadosColor = d3.scaleOrdinal()
+        .range(["#8dd3c7", "#ffffb3", "#bebada"])
+        .domain(["Primario", "Secundario", "Terciario"]);
     if (mercados != null){
         mercadosLyr = L.geoJSON([mercados], {
             style: function(feature){
                 return {
-                    weight: 4,
+                    weight: 3,
                     color: "#aaa",
                     opacity: 1,
-                    //fillOpacity: 0.8,
-                    //fillColor: regionColors(swap(idToName)[feature.properties.zona])
-                    //fillColor: 'red'
+                    fillOpacity: 1,
+                    fillColor: mercadosColor(feature.properties.mercado)
                 };
             },
             interactive: false
@@ -589,6 +591,12 @@ function layerClick(event){
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
         ciudadesLyr.eachLayer(function(l){
             if (l.feature.properties.zona != idToName[currentRegion]){
+                l.setStyle(noStyle);
+            } 
+        });
+        mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
+        mercadosLyr.eachLayer(function(l){
+            if (l.feature.properties.region != idToName[currentRegion]){
                 l.setStyle(noStyle);
             } 
         });
