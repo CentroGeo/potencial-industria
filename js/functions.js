@@ -514,8 +514,15 @@ function showpopup(e,f){
         topicsText += "<li class='bullet-conacyt'>" + t + "</li><br>";
     });
     topicsText += "</ul>";
-    var Text = "<div class ='popups scroll_style_activate'>" + f.properties.name + "<br/>" + f.properties.shortname + "<br/>Area: " + 
-                    f.properties.area + "<br/>Research lines:<br/><br/>" + topicsText;
+    var Text = "<div class ='popups scroll_style_activate'>" + 
+                f.properties.name + "<br/>" + 
+                f.properties.shortname + 
+                "<br/>Area: " + f.properties.area + 
+                "<br/>Research lines:<br/><br/>" + topicsText +
+                "Address:<br/>" + f.properties.address +
+                "<br/>Contact: " + f.properties.contact +
+                "<br/>Email: " + f.properties.email +
+                "<br/>Webpage: <a href='" + f.properties.url +"'>"+f.properties.url+"</a>";
                 "</div>"
     return Text;
 }
