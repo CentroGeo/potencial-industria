@@ -529,7 +529,7 @@ function stackedBarChart(){
                 if (line){
                     selection.select("#avgLines").selectAll(".avg-line")
                     .transition(transitionTime)
-                    .attr("d", function(d){ console.log(d); return "m 0 " + yBar(d.end) + 
+                    .attr("d", function(d){ return "m 0 " + yBar(d.end) + 
                             "l " + (xBar(d.name) + xBar.bandwidth()) + " 0";
                     });
                 }
