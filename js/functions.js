@@ -368,13 +368,13 @@ var currentRegion = 0,
     cpisLayer;
 
 var sede_icon = L.icon({
-   "iconUrl": "/img/icon_sede.png",
+   "iconUrl": "/img/icon_rdi.png",
    "iconSize": [20,20],
 });
 
 var nosede_icon = L.icon({
-   "iconUrl": "/img/icon_nosede.png",
-   "iconSize": [20,20]
+   "iconUrl": "/img/icon_rdi.png",
+   "iconSize": [10,10]
 });
 
 function makercpis(){
