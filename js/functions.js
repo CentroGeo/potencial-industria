@@ -95,8 +95,8 @@ var colorArray = ["#eb126f","#8669aa","#e72230","#40ab4e","#b0358f",
 var regionColors = d3.scaleOrdinal().range(colorArray).domain([3,1,2,6,7,4,5]);
 
 //limites del mapa
-var southWest = L.latLng(3.95, -80),
-    northEast = L.latLng(40.00, -124.67),
+var southWest = L.latLng(3.95, -74),
+    northEast = L.latLng(40.00, -125.67),
     bounds = L.latLngBounds(southWest, northEast);
 
 // map and base layer
@@ -486,7 +486,7 @@ function showpopup(e,f){
         topicsText += "<li class='bullet-conacyt'>" + t + "</li><br>";
     });
     topicsText += "</ul>";
-    var Text = "<div class ='popups'>" + f.properties.name + "<br/>" + f.properties.shortname + "<br/>Area: " + 
+    var Text = "<div class ='popups scroll_style_activate'>" + f.properties.name + "<br/>" + f.properties.shortname + "<br/>Area: " + 
                     f.properties.area + "<br/>Research lines:<br/><br/>" + topicsText;
                 "</div>"
     return Text;
@@ -526,10 +526,10 @@ function makerClick(event){
         }
         lastClickedMaker = layer;
         
+        map.flyTo(layer.getLatLng(), 7, { duration: 1});
         setTimeout(function(){
-           layer.bindPopup(showpopup(event,feature)).openPopup();
+           layer.bindPopup(showpopup(event,feature),{closeButton: false,className: 'PopupContainer'}).openPopup();
         },300)
-        map.flyTo(layer.getLatLng(), 8, { duration: 1});
         feature.properties.is_clicked = true;
 
     }else if(feature.properties.is_clicked == true){
