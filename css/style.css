@@ -89,7 +89,7 @@ body.fade-out {
 
 #graphs, #connectivity_carouselContent, 
 #ch_carouselContent, #business_carouselContent,
-#industrie_carouselContent, #conacyt_carouselContent {
+#industries_carouselContent, #conacyt_carouselContent {
     display: none;
 }
 
