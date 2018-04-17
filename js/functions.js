@@ -19,34 +19,38 @@ $(".topic-icon").on('click', function(){
             }
         });
 
-    switch(parentContainer.split("-")[0]) {
-        case "connectivity":
-            var topic_name = "Connectivity";
-            break;
-        case "ch":
-            var topic_name = "Human Capital";
-            break;
-        case "business":
-            var topic_name = "Doing Business";
-            break;
-        case "industrie":
-            var topic_name = "Industries";
-            break;
-        case "conacyt":
-            var topic_name = "Conacyt";
-            break;
-        default:
-            break;
-    }
+        switch(parentContainer.split("-")[0]) {
+            case "connectivity":
+                var topic_name = "Connectivity";
+                break;
+            case "ch":
+                var topic_name = "Human Capital";
+                break;
+            case "business":
+                var topic_name = "Doing Business";
+                break;
+            case "industries":
+                var topic_name = "Industries";
+                break;
+            case "conacyt":
+                var topic_name = "Conacyt";
+                break;
+            default:
+                break;
+        }
 
-    $("#topic").html(topic_name + ":");
+        $("#topic").html(topic_name + ":");
+        if (topic_name === "Conacyt") {
+            $("#title").html("Mexico");
+            changeBullets("default_bullet");
+        }
 
-    //parentContainer de los markers
-    if(parentContainer=="conacyt-div"){
-        makercpis()
-    }else{
-        makerRegion()
-    }
+        //parentContainer de los markers
+        if(parentContainer=="conacyt-div"){
+            makercpis()
+        }else{
+            makerRegion()
+        }
     
         $("#choose").css('display', 'none'); 
         $("#graphs").fadeIn("slow", "linear");
@@ -586,35 +590,32 @@ function layerClick(event){
 
         switch(zone) {
             case "Megalopolis":
-                var bullet_name = "megalopolis_bullet.png";
+                var bullet_name = "megalopolis_bullet";
                 break;
             case "Northeast":
-                var bullet_name = "northeast_bullet.png";
+                var bullet_name = "northeast_bullet";
                 break;
             case "Center-west":
-                var bullet_name = "centerwest_bullet.png";
+                var bullet_name = "centerwest_bullet";
                 break;
             case "Center-north":
-                var bullet_name = "centernorth_bullet.png";
+                var bullet_name = "centernorth_bullet";
                 break;
             case "Yucatán peninsula":
-                var bullet_name = "yucatan_bullet.png";
+                var bullet_name = "yucatan_bullet";
                 break;
             case "Northwest":
-                var bullet_name = "northwest_bullet.png";
+                var bullet_name = "northwest_bullet";
                 break;
             case "Gulf-east":
-                var bullet_name = "gulfeast_bullet.png";
+                var bullet_name = "gulfeast_bullet";
                 break;
             default:
-                var bullet_name = "default_bullet.png";
+                var bullet_name = "default_bullet";
                 break;
         }
-        
-        Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
-            element.style.backgroundImage = "url('/img/" + bullet_name + "')";
-            element.style.backgroundSize = "20px 20px";
-        });
+
+        changeBullets(bullet_name);
 
         var featBounds = feature.properties.bounds_calculated;
         map.flyToBounds(featBounds);
@@ -636,13 +637,17 @@ function layerClick(event){
         $(".icon-previous").addClass("text-muted");
         $(".icon-previous").addClass("icon-disabled");
 
-        Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
-            element.style.backgroundImage = "url('/img/default_bullet.png')";
-            element.style.backgroundSize = "20px 20px";
-        });
+        changeBullets("default_bullet");
     }
     map.once("moveend", function(){
         updateChartData();
+    });
+}
+
+function changeBullets (bullet) {
+    Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
+        element.style.backgroundImage = "url('/img/" + bullet + ".png')";
+        element.style.backgroundSize = "20px 20px";
     });
 }
 
@@ -672,10 +677,7 @@ $("#global").on('click', function(){
         map.flyTo([23.75, -101.9], 5, { duration: 1});
     }
 
-    Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
-        element.style.backgroundImage = "url('/img/default_bullet.png')";
-        element.style.backgroundSize = "20px 20px";
-    });
+    changeBullets("default_bullet");
 });
 
 $(".icon-next").on('click', function(){
@@ -712,6 +714,8 @@ $(".icon-next").on('click', function(){
             map.once("moveend", function(){
                 updateChartData();
             });
+
+            changeBullets("default_bullet");
         }
     }
 });
@@ -751,6 +755,8 @@ $(".icon-previous").on('click', function(){
             map.once("moveend", function(){
                 updateChartData();
             });
+
+            changeBullets("default_bullet");
         }
     }
 });
