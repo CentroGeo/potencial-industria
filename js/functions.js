@@ -52,6 +52,7 @@ $(".topic-icon").on('click', function(){
             $("#consortium-contact").html('');
             $("#consortium-centers").html('');
             $("[class^=consortium]").removeClass("selectedConsortium");
+            //TODO: remove colored centers from map
         }else{
             makerRegion();
         }
@@ -422,32 +423,42 @@ $("[class^=consortium]").on('click', function(){
     var currenTopic = this.className.split("-")[1];
     $("[class^=consortium]").removeClass("selectedConsortium");
     $('.'+this.className).addClass("selectedConsortium");
-    //var currenTopic = this.className.split("-")[1];
     
     var consortiumLines = consortiaData[currenTopic].lines.split(";");
-    var linesText = "<ul style='padding: 0 0 0 0px;'>";
+    var linesText = "<ul>";
     consortiumLines.forEach(function(t){
-        linesText += "<li class='' style'padding:0 0 0 0px'>" + t + "</li>";
+        linesText += "<li>" + t + "</li>";
     });
     linesText += "</ul>";
     
     var consortiumContact = consortiaData[currenTopic].contact.split(";");
-    var contactText = "<ul style='padding: 0 0 0 0px;'>";
+    var contactText = "<ul>";
     consortiumContact.forEach(function(t){
-        contactText += "<li class='' style'padding:0 0 0 0px'>" + t + "</li>";
+        contactText += "<li>" + t + "</li>";
     });
     contactText += "</ul>";
 
     var consortiumCenters = consortiaData[currenTopic].centers.split(";");
-    var centersText = "<ul style='padding: 0 0 0 0px;'>";
+    var centersText = "<ul>";
     consortiumCenters.forEach(function(t){
-        centersText += "<li class='' style'padding:0 0 0 0px'>" + t + "</li>";
+        centersText += "<li>" + t + "</li>";
     });
     centersText += "</ul>";
     
     $("#consortium-lines").html(linesText);
     $("#consortium-contact").html(contactText);
     $("#consortium-centers").html(centersText);
+    
+    //TODO: highlight involved centers on map
+    cpisLayer.eachLayer(function(l){cpisLayer.resetStyle(l);})
+    cpisLayer.eachLayer(function(l){
+        if (jQuery.inArray(l.feature.properties.shortname, consortiumCenters) != -1){
+            console.log(l.feature.properties.shortname, i)
+        }
+        /*if (l.feature.properties.zona != idToName[currentRegion]){
+            l.setStyle(noStyle);
+        }*/
+    });
     
 });
 
@@ -477,7 +488,7 @@ function makeMapCpis(cpis){
        pointToLayer: function(feature, latlng){
            var geojsonMarkerOptions = {
                opacity: feature.properties.main ? 1 : .70,
-               icon: feature.properties.main ? sede_icon : nosede_icon,
+               icon: feature.properties.main ? sede_icon : nosede_icon
            }           
            return L.marker(latlng, geojsonMarkerOptions)
             //.on("mouseover", function(event){showPRC(event, feature);})
