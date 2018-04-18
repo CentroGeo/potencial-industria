@@ -127,6 +127,9 @@ img.grayscale:hover {
     text-align: center;
 }
 
+[class|=consortium]{
+    cursor: pointer;
+}
 
 #story {
     height: 854px; 

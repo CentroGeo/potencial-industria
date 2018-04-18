@@ -161,7 +161,8 @@ var properties, // properties for each city
     ikaData,
     ikaBar,
     hhData,
-    hhBar;
+    hhBar,
+    consortiaData;
 
 // Load data
 var q = d3.queue();
@@ -389,8 +390,9 @@ var nosede_icon = L.icon({
 function makercpis(){
     var q = d3.queue()
     q.defer(d3.json, "data/cpis_en.geojson")
+     .defer(d3.csv, "data/consorcios.csv")
     
-    .await(function(error, cpis) {
+    .await(function(error, cpis, consorcios) {
         if (error) console.error('Oh dear, something went wrong: ' + error);
         else {
             if(ciudadesLyr != undefined && regionesLyr!=undefined){
@@ -405,10 +407,41 @@ function makercpis(){
                 makeMapCpis(cpis)
                 map.flyTo([23.75, -101.9], 5, { duration: 1});
             }
+            consortiaData = consorcios;
         }
     })
     
 }
+
+$("[class^=consortium]").on('click', function(){
+    var currenTopic = this.className.split("-")[1];
+    
+    var consortiumLines = consortiaData[currenTopic].lines.split(";");
+    var linesText = "<ul style='padding: 0 0 0 0px;'>";
+    consortiumLines.forEach(function(t){
+        linesText += "<li class='' style'padding:0 0 0 0px'>" + t + "</li>";
+    });
+    linesText += "</ul>";
+    
+    var consortiumContact = consortiaData[currenTopic].contact.split(";");
+    var contactText = "<ul style='padding: 0 0 0 0px;'>";
+    consortiumContact.forEach(function(t){
+        contactText += "<li class='' style'padding:0 0 0 0px'>" + t + "</li>";
+    });
+    contactText += "</ul>";
+
+    var consortiumCenters = consortiaData[currenTopic].centers.split(";");
+    var centersText = "<ul style='padding: 0 0 0 0px;'>";
+    consortiumCenters.forEach(function(t){
+        centersText += "<li class='' style'padding:0 0 0 0px'>" + t + "</li>";
+    });
+    centersText += "</ul>";
+    
+    $("#consortium-lines").html(linesText);
+    $("#consortium-contact").html(contactText);
+    $("#consortium-centers").html(centersText);
+    
+});
 
 function makerRegion(){
     var q = d3.queue()
