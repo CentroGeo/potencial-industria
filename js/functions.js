@@ -19,34 +19,43 @@ $(".topic-icon").on('click', function(){
             }
         });
 
-    switch(parentContainer.split("-")[0]) {
-        case "connectivity":
-            var topic_name = "Connectivity";
-            break;
-        case "ch":
-            var topic_name = "Human Capital";
-            break;
-        case "imco":
-            var topic_name = "Doing Bussiness";
-            break;
-        case "industry":
-            var topic_name = "Industries";
-            break;
-        case "top5":
-            var topic_name = "Consortiums";
-            break;
-        default:
-            break;
-    }
+        switch(parentContainer.split("-")[0]) {
+            case "connectivity":
+                var topic_name = "Connectivity";
+                break;
+            case "ch":
+                var topic_name = "Skills and Talent";
+                break;
+            case "business":
+                var topic_name = "Doing Business";
+                break;
+            case "industries":
+                var topic_name = "Industries";
+                break;
+            case "conacyt":
+                var topic_name = "Conacyt";
+                break;
+            default:
+                break;
+        }
 
-    $("#topic").html(topic_name + ":");
+        $("#topic").html(topic_name + ":");
+        if (topic_name === "Conacyt") {
+            $("#title").html("Mexico");
+            changeBullets("default_bullet");
+        }
 
-    //parentContainer de los markers
-    if(parentContainer=="top5-div"){
-        makercpis()
-    }else{
-        makerRegion()
-    }
+        //parentContainer de los markers
+        if(parentContainer=="conacyt-div"){
+            makercpis()
+        }else{
+            makerRegion()
+        }
+        
+        // if on Skills and Talent topic, display market regions
+        if (topic_name === "Skills and Talent") {
+            mercadosLyr.addTo(map);
+        }
     
         $("#choose").css('display', 'none'); 
         $("#graphs").fadeIn("slow", "linear");
@@ -65,6 +74,7 @@ $("#menu").on('click', function(){
         var topic = "#" + parentContainer.split("-")[0] + "_carouselContent";
         $(topic).css("display", "none");
     });
+    if (map.hasLayer(mercadosLyr)) mercadosLyr.removeFrom(map);
 });
 
 // Setup stuff for the bar chart
@@ -91,8 +101,8 @@ var colorArray = ["#eb126f","#8669aa","#e72230","#40ab4e","#b0358f",
 var regionColors = d3.scaleOrdinal().range(colorArray).domain([3,1,2,6,7,4,5]);
 
 //limites del mapa
-var southWest = L.latLng(3.95, -83),
-    northEast = L.latLng(40.00, -120.67),
+var southWest = L.latLng(3.95, -74),
+    northEast = L.latLng(40.00, -125.67),
     bounds = L.latLngBounds(southWest, northEast);
 
 // map and base layer
@@ -111,9 +121,9 @@ var overlay = new L.map('overlaydiv', {
 L.control.attribution({position: 'bottomright'}).addTo(overlay);
 
 var mapBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-	subdomains: 'abcd',
-	maxZoom: 19
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
 }).addTo(map);
 
 var overlayBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
@@ -122,6 +132,7 @@ var overlayBase = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.ne
 	maxZoom: 19
 }).addTo(overlay);
 
+//$('.leaflet-control-attribution').hide() //oculta la atribucion de leaflet
 map.sync(overlay, {offsetFn: offsetGlobal});
 
 function offsetGlobal (center, zoom, refMap, tgtMap) {
@@ -157,6 +168,7 @@ var q = d3.queue();
 q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.json, "data/ciudades.geojson")
     .defer(d3.json, "data/cpis_en.geojson")
+    .defer(d3.json, "data/mercados_trabajo.geojson")
     .defer(d3.csv, "data/variables-potencial-industrial.csv")
     .defer(d3.csv, "data/capital-humano-zonas.csv")
     .defer(d3.csv, "data/logroeducativo.csv")
@@ -164,7 +176,7 @@ q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.csv, "data/hh_region.csv")
     .defer(d3.csv, "data/hh_ika.csv")
     
-    .await(function(error, regiones, ciudades, cpis, variables,
+    .await(function(error, regiones, ciudades, cpis, mercados, variables,
                     varsChZonas, varsLogroE, varsIKA, varsRegionHH, varsIkaHH) {
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
@@ -190,7 +202,7 @@ q.defer(d3.json, "data/regiones.geojson")
             regionNames = getZonesNames(varsChZonas);
 
             // Make map
-            makeMap(regiones, ciudades);
+            makeMap(regiones, ciudades, mercados);
             
             // Connectivity charts
             connectivityBar = stackedBarChart()
@@ -206,6 +218,7 @@ q.defer(d3.json, "data/regiones.geojson")
                          itemsBar:['Highway','Railroad']})
                 .legendContainer('connectivityLegend')
                 .transitionTime(500)
+                .line(true)
                 .id("id");
             
             connectivityBar.data(getBarData());
@@ -360,16 +373,17 @@ var currentRegion = 0,
     lastClickedMaker = null, //new
     regionesLyr,
     ciudadesLyr,
-    cpisLayer;
+    cpisLayer,
+    mercadosLyr;
 
 var sede_icon = L.icon({
-   "iconUrl": "img/icon_sede.png",
+        "iconUrl": "/img/icon_rdi.png",
    "iconSize": [20,20],
 });
 
 var nosede_icon = L.icon({
-   "iconUrl": "img/icon_nosede.png",
-   "iconSize": [20,20]
+   "iconUrl": "/img/icon_rdi.png",
+   "iconSize": [10,10]
 });
 
 function makercpis(){
@@ -432,7 +446,7 @@ function makeMapCpis(cpis){
     }).addTo(map)
 }
 
-function makeMap(regiones, ciudades){  
+function makeMap(regiones, ciudades, mercados){  // mercados is an optional parameter
     ciudadesLyr = L.geoJSON([ciudades], {
         style: function(feature){
             return {
@@ -456,6 +470,25 @@ function makeMap(regiones, ciudades){
                },
         onEachFeature: onEachFeatureRegiones
     }).addTo(map);
+    
+    mercados = mercados || null;
+    var mercadosColor = d3.scaleOrdinal()
+        .range(["#8dd3c7", "#ffffb3", "#bebada"])
+        .domain(["Primario", "Secundario", "Terciario"]);
+    if (mercados != null){
+        mercadosLyr = L.geoJSON([mercados], {
+            style: function(feature){
+                return {
+                    weight: 3,
+                    color: "#aaa",
+                    opacity: 1,
+                    fillOpacity: 1,
+                    fillColor: mercadosColor(feature.properties.mercado)
+                };
+            },
+            interactive: false
+        });
+    }
 };
 
 /*new*/
@@ -476,13 +509,21 @@ function onEachFeatureRegiones(feature, layer){
 
 function showpopup(e,f){
     var topics = f.properties.topics.split(";");
-    topicsText = "<ul>";
+    topicsText = "<ul style='padding: 0 0 0 10px;'>";
     topics.forEach(function(t){
-        topicsText += "<li>" + t + "</li>";
+        topicsText += "<li class='bullet-conacyt'>" + t + "</li><br>";
     });
     topicsText += "</ul>";
-    var Text = f.properties.name + "<br/>" + f.properties.shortname + "<br/>Area: " + 
-                    f.properties.area + "<br/>Research lines:<br/>" + topicsText;
+    var Text = "<div class ='popups scroll_style_activate'>" + 
+                f.properties.name + "<br/>" + 
+                f.properties.shortname + 
+                "<br/>Area: " + f.properties.area + 
+                "<br/>Research lines:<br/><br/>" + topicsText +
+                "Address:<br/>" + f.properties.address +
+                "<br/>Contact: " + f.properties.contact +
+                "<br/>Email: " + f.properties.email +
+                "<br/>Webpage: <a href='" + f.properties.url +"'>"+f.properties.url+"</a>";
+                "</div>"
     return Text;
 }
 
@@ -520,10 +561,10 @@ function makerClick(event){
         }
         lastClickedMaker = layer;
         
+        map.flyTo(layer.getLatLng(), 7, { duration: 1});
         setTimeout(function(){
-           layer.bindPopup(showpopup(event,feature)).openPopup();
+           layer.bindPopup(showpopup(event,feature),{closeButton: false,className: 'PopupContainer'}).openPopup();
         },300)
-        map.flyTo(layer.getLatLng(), 8, { duration: 1});
         feature.properties.is_clicked = true;
 
     }else if(feature.properties.is_clicked == true){
@@ -560,6 +601,12 @@ function layerClick(event){
                 l.setStyle(noStyle);
             } 
         });
+        mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
+        mercadosLyr.eachLayer(function(l){
+            if (l.feature.properties.region != idToName[currentRegion]){
+                l.setStyle(noStyle);
+            } 
+        });
         /*if (currentRegion == 1){ // if first region, change button icon
             $(".icon-previous .fas").removeClass("fa-chevron-left");
             $(".icon-previous .fas").addClass("fa-reply");
@@ -586,35 +633,32 @@ function layerClick(event){
 
         switch(zone) {
             case "Megalopolis":
-                var bullet_name = "megalopolis_bullet.png";
+                var bullet_name = "megalopolis_bullet";
                 break;
             case "Northeast":
-                var bullet_name = "northeast_bullet.png";
+                var bullet_name = "northeast_bullet";
                 break;
             case "Center-west":
-                var bullet_name = "centerwest_bullet.png";
+                var bullet_name = "centerwest_bullet";
                 break;
             case "Center-north":
-                var bullet_name = "centernorth_bullet.png";
+                var bullet_name = "centernorth_bullet";
                 break;
-            case "Yucatan peninsula":
-                var bullet_name = "yucatan_bullet.png";
+            case "Yucatán peninsula":
+                var bullet_name = "yucatan_bullet";
                 break;
             case "Northwest":
-                var bullet_name = "northwest_bullet.png";
+                var bullet_name = "northwest_bullet";
                 break;
             case "Gulf-east":
-                var bullet_name = "gulfeast_bullet.png";
+                var bullet_name = "gulfeast_bullet";
                 break;
             default:
-                var bullet_name = "default_bullet.png";
+                var bullet_name = "default_bullet";
                 break;
         }
-        
-        Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
-            element.style.backgroundImage = "url('img/" + bullet_name + "')";
-            element.style.backgroundSize = "20px 20px";
-        });
+
+        changeBullets(bullet_name);
 
         var featBounds = feature.properties.bounds_calculated;
         map.flyToBounds(featBounds);
@@ -636,13 +680,17 @@ function layerClick(event){
         $(".icon-previous").addClass("text-muted");
         $(".icon-previous").addClass("icon-disabled");
 
-        Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
-            element.style.backgroundImage = "url('img/default_bullet.png')";
-            element.style.backgroundSize = "20px 20px";
-        });
+        changeBullets("default_bullet");
     }
     map.once("moveend", function(){
         updateChartData();
+    });
+}
+
+function changeBullets (bullet) {
+    Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
+        element.style.backgroundImage = "url('/img/" + bullet + ".png')";
+        element.style.backgroundSize = "20px 20px";
     });
 }
 
@@ -669,13 +717,14 @@ $("#global").on('click', function(){
         });
     }else if(cpisLayer!=undefined){
         makercpis()
+        lastClickedMaker.feature.properties.is_clicked = false;
+        setTimeout(function(){
+            lastClickedMaker.closePopup();
+        },300)
         map.flyTo([23.75, -101.9], 5, { duration: 1});
     }
 
-    Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
-        element.style.backgroundImage = "url('img/default_bullet.png')";
-        element.style.backgroundSize = "20px 20px";
-    });
+    changeBullets("default_bullet");
 });
 
 $(".icon-next").on('click', function(){
@@ -712,6 +761,8 @@ $(".icon-next").on('click', function(){
             map.once("moveend", function(){
                 updateChartData();
             });
+
+            changeBullets("default_bullet");
         }
     }
 });
@@ -751,6 +802,8 @@ $(".icon-previous").on('click', function(){
             map.once("moveend", function(){
                 updateChartData();
             });
+
+            changeBullets("default_bullet");
         }
     }
 });

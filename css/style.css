@@ -42,8 +42,12 @@ body.fade-out {
     height: 785px;
 }
 
+.carousel-item {
+    height: 775px;
+}
+
 .topic-icon{
-    width: 240px;
+    width: 265px;
     cursor: pointer;
     transition: transform 0.5s;
     -webkit-transition: transform 0.5s;
@@ -88,8 +92,8 @@ body.fade-out {
 }
 
 #graphs, #connectivity_carouselContent, 
-#ch_carouselContent, #imco_carouselContent,
-#industry_carouselContent, #top5_carouselContent {
+#ch_carouselContent, #business_carouselContent,
+#industries_carouselContent, #conacyt_carouselContent {
     display: none;
 }
 
@@ -309,13 +313,13 @@ img.grayscale:hover {
 .bar-avg {
     /*stroke: blue;*/
 }
-.bar-avg:hover {
+/*.bar-avg:hover {
     fill: brown;
 }
 
 .bar:hover {
   fill: brown;
-}
+}*/
 
 .tick text {
     fill: var(--main-text-color);
@@ -360,11 +364,12 @@ img.grayscale:hover {
 }
 
 div.bullet-section {
-    padding-top: 15%;
+    padding-top: 5%;
 }
 
 ul.no-bullet {
     list-style: none;
+    text-align: left;
     padding: 0px;
     margin: 0px;
 }
@@ -372,16 +377,16 @@ ul.no-bullet {
 li.bullet-li {
     background: url("../img/default_bullet.png") no-repeat left top;
     background-size: 20px 20px;
-    display: inline-block;
-    padding-left: 30px;
+    background-position: 24% top;
+    padding-left: 140px;
     padding-bottom: 10px;
 }
 
-li.bullet-top5 {
+li.bullet-conacyt {
     background: url("../img/default_bullet.png") no-repeat left top;
     background-size: 20px 20px;
-    display: inline-block;
-    padding-left: 30px;
+    background-position: 24% top;
+    padding-left: 140px;
     padding-bottom: 10px;
 }
 
@@ -445,4 +450,43 @@ li.bullet-top5 {
     left: 49%;
     top: 180px;
     z-index: 2;
+}
+
+.popups{
+    height: 220px;
+    overflow-y: scroll;
+    overflow-y: auto;
+    font-size: 12px;
+    margin-top: 10px;
+    font-family: 'DINMedium';
+}
+
+.scroll_style_activate::-webkit-scrollbar-track
+{
+  border-radius: 20px;
+}
+
+.scroll_style_activate::-webkit-scrollbar
+{
+  background-color: #ffffff;
+  border-radius: 20px;
+  width: 10px;
+}
+
+.scroll_style_activate::-webkit-scrollbar-thumb
+{
+  background-color: #A6A6A6;
+  border: 2px solid #ffffff;
+  border-radius: 10px;
+}
+
+.PopupContainer .leaflet-popup-content-wrapper{
+  background: white;
+  opacity: 0.9;
+}
+
+.PopupContainer .leaflet-popup-content{
+  /*margin: 0;*/
+  margin-left: 20px;
+  margin-right: 5px;
 }
