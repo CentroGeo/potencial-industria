@@ -130,6 +130,10 @@ img.grayscale:hover {
 [class|=consortium]{
     cursor: pointer;
 }
+.selectedConsortium {
+    color: #e72662;
+    font-weight: bold;
+}
 
 #story {
     height: 854px; 

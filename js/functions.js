@@ -48,8 +48,12 @@ $(".topic-icon").on('click', function(){
         //parentContainer de los markers
         if(parentContainer=="conacyt-div"){
             makercpis()
+            $("#consortium-lines").html('');
+            $("#consortium-contact").html('');
+            $("#consortium-centers").html('');
+            $("[class^=consortium]").removeClass("selectedConsortium");
         }else{
-            makerRegion()
+            makerRegion();
         }
         
         // if on Skills and Talent topic, display market regions
@@ -66,7 +70,7 @@ $(".topic-icon").on('click', function(){
 
 // Change carousel back to initial icons when on click
 $("#menu").on('click', function(){
-    makerRegion()
+    makerRegion();
     $("#graphs").css('display', 'none'); 
     $("#choose").fadeIn( "slow", "linear" ); 
     $(".topic-icon").each(function(){
@@ -378,13 +382,13 @@ var currentRegion = 0,
     mercadosLyr;
 
 var sede_icon = L.icon({
-        "iconUrl": "img/icon_rdi.png",
-   "iconSize": [20,20],
+    "iconUrl": "img/icon_rdi.png",
+    "iconSize": [20,20],
 });
 
 var nosede_icon = L.icon({
-   "iconUrl": "img/icon_rdi.png",
-   "iconSize": [10,10]
+    "iconUrl": "img/icon_rdi.png",
+    "iconSize": [10,10]
 });
 
 function makercpis(){
@@ -414,7 +418,11 @@ function makercpis(){
 }
 
 $("[class^=consortium]").on('click', function(){
+    
     var currenTopic = this.className.split("-")[1];
+    $("[class^=consortium]").removeClass("selectedConsortium");
+    $('.'+this.className).addClass("selectedConsortium");
+    //var currenTopic = this.className.split("-")[1];
     
     var consortiumLines = consortiaData[currenTopic].lines.split(";");
     var linesText = "<ul style='padding: 0 0 0 0px;'>";
