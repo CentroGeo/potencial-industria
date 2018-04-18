@@ -1,28 +1,70 @@
-    $(function() {
-        setTimeout(function(){
-            $('body').removeClass('fade-out'); 
-        }, 500);
-    });
+// Try this to use hover on touch devices
+//$('body').bind('touchstart', function() {});
+
+$(function() {
+    setTimeout(function(){
+        $('body').removeClass('fade-out'); 
+    }, 500);
+});
 
 // Change initial icons to carousel on click
 $(".topic-icon").on('click', function(){
-    parentContainer = this.parentElement.id;
-    topic = "#" + parentContainer.split("-")[0] + "_carouselContent";
-    $(".topic-icon").each(function(){
-      if (this.parentElement.id != parentContainer){
-          var otherTopic = "#" + this.parentElement.id.split("-")[0] + "_carouselContent";
-          $(otherTopic).css("display", "none");
-      }
-    });
-    $("#choose").css('display', 'none'); 
-    $("#graphs").fadeToggle("slow", "linear");
-    $(topic).fadeToggle( "slow", "linear" );
+    var parentContainer = this.parentElement.id;
+    $("#"+parentContainer).bind("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd", function(){
+        var topic = "#" + parentContainer.split("-")[0] + "_carouselContent";
+        $(".topic-icon").each(function(){
+            if (this.parentElement.id != parentContainer){
+                var otherTopic = "#" + this.parentElement.id.split("-")[0] + "_carouselContent";
+                $(otherTopic).css("display", "none");
+            }
+        });
+
+    switch(parentContainer.split("-")[0]) {
+        case "connectivity":
+            var topic_name = "Connectivity";
+            break;
+        case "ch":
+            var topic_name = "Human Capital";
+            break;
+        case "imco":
+            var topic_name = "Doing Bussiness";
+            break;
+        case "industry":
+            var topic_name = "Industries";
+            break;
+        case "top5":
+            var topic_name = "Consortiums";
+            break;
+        default:
+            break;
+    }
+
+    $("#topic").html(topic_name + ":");
+
+    //parentContainer de los markers
+    if(parentContainer=="top5-div"){
+        makercpis()
+    }else{
+        makerRegion()
+    }
+    
+        $("#choose").css('display', 'none'); 
+        $("#graphs").fadeIn("slow", "linear");
+        $(topic).fadeIn( "slow", "linear" );
+        $(this).removeClass("iconZoom");
+    }).addClass("iconZoom");
 });
 
 // Change carousel back to initial icons when on click
 $("#menu").on('click', function(){
+    makerRegion()
     $("#graphs").css('display', 'none'); 
     $("#choose").fadeIn( "slow", "linear" ); 
+    $(".topic-icon").each(function(){
+        var parentContainer = this.parentElement.id;
+        var topic = "#" + parentContainer.split("-")[0] + "_carouselContent";
+        $(topic).css("display", "none");
+    });
 });
 
 // Setup stuff for the bar chart
@@ -38,18 +80,23 @@ var idToName = {
 };
 
 // Set basic functions for styling the map
-var rateById = d3.map(); // will hold the map from ids to property values
-var colors5 = ['#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026']; // 5 color scheme
-var quantile = d3.scaleQuantile() 
-    .range(d3.range(5).map(function(i) { return colors5[i]; })); // quantile scale with 5 classes
 
     // TODO: regionColors domain should match ordered region ids.
-    
-//var regionColors = d3.scaleOrdinal().domain([1, 7]).range(d3.schemeCategory10);
-var regionColors = d3.scaleOrdinal().domain([3,1,2,6,7,4,5]).range(d3.schemeCategory20);
+
+// var colorArray = ["#e62b65","#bb91f9","#dd2229","#4fab47","#8569ad",
+//                   "#95c950","#ef5762","#be0040","#a93491","#0f7721"];
+var colorArray = ["#eb126f","#8669aa","#e72230","#40ab4e","#b0358f",
+                  "#90c85a","#f95765","#be0040","#a93491","#0f7721"];
+
+var regionColors = d3.scaleOrdinal().range(colorArray).domain([3,1,2,6,7,4,5]);
+
+//limites del mapa
+var southWest = L.latLng(3.95, -83),
+    northEast = L.latLng(40.00, -120.67),
+    bounds = L.latLngBounds(southWest, northEast);
 
 // map and base layer
-var map = L.map('mapdiv', {attributionControl: false}).setView([23.75, -101.9], 5);
+var map = L.map('mapdiv', {maxBounds:bounds, zoomControl: false, minZoom: 5, attributionControl: false}).setView([23.75, -101.9], 5);
 
 var overlay = new L.map('overlaydiv', {
     zoomControl: false,
@@ -122,10 +169,6 @@ q.defer(d3.json, "data/regiones.geojson")
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
         } else {
-            ciudades.features.forEach(function(e) {
-                // Populate the map
-                rateById.set(e.properties.id, +e.properties.grado_total);
-            });
             // properties = [];
             var cityNames = [],
                 regionNames = [];
@@ -147,14 +190,16 @@ q.defer(d3.json, "data/regiones.geojson")
             regionNames = getZonesNames(varsChZonas);
 
             // Make map
-            makeMap(regiones, ciudades, cpis);
+            makeMap(regiones, ciudades);
             
+            // Connectivity charts
             connectivityBar = stackedBarChart()
                 .width(300)
                 .height(250)
-                .margin({top: 25, right: 50, bottom: 60, left: 25})
+                .margin({top: 25, right: 50, bottom: 110, left: 25})
                 .stackVariables(["grado_ferrocarril", "grado_carretera"])
                 .displayName("nom_ciudad")
+                .stackColors(["#40ab4e","#e36930"])
                 .barAxisLabel("Degree")
                 .legend({title: 'Connectivity', translateX: 0,
                          translateY: 0,
@@ -165,83 +210,87 @@ q.defer(d3.json, "data/regiones.geojson")
             
             connectivityBar.data(getBarData());
             d3.select("#barConectividad")
-                .call(connectivityBar); // Draw chart in selected div
+                .call(connectivityBar);
 
-            imcoRadar = radarChart()
-                .width(250)
-                .height(200)
-                .margin({top: 40, right: 60, bottom: 60, left: 60})
-                .displayName("nom_ciudad")
-                .id("id")
-                .color(d3.scaleOrdinal()
-                       .domain(cityNames).range(d3.schemeCategory20))
-                .legend({ title: '', translateX: 135, translateY: 0 })
-                .legendContainer('imcoLegend')
-                .maxValue(100);
-
-            imcoRadar.data(getRadarData()); // bind data to chart object
-                 d3.select("#radarImco")
-                .call(imcoRadar); // Draw chart in selected div
-
-            chRadar = radarChart()
-                .width(250)
-                .height(200)
-                .margin({top: 40, right: 60, bottom: 60, left: 60})
-                .displayName("region")
-                .id("id")
-                .levels(4)
-                .format('.1f')
-                .color(d3.scaleOrdinal()
-                       .domain(regionNames).range(d3.schemeCategory20))
-                .legend({ title: '', translateX: 135, translateY: 0 })
-                .legendContainer('chLegend')
-                .maxValue(2);
-
-            //chRadar.data(chData); // bind data to chart object
-            chRadar.data(getChRadarData());
-                 d3.select("#radarCH")
-                .call(chRadar); // Draw chart in selected div
-
+                
+            // Human Capital charts
             logroEBar = stackedBarChart()
-                .width(300)
+                .width(280)
                 .height(250)
-                //.margin({top: 40, right: 60, bottom: 60, left: 60})
-                .margin({top: 30, right: 50, bottom: 60, left:60})
+                .margin({top: 30, right: 50, bottom: 100, left:60})
+                .stackColors(["#eb126f","#8669aa"])
+                .lineColors(d3.scaleLinear().range(colorArray).domain([0,1]))
+                .pointColors(d3.scaleLinear().range(colorArray).domain([0,1]))
                 .stackVariables(["Pop with bachelor",
                                  "Pop with grad"])
                 .lineVariables(["Percentage bachelor", "Percentage grad"])
                 .displayName("name")
+                .barAxisXLabelPos("-5.5em")
+                .barAxisYLabelPos("-4em")
                 .barAxisLabel("Population")
                 .lineAxisLabel("Percentage")
-                .legend({title: 'Educational Achievement', translateX: -70, translateY: 0,
+                /*.legend({title: 'Educational Achievement', translateX: -70, translateY: 0,
                          itemsLine:["Percentage bachelor", "Percentage grad"],
-                         itemsBar: ["Pop with bachelor","Pop with grad"]})
+                         itemsBar: ["Pop with bachelor","Pop with grad"]})*/
                 .id("name");
-            logroEBar.data(getLogroEData()); // bind data to chart object
+            
+            logroEBar.data(getLogroEData());
                 d3.select("#logroEBar")
-                .call(logroEBar); // Draw chart in selected div
+                .call(logroEBar);
+                
+            chRadar = radarChart()
+                .width(250)
+                .height(200)
+                .margin({top: 40, right: 60, bottom: 0, left: 50})
+                .displayName("region")
+                .opacityArea(0)
+                .id("id")
+                .levels(4)
+                .format('.1f')
+                .color(d3.scaleOrdinal().range(colorArray).domain(regionNames))
+                .legend({ title: '', translateX: 135, translateY: 0 })
+                .legendContainer('chLegend')
+                .maxValue(2);
 
+            chRadar.data(getChRadarData());
+                 d3.select("#radarCH")
+                .call(chRadar);
+            
             ikaBar = barLineChart()
-                .width(300)
+                .width(250)
                 .height(250)
+                //.margin({top: 10, right: 50, bottom: 110, left:60})
+                .margin({top: 30, right: 50, bottom: 100, left:60})
                 .barsVariables(["Labor market size", "IKAs market"])
+                .barColor(d3.scaleOrdinal().range(colorArray).domain(["Labor market size", "IKAs market"]))
                 .lineVariables(["IKAs Percentage"])
                 .displayName("name")
+                .barAxisXLabelPos("-4.5em")
+                .barAxisYLabelPos("-2em")
+                .barAxisLabel("Population")
+                .lineAxisLabel("Percentage")
+                /*.legend({title: '', translateX: -70, translateY: 0,
+                         itemsLine:["IKAs Percentage"],
+                         itemsBar: ["Labor market size", "IKAs market"]})*/
+                .legendContainer('ikaBarLegend')
                 .id("name");
             
-            ikaBar.data(getIkaData()); // bind data to chart object
+            ikaBar.data(getIkaData());
                 d3.select("#ikaBar")
-                .call(ikaBar); // Draw chart in selected div
+                .call(ikaBar);
             
             hhRegionBar = horizontalBarChart()
-                .width(300)
+                .width(250)
                 .height(250)
-                .margin({top: 30, right: 50, bottom: 60, left:100})
+                .margin({top: 10, right: 50, bottom: 26, left:100})
                 .barsVariable("index")
+                .barColor(d3.scaleOrdinal().range(colorArray).domain([1]))
                 .displayName("region")
                 .id("id")
                 .axisFormat(d3.format('.0f'))
-                .highlightColor('#81152a');
+                .highlightColor('#40ab4e')
+                .xOffsetStart(-132)
+                .xOffsetEnd(48);
             
             hhRegionData = [];
             varsRegionHH.forEach(function(d) {
@@ -264,10 +313,14 @@ q.defer(d3.json, "data/regiones.geojson")
                 .height(250)
                 .margin({top: 30, right: 50, bottom: 60, left:120})
                 .barsVariable("index")
+                .barColor(d3.scaleOrdinal().range(colorArray).domain([1]))
                 .displayName("oic")
-                .id("id");
+                .id("id")
+                .xOffsetStart(-201976)
+                .xOffsetEnd(46613);
             
             hhIkaData = [];
+            
             varsIkaHH.forEach(function(d) {
                 hhIkaData.push({
                     oic: d["OIC"], 
@@ -282,17 +335,104 @@ q.defer(d3.json, "data/regiones.geojson")
             hhIkaBar.data(hhIkaData);
                 d3.select("#hhIkaBar")
                 .call(hhIkaBar);
+            
+            // IMCO charts
+            imcoRadar = radarChart()
+                .width(200)
+                .height(250)
+                .margin({top: 40, right: 20, bottom: 0, left: 150})
+                .displayName("nom_ciudad")
+                .opacityArea(0)
+                .id("id")
+                .color(d3.scaleOrdinal().range(colorArray).domain(regionNames))
+                .legend({ title: '', translateX: 240, translateY: 70 })
+                .legendContainer('imcoLegend')
+                .maxValue(100);
+
+            imcoRadar.data(getRadarData()); // bind data to chart object
+                 d3.select("#radarImco")
+                .call(imcoRadar); // Draw chart in selected div
         }
     });
 
 var currentRegion = 0,
     lastClickedLayer = null,
+    lastClickedMaker = null, //new
     regionesLyr,
     ciudadesLyr,
     cpisLayer;
 
-function makeMap(regiones, ciudades, cpis){  
-    quantile.domain(rateById.values())
+var sede_icon = L.icon({
+   "iconUrl": "img/icon_sede.png",
+   "iconSize": [20,20],
+});
+
+var nosede_icon = L.icon({
+   "iconUrl": "img/icon_nosede.png",
+   "iconSize": [20,20]
+});
+
+function makercpis(){
+    var q = d3.queue()
+    q.defer(d3.json, "data/cpis_en.geojson")
+    
+    .await(function(error, cpis) {
+        if (error) console.error('Oh dear, something went wrong: ' + error);
+        else {
+            if(ciudadesLyr != undefined && regionesLyr!=undefined){
+                ciudadesLyr.clearLayers();
+                regionesLyr.clearLayers();
+                ciudadesLyr=undefined;
+                regionesLyr=undefined;
+            }
+            if(cpisLayer==undefined){
+                $(".buttonleft").css('display', 'none');
+                $(".buttonright").css('display', 'none');
+                makeMapCpis(cpis)
+                map.flyTo([23.75, -101.9], 5, { duration: 1});
+            }
+        }
+    })
+    
+}
+
+function makerRegion(){
+    var q = d3.queue()
+    q.defer(d3.json, "data/regiones.geojson")
+    .defer(d3.json, "data/ciudades.geojson")
+    .await(function(error,regiones,ciudades){
+        if(error) console.error('Oh dear, something went wrong: ' + error)
+        else {
+            if(cpisLayer!=undefined){
+                cpisLayer.clearLayers();
+                cpisLayer=undefined;
+            }
+            if(ciudadesLyr == undefined && regionesLyr == undefined){
+                $(".buttonleft").css('display', 'block');
+                $(".buttonright").css('display', 'block');
+                makeMap(regiones,ciudades);
+                map.flyTo([23.75, -101.9], 5, { duration: 1});
+            }
+        }
+    });
+}
+
+function makeMapCpis(cpis){
+    cpisLayer = L.geoJSON([cpis], {
+       pointToLayer: function(feature, latlng){
+           var geojsonMarkerOptions = {
+               opacity: feature.properties.main ? 1 : .70,
+               icon: feature.properties.main ? sede_icon : nosede_icon,
+           }           
+           return L.marker(latlng, geojsonMarkerOptions)
+            //.on("mouseover", function(event){showPRC(event, feature);})
+            //.on("mouseout", hidePRC);
+       },
+       onEachFeature: onEachFeatureCpis /*new*/
+    }).addTo(map)
+}
+
+function makeMap(regiones, ciudades){  
     ciudadesLyr = L.geoJSON([ciudades], {
         style: function(feature){
             return {
@@ -316,23 +456,13 @@ function makeMap(regiones, ciudades, cpis){
                },
         onEachFeature: onEachFeatureRegiones
     }).addTo(map);
-    
-    cpisLayer = L.geoJSON([cpis], {
-       pointToLayer: function(feature, latlng){
-           var geojsonMarkerOptions = {
-               opacity: .75,
-               weight: 1,
-               fillColor: feature.properties.main ? "#e81b44" : "#1ba3e8", // if sede is null paint red, else, blue. 
-               color: "#03f", 
-               fillOpacity: .75,
-               radius: feature.properties.main ? "5" : "3" // if sede, radius is 4 (larger), else, 3 (smaller).
-           }           
-           return L.circleMarker(latlng, geojsonMarkerOptions)
-            .on("mouseover", function(event){showPRC(event, feature);})
-            .on("mouseout", hidePRC);
-       }
-    }).addTo(map);
 };
+
+/*new*/
+function onEachFeatureCpis(feature, layer){
+    feature.properties.is_clicked = false;
+    layer.on('click', makerClick);
+}
 
 function onEachFeatureRegiones(feature, layer){
     // assign bounding box to each feature
@@ -342,6 +472,18 @@ function onEachFeatureRegiones(feature, layer){
     // assign each layer an id that makes sense
     layer._leaflet_id = feature.properties.id_0;
     layer.on('click', layerClick);
+}
+
+function showpopup(e,f){
+    var topics = f.properties.topics.split(";");
+    topicsText = "<ul>";
+    topics.forEach(function(t){
+        topicsText += "<li>" + t + "</li>";
+    });
+    topicsText += "</ul>";
+    var Text = f.properties.name + "<br/>" + f.properties.shortname + "<br/>Area: " + 
+                    f.properties.area + "<br/>Research lines:<br/>" + topicsText;
+    return Text;
 }
 
 function showPRC(e, f){
@@ -364,6 +506,34 @@ function showPRC(e, f){
     
 function hidePRC(){
     $("#probe").css("display","none");
+}
+
+/*new*/
+function makerClick(event){
+    layer = event.target;
+    feature = layer.feature;
+
+    if (feature.properties.is_clicked == false){ // feature not clicked, so zoom in
+        if (lastClickedMaker){ // when a region is clicked and you click another, reset previous one
+            lastClickedMaker.feature.properties.is_clicked = false;
+            lastClickedMaker.closePopup();
+        }
+        lastClickedMaker = layer;
+        
+        setTimeout(function(){
+           layer.bindPopup(showpopup(event,feature)).openPopup();
+        },300)
+        map.flyTo(layer.getLatLng(), 8, { duration: 1});
+        feature.properties.is_clicked = true;
+
+    }else if(feature.properties.is_clicked == true){
+        feature.properties.is_clicked = false;
+        map.flyTo([23.75, -101.9], 5, { duration: 1});
+        
+        setTimeout(function(){
+            lastClickedMaker.closePopup();
+        },300)
+    }
 }
 
 function layerClick(event){
@@ -412,6 +582,40 @@ function layerClick(event){
         }
         
         $("#title").html(feature.properties.zona);
+        var zone = feature.properties.zona;
+
+        switch(zone) {
+            case "Megalopolis":
+                var bullet_name = "megalopolis_bullet.png";
+                break;
+            case "Northeast":
+                var bullet_name = "northeast_bullet.png";
+                break;
+            case "Center-west":
+                var bullet_name = "centerwest_bullet.png";
+                break;
+            case "Center-north":
+                var bullet_name = "centernorth_bullet.png";
+                break;
+            case "Yucatan peninsula":
+                var bullet_name = "yucatan_bullet.png";
+                break;
+            case "Northwest":
+                var bullet_name = "northwest_bullet.png";
+                break;
+            case "Gulf-east":
+                var bullet_name = "gulfeast_bullet.png";
+                break;
+            default:
+                var bullet_name = "default_bullet.png";
+                break;
+        }
+        
+        Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
+            element.style.backgroundImage = "url('img/" + bullet_name + "')";
+            element.style.backgroundSize = "20px 20px";
+        });
+
         var featBounds = feature.properties.bounds_calculated;
         map.flyToBounds(featBounds);
         regionesLyr.eachLayer(function(l){l.setStyle(noStyle);})
@@ -424,107 +628,130 @@ function layerClick(event){
         ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
         $(layer.getElement()).removeClass("regionZoomed");
         $(layer.getElement()).addClass("regionStyle");
-        $("#title").html('México');
+        $("#title").html('Mexico');
         feature.properties.is_clicked = false;
         currentRegion = 0;
         /*$(".icon-next .fas").removeClass("fa-reply");
         $(".icon-next .fas").addClass("fa-chevron-right");*/
         $(".icon-previous").addClass("text-muted");
         $(".icon-previous").addClass("icon-disabled");
+
+        Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
+            element.style.backgroundImage = "url('img/default_bullet.png')";
+            element.style.backgroundSize = "20px 20px";
+        });
     }
     map.once("moveend", function(){
         updateChartData();
     });
 }
 
-$("#restart").on('click', function(){ 
-    if (lastClickedLayer){
-        regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);})
-        ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
-        $(lastClickedLayer.getElement()).removeClass("regionZoomed");
-        $(lastClickedLayer.getElement()).addClass("regionStyle");
-        lastClickedLayer.feature.properties.is_clicked = false;
+$("#global").on('click', function(){ 
+    if(ciudadesLyr != undefined && regionesLyr !=undefined){
+        makerRegion(); //default view of map
+        if (lastClickedLayer){
+            regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);})
+            ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);})
+            $(lastClickedLayer.getElement()).removeClass("regionZoomed");
+            $(lastClickedLayer.getElement()).addClass("regionStyle");
+            lastClickedLayer.feature.properties.is_clicked = false;
+        }
+        lastClickedLayer = null;
+        $("#title").html('Mexico');
+        map.flyTo([23.75, -101.9], 5);
+        /*$(".icon-next .fas").removeClass("fa-reply");
+        $(".icon-next .fas").addClass("fa-chevron-right");*/
+        $(".icon-previous").addClass("text-muted");
+        $(".icon-previous").addClass("icon-disabled");
+        currentRegion = 0;
+        map.once("moveend", function(){
+            updateChartData();
+        });
+    }else if(cpisLayer!=undefined){
+        makercpis()
+        map.flyTo([23.75, -101.9], 5, { duration: 1});
     }
-    lastClickedLayer = null;
-    $("#title").html('México');
-    map.flyTo([23.75, -101.9], 5);
-    /*$(".icon-next .fas").removeClass("fa-reply");
-    $(".icon-next .fas").addClass("fa-chevron-right");*/
-    $(".icon-previous").addClass("text-muted");
-    $(".icon-previous").addClass("icon-disabled");
-    currentRegion = 0;
-    map.once("moveend", function(){
-        updateChartData();
+
+    Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
+        element.style.backgroundImage = "url('img/default_bullet.png')";
+        element.style.backgroundSize = "20px 20px";
     });
 });
 
 $(".icon-next").on('click', function(){
-    if (lastClickedLayer){ // if something is clicked, reset style
-            lastClickedLayer.feature.properties.is_clicked = false;
-            $(lastClickedLayer.getElement()).removeClass("regionZoomed");
-            $(lastClickedLayer.getElement()).addClass("regionStyle");
-    }
-    currentRegion++;
-    if (currentRegion > 0 && currentRegion < regionesLyr.getLayers().length){ // cycle to next region
-        /*if (currentRegion > 1) {
+    if(ciudadesLyr != undefined && regionesLyr !=undefined){
+        if (lastClickedLayer){ // if something is clicked, reset style
+                lastClickedLayer.feature.properties.is_clicked = false;
+                $(lastClickedLayer.getElement()).removeClass("regionZoomed");
+                $(lastClickedLayer.getElement()).addClass("regionStyle");
+        }
+        currentRegion++;
+        if (currentRegion > 0 && currentRegion < regionesLyr.getLayers().length){ // cycle to next region
+            /*if (currentRegion > 1) {
+                $(".icon-previous .fas").removeClass("fa-reply");
+                $(".icon-previous .fas").addClass("fa-chevron-left");   
+            }*/
+            regionesLyr._layers[currentRegion].fire('click');
+        } else if (currentRegion == regionesLyr.getLayers().length){ // if last region
+            regionesLyr._layers[currentRegion].fire('click');
+            /*$(".icon-next .fas").removeClass("fa-chevron-right");
+            $(".icon-next .fas").addClass("fa-reply");
             $(".icon-previous .fas").removeClass("fa-reply");
-            $(".icon-previous .fas").addClass("fa-chevron-left");   
-        }*/
-        regionesLyr._layers[currentRegion].fire('click');
-    } else if (currentRegion == regionesLyr.getLayers().length){ // if last region
-        regionesLyr._layers[currentRegion].fire('click');
-        /*$(".icon-next .fas").removeClass("fa-chevron-right");
-        $(".icon-next .fas").addClass("fa-reply");
-        $(".icon-previous .fas").removeClass("fa-reply");
-        $(".icon-previous .fas").addClass("fa-chevron-left");*/
-    } else { // return to overview
-        map.flyTo([23.75, -101.9], 5);
-        /*$(".icon-next .fas").removeClass("fa-reply");
-        $(".icon-next .fas").addClass("fa-chevron-right");*/
-        $(".icon-previous").addClass("text-muted");
-        $(".icon-previous").addClass("icon-disabled");
-        currentRegion = 0;
-        regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
-        ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
-        $("#title").html('México');
+            $(".icon-previous .fas").addClass("fa-chevron-left");*/
+        } else { // return to overview
+            map.flyTo([23.75, -101.9], 5);
+            /*$(".icon-next .fas").removeClass("fa-reply");
+            $(".icon-next .fas").addClass("fa-chevron-right");*/
+            $(".icon-previous").addClass("text-muted");
+            $(".icon-previous").addClass("icon-disabled");
+            currentRegion = 0;
+            regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
+            ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
+            $("#title").html('Mexico');
 
-        map.once("moveend", function(){
-            updateChartData();
-        });
+            map.once("moveend", function(){
+                updateChartData();
+            });
+        }
     }
 });
 
 $(".icon-previous").on('click', function(){    
-    if (lastClickedLayer){ // if something is clicked, reset style
-            lastClickedLayer.feature.properties.is_clicked = false;
-            $(lastClickedLayer.getElement()).removeClass("regionZoomed");
-            $(lastClickedLayer.getElement()).addClass("regionStyle");
-    }
-    currentRegion--;
-    if (currentRegion > 1 && currentRegion < regionesLyr.getLayers().length){ // cycle to previous region
-        regionesLyr._layers[currentRegion].fire('click');
-        /*$(".icon-next .fas").removeClass("fa-reply");
-        $(".icon-next .fas").addClass("fa-chevron-right");*/
-    } else if (currentRegion == 1){ // if first region
-        regionesLyr._layers[currentRegion].fire('click');
-        /*$(".icon-next .fas").removeClass("fa-reply");
-        $(".icon-next .fas").addClass("fa-chevron-right");
-        $(".icon-previous .fas").removeClass("fa-chevron-left");
-        $(".icon-previous .fas").addClass("fa-reply");*/
-    } else { // return to overview
-        map.flyTo([23.75, -101.9], 5);
-        /*$(".icon-previous .fas").removeClass("fa-reply");
-        $(".icon-previous .fas").addClass("fa-chevron-left");*/
-        $(".icon-previous").addClass("text-muted");
-        $(".icon-previous").addClass("icon-disabled");
-        currentRegion = 0;
-        regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
-        ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
-        $("#title").html('México');
-        
-        map.once("moveend", function(){
-            updateChartData();
-        });
+    if(ciudadesLyr != undefined && regionesLyr !=undefined){
+        if (lastClickedLayer){ // if something is clicked, reset style
+                lastClickedLayer.feature.properties.is_clicked = false;
+                $(lastClickedLayer.getElement()).removeClass("regionZoomed");
+                $(lastClickedLayer.getElement()).addClass("regionStyle");
+        }
+        currentRegion--;
+        if(currentRegion<0){
+            currentRegion= regionesLyr.getLayers().length
+        }
+        if (currentRegion > 1 && currentRegion <= regionesLyr.getLayers().length){ // cycle to previous region
+            regionesLyr._layers[currentRegion].fire('click');
+            /*$(".icon-next .fas").removeClass("fa-reply");
+            $(".icon-next .fas").addClass("fa-chevron-right");*/
+        } else if (currentRegion == 1){ // if first region
+            regionesLyr._layers[currentRegion].fire('click');
+            /*$(".icon-next .fas").removeClass("fa-reply");
+            $(".icon-next .fas").addClass("fa-chevron-right");
+            $(".icon-previous .fas").removeClass("fa-chevron-left");
+            $(".icon-previous .fas").addClass("fa-reply");*/
+        } else { // return to overview
+            map.flyTo([23.75, -101.9], 5);
+            /*$(".icon-previous .fas").removeClass("fa-reply");
+            $(".icon-previous .fas").addClass("fa-chevron-left");*/
+            $(".icon-previous").addClass("text-muted");
+            $(".icon-previous").addClass("icon-disabled");
+            currentRegion = 0;
+            regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);});
+            ciudadesLyr.eachLayer(function(l){ciudadesLyr.resetStyle(l);});
+            $("#title").html('Mexico');
+            
+            map.once("moveend", function(){
+                updateChartData();
+            });
+        }
     }
 });
 
@@ -812,5 +1039,4 @@ function updateChartData(){
     logroEBar.data(getLogroEData());
     ikaBar.data(getIkaData());
     hhRegionBar.highlight(idToName[currentRegion]);
-    
 }

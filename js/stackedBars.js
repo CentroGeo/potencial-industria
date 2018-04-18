@@ -12,6 +12,8 @@ function stackedBarChart(){
         stackVariables, // Which variables to stack in bars
         lineVariables = null, // list of variables to display as lines
         barAxisLabel = "",
+        barAxisXLabelPos = "-2em",
+        barAxisYLabelPos = "-2em",
         lineAxisLabel = "",
         id,  // variable in data to use as identifier
         displayName, // variable in data to use as x axis labels
@@ -19,7 +21,6 @@ function stackedBarChart(){
         floatFormat = d3.format('.1f'),
         leftAxisFormat = '.2s',
         rightAxisFormat = '.0%',
-
         legend = false,
         //legend = {title: 'title', translateX: 100, translateY: 0, items:['item1','item2']}
         legendContainer = 'legendZone',
@@ -167,8 +168,8 @@ function stackedBarChart(){
                 .append("text")
                 .attr("x", 2)
                 .attr("y", yBar(yBar.ticks().pop()))
-                .attr("dy", "-2em")
-                .attr("dx", "-2em")
+                .attr("dy", barAxisYLabelPos)
+                .attr("dx", barAxisXLabelPos)
                 .attr("text-anchor", "start")
                 .text(barAxisLabel);
             
@@ -334,7 +335,7 @@ function stackedBarChart(){
                         .attr("x", width - 55)
                     // TODO: The start point must be calculated
                         .attr("y", function(d, i){return i * 20 + 60; })
-                        .attr("fill", function(d, i){ return lineColors(i);})
+                        .attr("fill", function(d, i){ return lineColors(i);});
 
                     barLegend.selectAll('text-line')
                         .data(lineVariables.reverse())
@@ -587,6 +588,18 @@ function stackedBarChart(){
     chart.barAxisLabel = function(value) {
         if (!arguments.length) return barAxisLabel;
         barAxisLabel = value;
+        return chart;
+    };
+
+    chart.barAxisXLabelPos = function(value) {
+        if (!arguments.length) return barAxisXLabelPos;
+        barAxisXLabelPos = value;
+        return chart;
+    };
+
+    chart.barAxisYLabelPos = function(value) {
+        if (!arguments.length) return barAxisYLabelPos;
+        barAxisYLabelPos = value;
         return chart;
     };
 

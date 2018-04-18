@@ -12,6 +12,8 @@ function horizontalBarChart(){
         axisFormat = d3.format('.1s'),
         legend = { title: '', translateX: 100, translateY: 0 },
         legendContainer = 'legendZone',
+        xOffsetStart = 0,
+        xOffsetEnd = 0,
         doHighlight,
         highlightValue,
         updateData;
@@ -31,21 +33,21 @@ function horizontalBarChart(){
 
         selection.each(function(){
             
-            x.domain([0, d3.max(data, function(d) { return d[barsVariable]; })]);
+            x.domain([d3.min(data, function(d){
+                        return d[barsVariable]; }) + xOffsetStart,
+                      d3.max(data, function(d) {
+                          return d[barsVariable]; }) + xOffsetEnd]
+            );
             y.domain(data.map(function(d) { return d[displayName]; })).padding(0.1);
 
             g.append("g")
-                .attr("class", "axis--x")
+                .attr("class", "axisHBar--x")
        	        .attr("transform", "translate(0," + height + ")")
       	        .call(d3.axisBottom(x)
                       .ticks(5)
                       .tickFormat(axisFormat)
                       //.tickSizeInner([-height]));
                       );
-
-            g.append("g")
-                .attr("class", "axis--y")
-                .call(d3.axisLeft(y));
 
             g.selectAll(".bar")
                 .data(data)
@@ -68,6 +70,10 @@ function horizontalBarChart(){
                 })
                 .on("mouseout", function(d){ tooltip.style("display", "none");})*/;
 
+            g.append("g")
+                .attr("class", "axis--y")
+                .call(d3.axisLeft(y));
+                
             doHighlight = function(){
                 selection.selectAll(".horizontal-bar")
                     .each(function(){
@@ -112,13 +118,11 @@ function horizontalBarChart(){
         return chart;
     };
 
-    
     chart.displayName = function(value) {
         if (!arguments.length) return displayName;
         displayName = value;
         return chart;
     };
-
 
     chart.transitionTime = function(value) {
         if (!arguments.length) return transitionTime;
@@ -149,6 +153,18 @@ function horizontalBarChart(){
         axisFormat = value;
         return chart;
     };
+    
+    chart.xOffsetStart = function(value) {
+        if (!arguments.length) return xOffsetStart;
+        xOffsetStart = value;
+        return chart;
+    };
+    
+    chart.xOffsetEnd = function(value) {
+        if (!arguments.length) return xOffsetEnd;
+        xOffsetEnd = value;
+        return chart;
+    };
 
     chart.data = function(value) {        
         if (!arguments.length) return data;
@@ -160,6 +176,12 @@ function horizontalBarChart(){
     chart.highlightColor = function(value) {
         if (!arguments.length) return highlightColor;
         highlightColor = value;
+        return chart;
+    };
+    
+    chart.barColor = function(value) {
+        if (!arguments.length) return barColor;
+        barColor = value;
         return chart;
     };
 

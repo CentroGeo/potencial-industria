@@ -130,7 +130,7 @@ function radarChart(){
                       (height/2 + margin.top) + ")");
 
             // glow filter
-            var filter = g.append('defs').append('filter').attr('id','glow-'+chartId),
+            /*var filter = g.append('defs').append('filter').attr('id','glow-'+chartId),
                 feGaussianBlur = filter.append('feGaussianBlur')
                     .attr('stdDeviation','2.5')
                     .attr('result','coloredBlur'),
@@ -139,6 +139,7 @@ function radarChart(){
                     .attr('in','coloredBlur'),
                 feMergeNode_2 = feMerge.append('feMergeNode')
                     .attr('in','SourceGraphic');
+            */
 
             // circular grid
 
@@ -154,8 +155,8 @@ function radarChart(){
                 .attr("r", d => radius / levels * d)
                 .style("fill", "#CDCDCD")
                 .style("stroke", "#CDCDCD")
-                .style("fill-opacity", opacityCircles)
-                .style("filter" , "url(#glow-"+chartId+")");
+                .style("fill-opacity", opacityCircles);
+                //.style("filter" , "url(#glow-"+chartId+")");
 
             //Text indicating at what % each level is
             axisGrid.selectAll(".axisLabel")
@@ -232,9 +233,9 @@ function radarChart(){
                 .attr("class", "radarArea")
                 //.attr("class", function(d, i){ return chartId + "-radarArea-" + i; })
                 .attr("d", d => radarLine(d.axes))
-                .style("fill", (d,i) => color(d))
-                .style("fill-opacity", opacityArea)
-                .on('mouseover', function(d, i) {
+                //.style("fill", (d,i) => color(d))
+                .style("fill-opacity", opacityArea);
+                /*.on('mouseover', function(d, i) {
                     //Dim all blobs
                     selection.selectAll(".radarArea")
                     .transition().duration(transitionTime)
@@ -249,7 +250,7 @@ function radarChart(){
                     selection.selectAll(".radarArea")
                     .transition().duration(transitionTime)
                     .style("fill-opacity", opacityArea);
-                });
+                });*/
 
             //Create the outlines
             blobWrapper.append("path")
@@ -257,8 +258,8 @@ function radarChart(){
                 .attr("d", function(d,i) { return radarLine(d.axes); })
                 .style("stroke-width", strokeWidth + "px")
                 .style("stroke", (d,i) => color(d.name))
-                .style("fill", "none")
-                .style("filter" , "url(#glow-"+chartId+")");
+                .style("fill", "none");
+                //.style("filter" , "url(#glow-"+chartId+")");
 
             //Append the circles
             blobWrapper.selectAll(".radarCircle")
@@ -438,8 +439,8 @@ function radarChart(){
                     .attr("d", function(d,i) { return radarLine(d.axes); })
                     .style("stroke-width", strokeWidth + "px")
                     .style("stroke", d => color(d.name))
-                    .style("fill", "none")
-                    .style("filter" , "url(#glow-"+chartId+")");
+                    .style("fill", "none");
+                    //.style("filter" , "url(#glow-"+chartId+")");
                 
                 //Append the circles
                 var radarCircleEnter = radarWrapperEnter.selectAll(".radarCircle")
@@ -518,6 +519,7 @@ function radarChart(){
                                     highlightedStrokeWidth + "px" :
                                     strokeWidth + "px"
                             });
+                        d3.select(".wrapper"+highlightValue).moveToFront();
                     });
             }
         });
@@ -584,6 +586,12 @@ function radarChart(){
         color = value;
         return chart;
     };
+    
+    chart.opacityArea = function(value) {
+        if (!arguments.length) return opacityArea;
+        opacityArea = value;
+        return chart;
+    };
 
     chart.legend = function(value) {
         if (!arguments.length) return legend;
@@ -613,3 +621,9 @@ function radarChart(){
 
     return chart;
 }
+
+d3.selection.prototype.moveToFront = function() {
+  return this.each(function(){
+    this.parentNode.appendChild(this);
+  });
+};
