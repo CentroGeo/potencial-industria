@@ -377,12 +377,12 @@ var currentRegion = 0,
     mercadosLyr;
 
 var sede_icon = L.icon({
-        "iconUrl": "/img/icon_rdi.png",
+        "iconUrl": "img/icon_rdi.png",
    "iconSize": [20,20],
 });
 
 var nosede_icon = L.icon({
-   "iconUrl": "/img/icon_rdi.png",
+   "iconUrl": "img/icon_rdi.png",
    "iconSize": [10,10]
 });
 
