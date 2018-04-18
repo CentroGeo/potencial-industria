@@ -511,7 +511,7 @@ function showpopup(e,f){
     var topics = f.properties.topics.split(";");
     topicsText = "<ul style='padding: 0 0 0 10px;'>";
     topics.forEach(function(t){
-        topicsText += "<li class='bullet-conacyt'>" + t + "</li><br>";
+        topicsText += "<li class='bullet-popup-conacyt' style'padding:0 0 0 5px'>" + t + "</li><br>";
     });
     topicsText += "</ul>";
     var Text = "<div class ='popups scroll_style_activate'>" + 
@@ -681,6 +681,8 @@ function layerClick(event){
         $(".icon-previous").addClass("icon-disabled");
 
         changeBullets("default_bullet");
+        
+        mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
     }
     map.once("moveend", function(){
         updateChartData();
@@ -715,6 +717,9 @@ $("#global").on('click', function(){
         map.once("moveend", function(){
             updateChartData();
         });
+        
+        mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
+
     }else if(cpisLayer!=undefined){
         makercpis()
         lastClickedMaker.feature.properties.is_clicked = false;

@@ -390,6 +390,12 @@ li.bullet-conacyt {
     padding-bottom: 10px;
 }
 
+li.bullet-popup-conacyt {
+    background: url("../img/default_bullet.png") no-repeat left top;
+    background-size: 15px 15px;
+    padding-left: 22px;
+}
+
 .bullet-info-text {
     margin-bottom: 5px;
 }
