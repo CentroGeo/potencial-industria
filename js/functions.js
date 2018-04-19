@@ -39,6 +39,8 @@ $(".topic-icon").on('click', function(){
                 break;
         }
 
+        currentTopic = topic_name;
+
         $("#topic").html(topic_name + ":");
         if (topic_name === "Conacyt") {
             $("#title").html("Mexico");
@@ -50,6 +52,11 @@ $(".topic-icon").on('click', function(){
             makercpis()
         }else{
             makerRegion()
+        }
+
+        if(topic_name === 'Connectivity'){
+            loadSelectedRailNet(currentRegion);
+            loadSelectedHighNet(currentRegion);
         }
         
         // if on Skills and Talent topic, display market regions
@@ -75,6 +82,9 @@ $("#menu").on('click', function(){
         $(topic).css("display", "none");
     });
     if (map.hasLayer(mercadosLyr)) mercadosLyr.removeFrom(map);
+    if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
+    if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
+    currentTopic = "";
 });
 
 // Setup stuff for the bar chart
@@ -374,7 +384,10 @@ var currentRegion = 0,
     regionesLyr,
     ciudadesLyr,
     cpisLayer,
-    mercadosLyr;
+    mercadosLyr,
+    currentRailNetLyr,
+    currentTopic,
+    currentHighNetLyr;
 
 var sede_icon = L.icon({
         "iconUrl": "img/icon_rdi.png",
@@ -666,6 +679,12 @@ function layerClick(event){
         $(layer.getElement()).removeClass("regionStyle");
         $(layer.getElement()).addClass("regionZoomed");
         feature.properties.is_clicked = true;
+
+        if(currentTopic === 'Connectivity'){
+            loadSelectedRailNet(currentRegion);
+            loadSelectedHighNet(currentRegion);
+        }
+
     } else if (feature.properties.is_clicked == true){ // feature already clicked, so zoom out
         map.flyTo([23.75, -101.9], 5);
         regionesLyr.eachLayer(function(l){regionesLyr.resetStyle(l);})
@@ -681,6 +700,9 @@ function layerClick(event){
         $(".icon-previous").addClass("icon-disabled");
 
         changeBullets("default_bullet");
+
+        if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
+        if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
     }
     map.once("moveend", function(){
         updateChartData();
@@ -715,6 +737,12 @@ $("#global").on('click', function(){
         map.once("moveend", function(){
             updateChartData();
         });
+
+        if(currentTopic === 'Connectivity'){
+            if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
+            if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
+        }
+
     }else if(cpisLayer!=undefined){
         makercpis()
         lastClickedMaker.feature.properties.is_clicked = false;
@@ -763,6 +791,8 @@ $(".icon-next").on('click', function(){
             });
 
             changeBullets("default_bullet");
+            if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
+            if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
         }
     }
 });
@@ -804,6 +834,8 @@ $(".icon-previous").on('click', function(){
             });
 
             changeBullets("default_bullet");
+            if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
+            if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
         }
     }
 });
@@ -1092,4 +1124,86 @@ function updateChartData(){
     logroEBar.data(getLogroEData());
     ikaBar.data(getIkaData());
     hhRegionBar.highlight(idToName[currentRegion]);
+}
+
+function loadSelectedRailNet(region){
+    if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
+    switch(region) {
+        case 1:
+            $.getJSON("data/northeast.geojson", function(data){
+                currentRailNetLyr = L.geoJson(data, {style: {"color": "#E36930"}}).addTo(map);
+            });
+            break;
+        case 2:
+            $.getJSON("data/center_west.geojson", function(data){
+                currentRailNetLyr = L.geoJson(data, {style: {"color": "#E36930"}}).addTo(map);
+            });
+            break;
+        case 3:
+            $.getJSON("data/megalopolis.geojson", function(data){
+                currentRailNetLyr = L.geoJson(data, {style: {"color": "#E36930"}}).addTo(map);
+            });
+            break;
+        case 4:
+            $.getJSON("data/northwest.geojson", function(data){
+                currentRailNetLyr = L.geoJson(data, {style: {"color": "#E36930"}}).addTo(map);
+            });
+            break;
+        case 5:
+            $.getJSON("data/gulf_east.geojson", function(data){
+                currentRailNetLyr = L.geoJson(data, {style: {"color": "#E36930"}}).addTo(map);
+            });
+            break;
+        case 6:
+            $.getJSON("data/center_north.geojson", function(data){
+                currentRailNetLyr = L.geoJson(data, {style: {"color": "#E36930"}}).addTo(map);
+            });
+            break;
+        case 7:
+            $.getJSON("data/yucatan_peninsula.geojson", function(data){
+                currentRailNetLyr = L.geoJson(data, {style: {"color": "#E36930"}}).addTo(map);
+            });
+            break;
+    }
+}
+
+function loadSelectedHighNet(region){
+    if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
+    switch(region) {
+        case 1:
+            $.getJSON("data/red_primaria/northeast.geojson", function(data){
+                currentHighNetLyr = L.geoJson(data, {style: {"color": "#40AB4E"}}).addTo(map);
+            });
+            break;
+        case 2:
+            $.getJSON("data/red_primaria/center_west.geojson", function(data){
+                currentHighNetLyr = L.geoJson(data, {style: {"color": "#40AB4E"}}).addTo(map);
+            });
+            break;
+        case 3:
+            $.getJSON("data/red_primaria/megalopolis.geojson", function(data){
+                currentHighNetLyr = L.geoJson(data, {style: {"color": "#40AB4E"}}).addTo(map);
+            });
+            break;
+        case 4:
+            $.getJSON("data/red_primaria/northwest.geojson", function(data){
+                currentHighNetLyr = L.geoJson(data, {style: {"color": "#40AB4E"}}).addTo(map);
+            });
+            break;
+        case 5:
+            $.getJSON("data/red_primaria/gulf_east.geojson", function(data){
+                currentHighNetLyr = L.geoJson(data, {style: {"color": "#40AB4E"}}).addTo(map);
+            });
+            break;
+        case 6:
+            $.getJSON("data/red_primaria/center_north.geojson", function(data){
+                currentHighNetLyr = L.geoJson(data, {style: {"color": "#40AB4E"}}).addTo(map);
+            });
+            break;
+        case 7:
+            $.getJSON("data/red_primaria/yucatan_peninsula.geojson", function(data){
+                currentHighNetLyr = L.geoJson(data, {style: {"color": "#40AB4E"}}).addTo(map);
+            });
+            break;
+    }
 }
