@@ -91,7 +91,7 @@ $(".topic-icon").on('click', function(){
         }
 
         if(topic_name === "Industries"){
-            updateBullerComplementary();
+            updateBulletComplementary();
             updateBulletIndustry();
         }
     
@@ -769,7 +769,7 @@ function layerClick(event){
         }
 
         changeBullets(bullet_name);
-        updateBullerComplementary();
+        updateBulletComplementary();
         updateBulletIndustry();
 
         var featBounds = feature.properties.bounds_calculated;
@@ -799,7 +799,7 @@ function layerClick(event){
         $(".icon-previous").addClass("icon-disabled");
 
         changeBullets("default_bullet");
-        updateBullerComplementary();
+        updateBulletComplementary();
         updateBulletIndustry();
 
         mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
@@ -850,7 +850,7 @@ $("#global").on('click', function(){
             updateChartData();
         });
 
-        updateBullerComplementary();
+        updateBulletComplementary();
         updateBulletIndustry();
 
         mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
@@ -912,7 +912,7 @@ $(".icon-next").on('click', function(){
             if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
             if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
         }
-        updateBullerComplementary();
+        updateBulletComplementary();
         updateBulletIndustry();
     }
 });
@@ -957,7 +957,7 @@ $(".icon-previous").on('click', function(){
             if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
             if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
         }
-        updateBullerComplementary();
+        updateBulletComplementary();
         updateBulletIndustry();
     }
 });
@@ -1412,8 +1412,8 @@ function updateBulletIndustry(){
     var data = getdataBase();
     var keys = Object.keys(data[0]);
     var keysLength = keys.length-3;
-    var numbers =Array.from(document.getElementsByClassName("four-fixed-number"))
-    var title =Array.from(document.getElementsByClassName("four-fixed-category"))
+    var numbers =Array.from(document.getElementsByClassName("four-fixed-number"));
+    var title =Array.from(document.getElementsByClassName("four-fixed-category"));
     var index = 0
 
     keys.forEach(function(e){
@@ -1426,7 +1426,7 @@ function updateBulletIndustry(){
     
 }
 /*Function for update of bullet of industry*/
-function updateBullerComplementary(){
+function updateBulletComplementary(){
     var data = getcomplementaryData();
     var keys = Object.keys(data[0])
     var keysLength = keys.length-3;
@@ -1436,20 +1436,20 @@ function updateBullerComplementary(){
 
     switch(keysLength) {
         case 8:
-            numbersRow1 = Array.from(document.getElementsByClassName("four-top-number"))
-            titleRow1   = Array.from(document.getElementsByClassName("four-top-category"))
-            numbersRow2 = Array.from(document.getElementsByClassName("four-bottom-number"))
-            titleRow2   = Array.from(document.getElementsByClassName("four-bottom-category"))
+            numbersRow1 = Array.from(document.getElementsByClassName("four-top-number"));
+            titleRow1   = Array.from(document.getElementsByClassName("four-top-category"));
+            numbersRow2 = Array.from(document.getElementsByClassName("four-bottom-number"));
+            titleRow2   = Array.from(document.getElementsByClassName("four-bottom-category"));
             $("#three-bullet-ind-bottom").hide();
             $("#three-bullet-ind-top").hide();
             $("#four-bullet-ind-bottom").show();
             $("#four-bullet-ind-top").show();
             break;
         case 7:
-            numbersRow1 = Array.from(document.getElementsByClassName("four-top-number"))
-            titleRow1   = Array.from(document.getElementsByClassName("four-top-category"))    
-            numbersRow2 = Array.from(document.getElementsByClassName("three-bottom-number"))
-            titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category"))
+            numbersRow1 = Array.from(document.getElementsByClassName("four-top-number"));
+            titleRow1   = Array.from(document.getElementsByClassName("four-top-category"));
+            numbersRow2 = Array.from(document.getElementsByClassName("three-bottom-number"));
+            titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category"));
             $("#four-bullet-ind-bottom").hide();
             $("#three-bullet-ind-top").hide();
             $("#four-bullet-ind-top").show();
@@ -1457,10 +1457,10 @@ function updateBullerComplementary(){
 
             break;
         case 6:
-            numbersRow1 = Array.from(document.getElementsByClassName("three-top-number"))
-            titleRow1   = Array.from(document.getElementsByClassName("three-top-category"))
-            numbersRow2 = Array.from(document.getElementsByClassName("three-bottom-number"))
-            titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category"))    
+            numbersRow1 = Array.from(document.getElementsByClassName("three-top-number"));
+            titleRow1   = Array.from(document.getElementsByClassName("three-top-category"));
+            numbersRow2 = Array.from(document.getElementsByClassName("three-bottom-number"));
+            titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category")) ;
             $("#four-bullet-ind-bottom").hide();
             $("#four-bullet-ind-top").hide();
             $("#three-bullet-ind-bottom").show();
