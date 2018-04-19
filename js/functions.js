@@ -452,7 +452,7 @@ $("[class^=consortium]").on('click', function(){
     
     // highlight involved centers on map
     cpisLayer.eachLayer(function(l){
-        if (jQuery.inArray(l.feature.properties.shortname, consortiumCenters) != -1){
+        if (jQuery.inArray(l.feature.properties.shortname.split(" ")[0], consortiumCenters) != -1){
             var currentIcon = L.icon({
                 iconUrl: 'img/icon_rdi_color.png',
             });
