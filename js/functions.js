@@ -68,6 +68,11 @@ $(".topic-icon").on('click', function(){
         if (topic_name === "Skills and Talent") {
             mercadosLyr.addTo(map);
         }
+
+        if(topic_name === "Industries"){
+            updateBullerComplementary();
+            updateBulletIndustry();
+        }
     
         $("#choose").css('display', 'none'); 
         $("#graphs").fadeIn("slow", "linear");
@@ -177,7 +182,9 @@ var properties, // properties for each city
     ikaBar,
     hhData,
     hhBar,
-    consortiaData;
+    consortiaData,
+    dataBase,
+    complementaryData;
 
 // Load data
 var q = d3.queue();
@@ -191,9 +198,13 @@ q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.csv, "data/tamanomercado.csv")
     .defer(d3.csv, "data/hh_region.csv")
     .defer(d3.csv, "data/hh_ika.csv")
+    .defer(d3.csv, "data/empresas_base_resumen.csv")
+    .defer(d3.csv, "data/empresas_complementarias_resumen.csv")
+
     
     .await(function(error, regiones, ciudades, cpis, mercados, variables,
-                    varsChZonas, varsLogroE, varsIKA, varsRegionHH, varsIkaHH) {
+                    varsChZonas, varsLogroE, varsIKA, varsRegionHH, varsIkaHH,
+                    bases, complementary) {
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
         } else {
@@ -214,6 +225,10 @@ q.defer(d3.json, "data/regiones.geojson")
             logroEData = parseLogroEData(varsLogroE);
             // Read IKA data
             ikaData = parseIkaData(varsIKA);
+
+            dataBase = parsedataBase(bases);
+            complementaryData = parsecomplementaryData(complementary);
+
             // Read zone names
             regionNames = getZonesNames(varsChZonas);
 
@@ -733,6 +748,8 @@ function layerClick(event){
         }
 
         changeBullets(bullet_name);
+        updateBullerComplementary();
+        updateBulletIndustry();
 
         var featBounds = feature.properties.bounds_calculated;
         map.flyToBounds(featBounds);
@@ -761,6 +778,8 @@ function layerClick(event){
         $(".icon-previous").addClass("icon-disabled");
 
         changeBullets("default_bullet");
+        updateBullerComplementary();
+        updateBulletIndustry();
 
         mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
 
@@ -809,6 +828,9 @@ $("#global").on('click', function(){
         map.once("moveend", function(){
             updateChartData();
         });
+
+        updateBullerComplementary();
+        updateBulletIndustry();
 
         mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
 
@@ -869,6 +891,8 @@ $(".icon-next").on('click', function(){
             if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
             if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
         }
+        updateBullerComplementary();
+        updateBulletIndustry();
     }
 });
 
@@ -912,6 +936,8 @@ $(".icon-previous").on('click', function(){
             if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
             if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
         }
+        updateBullerComplementary();
+        updateBulletIndustry();
     }
 });
 
@@ -1182,6 +1208,83 @@ function getIkaData() {
     return chartData;
 }
 
+
+function parsedataBase(rows){
+    dataBase = [];
+    rows.forEach(function(d) {
+        dataBase.push({
+            id: d["region"], 
+            name: d.id, // lowercase
+            region: d.region,
+            "Internet of things":
+            +d["Internet of Things and Cyberphysical Systems"],
+            "Manufacturing":
+            +d["Additive Manufacturing, Augmented Reality, and Simulation"],
+            "Robotics":
+            +d["Collaborative Robotics"],
+            "Big Data":
+            +d["Big Data and Cloud Computing"]
+         });
+    });
+    return dataBase;
+}
+
+// update logro educativo data
+function getdataBase(){
+    if (currentRegion == 0){
+        var chartData = dataBase.filter(function(el){
+            return el.region === "National";
+        });
+    } else {
+        var chartData = dataBase.filter(function(el){
+            return el.region === idToName[currentRegion];
+        });
+    }
+    return chartData;
+}
+
+function parsecomplementaryData(rows){
+    complementaryData = [];
+    rows.forEach(function(d) {
+        var obj={
+            id: d["region"], 
+            name: d.id, // lowercase
+            region: d.region,
+            "Electrical Equipment and Accessories":
+            +d["Electrical Equipment and Accessories"],
+            "Printing Industries":
+            +d["Printing Industries"],
+            "Equipment and Machinery Manufacturing":
+            +d["Equipment and Machinery Manufacturing"],
+            "Transportation Equipment Manufacturing":
+            +d["Transportation Equipment Manufacturing"],
+            "Freight Transport":
+            +d["Freight Transport"],
+        }
+        if(+d["Grupo 8"]!=0) obj.Grupo8 = +d["Grupo 8"];
+        if(+d["Chemical Industries"]!=0) obj.ChemicalIndustries = +d["Chemical Industries"];
+        if(+d["Domestic Appliance Manufacturing"]!=0){
+         obj.DomesticApplianceManufacturing = +d["Domestic Appliance Manufacturing"];
+        }
+        complementaryData.push(obj);
+    });
+    return complementaryData;
+}
+
+// update logro educativo data
+function getcomplementaryData(){
+    if (currentRegion == 0){
+        var chartData = complementaryData.filter(function(el){
+            return el.region === "National";
+        });
+    } else {
+        var chartData = complementaryData.filter(function(el){
+            return el.region === idToName[currentRegion];
+        });
+    }
+    return chartData;
+}
+
 // Get all zones names
 // Parse zone names (in english) from human capital data
 function getZonesNames(rowsCh){
@@ -1281,4 +1384,79 @@ function loadSelectedHighNet(region){
             });
             break;
     }
+}
+
+/*Function for update of industry*/
+function updateBulletIndustry(){
+    var data = getdataBase();
+    var keys = Object.keys(data[0]);
+    var keysLength = keys.length-3;
+    var numbers =Array.from(document.getElementsByClassName("four-fixed-number"))
+    var title =Array.from(document.getElementsByClassName("four-fixed-category"))
+    var index = 0
+
+    keys.forEach(function(e){
+        if(e!="region" && e!="id" && e!="name"){
+            numbers[index].innerHTML  = data[0][e];
+            title[index].innerHTML  = e
+            index++;
+        }
+    });
+    
+}
+/*Function for update of bullet of industry*/
+function updateBullerComplementary(){
+    var data = getcomplementaryData();
+    var keys = Object.keys(data[0])
+    var keysLength = keys.length-3;
+    var middle = Math.ceil(keysLength/2);
+    var index=0;
+    var numbersRow1,titleRow1,numbersRow2,titleRow2;
+
+    switch(keysLength) {
+        case 8:
+            numbersRow1 = Array.from(document.getElementsByClassName("four-top-number"))
+            titleRow1   = Array.from(document.getElementsByClassName("four-top-category"))
+            numbersRow2 = Array.from(document.getElementsByClassName("four-bottom-number"))
+            titleRow2   = Array.from(document.getElementsByClassName("four-bottom-category"))
+            $("#three-bullet-ind-bottom").hide();
+            $("#three-bullet-ind-top").hide();
+            $("#four-bullet-ind-bottom").show();
+            $("#four-bullet-ind-top").show();
+            break;
+        case 7:
+            numbersRow1 = Array.from(document.getElementsByClassName("four-top-number"))
+            titleRow1   = Array.from(document.getElementsByClassName("four-top-category"))    
+            numbersRow2 = Array.from(document.getElementsByClassName("three-bottom-number"))
+            titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category"))
+            $("#four-bullet-ind-bottom").hide();
+            $("#three-bullet-ind-top").hide();
+            $("#four-bullet-ind-top").show();
+            $("#three-bullet-ind-bottom").show();
+
+            break;
+        case 6:
+            numbersRow1 = Array.from(document.getElementsByClassName("three-top-number"))
+            titleRow1   = Array.from(document.getElementsByClassName("three-top-category"))
+            numbersRow2 = Array.from(document.getElementsByClassName("three-bottom-number"))
+            titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category"))    
+            $("#four-bullet-ind-bottom").hide();
+            $("#four-bullet-ind-top").hide();
+            $("#three-bullet-ind-bottom").show();
+            $("#three-bullet-ind-top").show();
+            break;
+    }
+
+    keys.forEach(function(e){
+        if(e!="region" && e!="id" && e!="name"){
+            if(index < middle){
+                numbersRow1[index].innerHTML  = data[0][e];
+                titleRow1[index].innerHTML  = e
+            }else{
+                numbersRow2[index-middle].innerHTML  = data[0][e];
+                titleRow2[index-middle].innerHTML  = e
+            }
+            index++;
+        }
+    });
 }
