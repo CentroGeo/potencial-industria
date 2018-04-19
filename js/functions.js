@@ -405,6 +405,10 @@ var nosede_icon = L.icon({
     "iconSize": [10,10]
 });
 
+$("#two-bullet-conect").hide();
+$("#three-bullet-ind-top").hide();
+$("#three-bullet-ind-bottom").hide();
+
 function makercpis(){
     var q = d3.queue()
     q.defer(d3.json, "data/cpis_en.geojson")
@@ -772,6 +776,15 @@ function changeBullets (bullet) {
     Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
         element.style.backgroundImage = "url('/img/" + bullet + ".png')";
         element.style.backgroundSize = "20px 20px";
+    });
+
+    Array.from(document.getElementsByClassName("bullet-li-skills")).forEach(function(element) {
+        element.style.backgroundImage = "url('/img/" + bullet + ".png')";
+        element.style.backgroundSize = "20px 20px";
+    });
+
+    Array.from(document.getElementsByClassName("bullet-img")).forEach(function(element) {
+        element.src = "/img/" + bullet + ".png";
     });
 }
 
