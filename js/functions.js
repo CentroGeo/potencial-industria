@@ -81,6 +81,7 @@ $(".topic-icon").on('click', function(){
         }
 
         if(topic_name === 'Connectivity'){
+            updateBulletConnectivity();
             loadSelectedRailNet(currentRegion);
             loadSelectedHighNet(currentRegion);
         }
@@ -205,7 +206,8 @@ var properties, // properties for each city
     hhBar,
     consortiaData,
     dataBase,
-    complementaryData;
+    complementaryData,
+    logisticsData;
 
 // Load data
 var q = d3.queue();
@@ -221,11 +223,12 @@ q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.csv, "data/hh_ika.csv")
     .defer(d3.csv, "data/empresas_base_resumen.csv")
     .defer(d3.csv, "data/empresas_complementarias_resumen.csv")
+    .defer(d3.csv, "data/datos_logistica.csv")
 
     
     .await(function(error, regiones, ciudades, cpis, mercados, variables,
                     varsChZonas, varsLogroE, varsIKA, varsRegionHH, varsIkaHH,
-                    bases, complementary) {
+                    bases, complementary, logistics) {
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
         } else {
@@ -249,6 +252,7 @@ q.defer(d3.json, "data/regiones.geojson")
 
             dataBase = parsedataBase(bases);
             complementaryData = parsecomplementaryData(complementary);
+            logisticsData = parselogisticsData(logistics);
 
             // Read zone names
             regionNames = getZonesNames(varsChZonas);
@@ -771,6 +775,7 @@ function layerClick(event){
         changeBullets(bullet_name);
         updateBulletComplementary();
         updateBulletIndustry();
+        updateBulletConnectivity();
 
         var featBounds = feature.properties.bounds_calculated;
         map.flyToBounds(featBounds);
@@ -801,6 +806,7 @@ function layerClick(event){
         changeBullets("default_bullet");
         updateBulletComplementary();
         updateBulletIndustry();
+        updateBulletConnectivity();
 
         mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
 
@@ -852,6 +858,7 @@ $("#global").on('click', function(){
 
         updateBulletComplementary();
         updateBulletIndustry();
+        updateBulletConnectivity();
 
         mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
 
@@ -914,6 +921,7 @@ $(".icon-next").on('click', function(){
         }
         updateBulletComplementary();
         updateBulletIndustry();
+        updateBulletConnectivity();
     }
 });
 
@@ -959,6 +967,7 @@ $(".icon-previous").on('click', function(){
         }
         updateBulletComplementary();
         updateBulletIndustry();
+        updateBulletConnectivity();
     }
 });
 
@@ -1283,9 +1292,9 @@ function parsecomplementaryData(rows){
             +d["Freight Transport"],
         }
         if(+d["Grupo 8"]!=0) obj.Grupo8 = +d["Grupo 8"];
-        if(+d["Chemical Industries"]!=0) obj.ChemicalIndustries = +d["Chemical Industries"];
+        if(+d["Chemical Industries"]!=0) obj.Chemical_Industries = +d["Chemical Industries"];
         if(+d["Domestic Appliance Manufacturing"]!=0){
-         obj.DomesticApplianceManufacturing = +d["Domestic Appliance Manufacturing"];
+         obj.Domestic_Appliance_Manufacturing = +d["Domestic Appliance Manufacturing"];
         }
         complementaryData.push(obj);
     });
@@ -1300,6 +1309,38 @@ function getcomplementaryData(){
         });
     } else {
         var chartData = complementaryData.filter(function(el){
+            return el.region === idToName[currentRegion];
+        });
+    }
+    return chartData;
+}
+
+function parselogisticsData(rows){
+    logisticsData = [];
+    rows.forEach(function(d) {
+        var obj={
+            id: d["region"], 
+            region: d.region,
+            "Industrial Parks":
+            +d["Industrial Parks"],
+        }
+        if(+d["Ports"]!=0) obj.Ports = +d["Ports"];
+        if(+d["Carousel Train Terminals"]!=0){
+         obj.Carousel_Train_Terminals = +d["Carousel Train Terminals"];
+        }
+        logisticsData.push(obj);
+    });
+    return logisticsData;
+}
+
+// update logro educativo data
+function getlogisticsData(){
+    if (currentRegion == 0){
+        var chartData = logisticsData.filter(function(el){
+            return el.region === "National";
+        });
+    } else {
+        var chartData = logisticsData.filter(function(el){
             return el.region === idToName[currentRegion];
         });
     }
@@ -1407,6 +1448,39 @@ function loadSelectedHighNet(region){
     }
 }
 
+/*Function for update of connectivity*/
+function updateBulletConnectivity(){
+    var data = getlogisticsData();
+    var keys = Object.keys(data[0]);
+    var keysLength = keys.length-2;
+    var numbers,title;
+    var index = 0
+
+    switch(keysLength){
+        case 3:
+            numbers = Array.from(document.getElementsByClassName("three-info-number"));
+            title   = Array.from(document.getElementsByClassName("three-info-category"));
+            $("#two-bullet-conect").hide();
+            $("#three-bullet-conect").show();
+            break;
+        case 2:
+            numbers = Array.from(document.getElementsByClassName("two-info-number"));
+            title   = Array.from(document.getElementsByClassName("two-info-category"));
+            $("#two-bullet-conect").show();
+            $("#three-bullet-conect").hide();
+            break;
+    }
+
+    keys.forEach(function(e){
+        if(e!="region" && e!="id" && e!="name"){
+            numbers[index].innerHTML  = data[0][e];
+            title[index].innerHTML  = e.split("_").join(" ");
+            index++;
+        }
+    });
+    
+}
+
 /*Function for update of industry*/
 function updateBulletIndustry(){
     var data = getdataBase();
@@ -1419,7 +1493,7 @@ function updateBulletIndustry(){
     keys.forEach(function(e){
         if(e!="region" && e!="id" && e!="name"){
             numbers[index].innerHTML  = data[0][e];
-            title[index].innerHTML  = e
+            title[index].innerHTML  = e.split("_").join(" ");
             index++;
         }
     });
@@ -1472,10 +1546,10 @@ function updateBulletComplementary(){
         if(e!="region" && e!="id" && e!="name"){
             if(index < middle){
                 numbersRow1[index].innerHTML  = data[0][e];
-                titleRow1[index].innerHTML  = e
+                titleRow1[index].innerHTML  = e.split("_").join(" ");
             }else{
                 numbersRow2[index-middle].innerHTML  = data[0][e];
-                titleRow2[index-middle].innerHTML  = e
+                titleRow2[index-middle].innerHTML  = e.split("_").join(" ");
             }
             index++;
         }
