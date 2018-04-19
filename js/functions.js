@@ -454,14 +454,16 @@ $("[class^=consortium]").on('click', function(){
     cpisLayer.eachLayer(function(l){
         if (jQuery.inArray(l.feature.properties.shortname.split(" ")[0], consortiumCenters) != -1){
             var currentIcon = L.icon({
-                iconUrl: 'img/icon_rdi_color.png',
+                iconUrl: 'img/icon_rdi_color.png'
             });
+            l.setZIndexOffset(1000); // bring selected markres to front
         } else {
             var currentIcon = L.icon({
-                iconUrl: 'img/icon_rdi.png',
+                iconUrl: 'img/icon_rdi.png'
             });
+            l.setZIndexOffset(-1000);
         }
-        l.setIcon(currentIcon); // TODO: bring to front
+        l.setIcon(currentIcon); // send the others to back
     });
 });
 
