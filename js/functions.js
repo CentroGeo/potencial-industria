@@ -7,10 +7,31 @@ $(function() {
     }, 500);
 });
 
+function whichAnimationEvent(){
+  var t,
+      el = document.createElement("fakeelement");
+
+  var animations = {
+    "animation"      : "animationend",
+    "OAnimation"     : "oAnimationEnd",
+    "MozAnimation"   : "animationend",
+    "WebkitAnimation": "webkitAnimationEnd"
+  }
+
+  for (t in animations){
+    if (el.style[t] !== undefined){
+      return animations[t];
+    }
+  }
+}
+
+var animationEvent = whichAnimationEvent();
+
 // Change initial icons to carousel on click
 $(".topic-icon").on('click', function(){
     var parentContainer = this.parentElement.id;
-    $("#"+parentContainer).bind("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd", function(){
+    $("#"+parentContainer).addClass("iconZoom");
+    $("#"+parentContainer).one(animationEvent, function(event){
         var topic = "#" + parentContainer.split("-")[0] + "_carouselContent";
         $(".topic-icon").each(function(){
             if (this.parentElement.id != parentContainer){
@@ -72,8 +93,8 @@ $(".topic-icon").on('click', function(){
         $("#choose").css('display', 'none'); 
         $("#graphs").fadeIn("slow", "linear");
         $(topic).fadeIn( "slow", "linear" );
-        $(this).removeClass("iconZoom");
-    }).addClass("iconZoom");
+        $("#"+parentContainer).removeClass("iconZoom");
+    });
 });
 
 // Change carousel back to initial icons when on click
