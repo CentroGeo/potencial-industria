@@ -47,12 +47,12 @@ $(".topic-icon").on('click', function(){
 
         //parentContainer de los markers
         if(parentContainer=="conacyt-div"){
-            makercpis()
+            makercpis();
+            // clear consortium info
             $("#consortium-lines").html('');
             $("#consortium-contact").html('');
             $("#consortium-centers").html('');
             $("[class^=consortium]").removeClass("selectedConsortium");
-            //TODO: remove colored centers from map
         }else{
             makerRegion();
         }
@@ -409,7 +409,7 @@ function makercpis(){
             if(cpisLayer==undefined){
                 $(".buttonleft").css('display', 'none');
                 $(".buttonright").css('display', 'none');
-                makeMapCpis(cpis)
+                makeMapCpis(cpis);
                 map.flyTo([23.75, -101.9], 5, { duration: 1});
             }
             consortiaData = consorcios;
@@ -434,8 +434,9 @@ $("[class^=consortium]").on('click', function(){
     var consortiumContact = consortiaData[currenTopic].contact.split(";");
     var contactText = "<ul>";
     consortiumContact.forEach(function(t){
-        contactText += "<li>" + t + "</li>";
+        contactText += t + "<br/>";
     });
+    contactText +=  consortiaData[currenTopic].email;
     contactText += "</ul>";
 
     var consortiumCenters = consortiaData[currenTopic].centers.split(";");
@@ -449,24 +450,26 @@ $("[class^=consortium]").on('click', function(){
     $("#consortium-contact").html(contactText);
     $("#consortium-centers").html(centersText);
     
-    //TODO: highlight involved centers on map
-    cpisLayer.eachLayer(function(l){cpisLayer.resetStyle(l);})
+    // highlight involved centers on map
     cpisLayer.eachLayer(function(l){
         if (jQuery.inArray(l.feature.properties.shortname, consortiumCenters) != -1){
-            console.log(l.feature.properties.shortname, i)
+            var currentIcon = L.icon({
+                iconUrl: 'img/icon_rdi_color.png',
+            });
+        } else {
+            var currentIcon = L.icon({
+                iconUrl: 'img/icon_rdi.png',
+            });
         }
-        /*if (l.feature.properties.zona != idToName[currentRegion]){
-            l.setStyle(noStyle);
-        }*/
+        l.setIcon(currentIcon); // TODO: bring to front
     });
-    
 });
 
 function makerRegion(){
-    var q = d3.queue()
+    var q = d3.queue();
     q.defer(d3.json, "data/regiones.geojson")
-    .defer(d3.json, "data/ciudades.geojson")
-    .await(function(error,regiones,ciudades){
+     .defer(d3.json, "data/ciudades.geojson")
+     .await(function(error,regiones,ciudades){
         if(error) console.error('Oh dear, something went wrong: ' + error)
         else {
             if(cpisLayer!=undefined){
@@ -495,7 +498,7 @@ function makeMapCpis(cpis){
             //.on("mouseout", hidePRC);
        },
        onEachFeature: onEachFeatureCpis /*new*/
-    }).addTo(map)
+    }).addTo(map);
 }
 
 function makeMap(regiones, ciudades, mercados){  // mercados is an optional parameter
@@ -616,7 +619,7 @@ function makerClick(event){
         map.flyTo(layer.getLatLng(), 7, { duration: 1});
         setTimeout(function(){
            layer.bindPopup(showpopup(event,feature),{closeButton: false,className: 'PopupContainer'}).openPopup();
-        },300)
+        },300);
         feature.properties.is_clicked = true;
 
     }else if(feature.properties.is_clicked == true){
@@ -625,7 +628,7 @@ function makerClick(event){
         
         setTimeout(function(){
             lastClickedMaker.closePopup();
-        },300)
+        },300);
     }
 }
 
