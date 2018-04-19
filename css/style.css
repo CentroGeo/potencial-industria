@@ -127,6 +127,13 @@ img.grayscale:hover {
     text-align: center;
 }
 
+[class|=consortium]{
+    cursor: pointer;
+}
+.selectedConsortium {
+    color: #e72662;
+    font-weight: bold;
+}
 
 #story {
     height: 854px; 
@@ -388,6 +395,12 @@ li.bullet-conacyt {
     background-position: 24% top;
     padding-left: 140px;
     padding-bottom: 10px;
+}
+
+li.bullet-popup-conacyt {
+    background: url("../img/default_bullet.png") no-repeat left top;
+    background-size: 15px 15px;
+    padding-left: 22px;
 }
 
 .bullet-info-text {

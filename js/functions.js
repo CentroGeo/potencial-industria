@@ -49,16 +49,21 @@ $(".topic-icon").on('click', function(){
 
         //parentContainer de los markers
         if(parentContainer=="conacyt-div"){
-            makercpis()
+            makercpis();
+            // clear consortium info
+            $("#consortium-lines").html('');
+            $("#consortium-contact").html('');
+            $("#consortium-centers").html('');
+            $("[class^=consortium]").removeClass("selectedConsortium");
         }else{
-            makerRegion()
+            makerRegion();
         }
 
         if(topic_name === 'Connectivity'){
             loadSelectedRailNet(currentRegion);
             loadSelectedHighNet(currentRegion);
         }
-        
+
         // if on Skills and Talent topic, display market regions
         if (topic_name === "Skills and Talent") {
             mercadosLyr.addTo(map);
@@ -73,7 +78,7 @@ $(".topic-icon").on('click', function(){
 
 // Change carousel back to initial icons when on click
 $("#menu").on('click', function(){
-    makerRegion()
+    makerRegion();
     $("#graphs").css('display', 'none'); 
     $("#choose").fadeIn( "slow", "linear" ); 
     $(".topic-icon").each(function(){
@@ -171,7 +176,8 @@ var properties, // properties for each city
     ikaData,
     ikaBar,
     hhData,
-    hhBar;
+    hhBar,
+    consortiaData;
 
 // Load data
 var q = d3.queue();
@@ -390,20 +396,21 @@ var currentRegion = 0,
     currentHighNetLyr;
 
 var sede_icon = L.icon({
-        "iconUrl": "img/icon_rdi.png",
-   "iconSize": [20,20],
+    "iconUrl": "img/icon_rdi.png",
+    "iconSize": [20,20],
 });
 
 var nosede_icon = L.icon({
-   "iconUrl": "img/icon_rdi.png",
-   "iconSize": [10,10]
+    "iconUrl": "img/icon_rdi.png",
+    "iconSize": [10,10]
 });
 
 function makercpis(){
     var q = d3.queue()
     q.defer(d3.json, "data/cpis_en.geojson")
-    
-    .await(function(error, cpis) {
+     .defer(d3.csv, "data/consorcios.csv")
+
+    .await(function(error, cpis, consorcios) {
         if (error) console.error('Oh dear, something went wrong: ' + error);
         else {
             if(ciudadesLyr != undefined && regionesLyr!=undefined){
@@ -415,19 +422,69 @@ function makercpis(){
             if(cpisLayer==undefined){
                 $(".buttonleft").css('display', 'none');
                 $(".buttonright").css('display', 'none');
-                makeMapCpis(cpis)
+                makeMapCpis(cpis);
                 map.flyTo([23.75, -101.9], 5, { duration: 1});
             }
+            consortiaData = consorcios;
         }
     })
     
 }
 
+$("[class^=consortium]").on('click', function(){
+
+    var currenTopic = this.className.split("-")[1];
+    $("[class^=consortium]").removeClass("selectedConsortium");
+    $('.'+this.className).addClass("selectedConsortium");
+
+    var consortiumLines = consortiaData[currenTopic].lines.split(";");
+    var linesText = "<ul>";
+    consortiumLines.forEach(function(t){
+        linesText += "<li>" + t + "</li>";
+    });
+    linesText += "</ul>";
+
+    var consortiumContact = consortiaData[currenTopic].contact.split(";");
+    var contactText = "<ul>";
+    consortiumContact.forEach(function(t){
+        contactText += t + "<br/>";
+    });
+    contactText +=  consortiaData[currenTopic].email;
+    contactText += "</ul>";
+
+    var consortiumCenters = consortiaData[currenTopic].centers.split(";");
+    var centersText = "<ul>";
+    consortiumCenters.forEach(function(t){
+        centersText += "<li>" + t + "</li>";
+    });
+    centersText += "</ul>";
+
+    $("#consortium-lines").html(linesText);
+    $("#consortium-contact").html(contactText);
+    $("#consortium-centers").html(centersText);
+
+    // highlight involved centers on map
+    cpisLayer.eachLayer(function(l){
+        if (jQuery.inArray(l.feature.properties.shortname.split(" ")[0], consortiumCenters) != -1){
+            var currentIcon = L.icon({
+                iconUrl: 'img/icon_rdi_color.png'
+            });
+            l.setZIndexOffset(1000); // bring selected markres to front
+        } else {
+            var currentIcon = L.icon({
+                iconUrl: 'img/icon_rdi.png'
+            });
+            l.setZIndexOffset(-1000);
+        }
+        l.setIcon(currentIcon); // send the others to back
+    });
+});
+
 function makerRegion(){
-    var q = d3.queue()
+    var q = d3.queue();
     q.defer(d3.json, "data/regiones.geojson")
-    .defer(d3.json, "data/ciudades.geojson")
-    .await(function(error,regiones,ciudades){
+     .defer(d3.json, "data/ciudades.geojson")
+     .await(function(error,regiones,ciudades){
         if(error) console.error('Oh dear, something went wrong: ' + error)
         else {
             if(cpisLayer!=undefined){
@@ -449,14 +506,14 @@ function makeMapCpis(cpis){
        pointToLayer: function(feature, latlng){
            var geojsonMarkerOptions = {
                opacity: feature.properties.main ? 1 : .70,
-               icon: feature.properties.main ? sede_icon : nosede_icon,
+               icon: feature.properties.main ? sede_icon : nosede_icon
            }           
            return L.marker(latlng, geojsonMarkerOptions)
             //.on("mouseover", function(event){showPRC(event, feature);})
             //.on("mouseout", hidePRC);
        },
        onEachFeature: onEachFeatureCpis /*new*/
-    }).addTo(map)
+    }).addTo(map);
 }
 
 function makeMap(regiones, ciudades, mercados){  // mercados is an optional parameter
@@ -524,7 +581,7 @@ function showpopup(e,f){
     var topics = f.properties.topics.split(";");
     topicsText = "<ul style='padding: 0 0 0 10px;'>";
     topics.forEach(function(t){
-        topicsText += "<li class='bullet-conacyt'>" + t + "</li><br>";
+        topicsText += "<li class='bullet-popup-conacyt' style'padding:0 0 0 5px'>" + t + "</li><br>";
     });
     topicsText += "</ul>";
     var Text = "<div class ='popups scroll_style_activate'>" + 
@@ -577,7 +634,7 @@ function makerClick(event){
         map.flyTo(layer.getLatLng(), 7, { duration: 1});
         setTimeout(function(){
            layer.bindPopup(showpopup(event,feature),{closeButton: false,className: 'PopupContainer'}).openPopup();
-        },300)
+        },300);
         feature.properties.is_clicked = true;
 
     }else if(feature.properties.is_clicked == true){
@@ -586,7 +643,7 @@ function makerClick(event){
         
         setTimeout(function(){
             lastClickedMaker.closePopup();
-        },300)
+        },300);
     }
 }
 
@@ -701,6 +758,8 @@ function layerClick(event){
 
         changeBullets("default_bullet");
 
+        mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
+
         if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
         if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
     }
@@ -737,6 +796,9 @@ $("#global").on('click', function(){
         map.once("moveend", function(){
             updateChartData();
         });
+
+        mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
+
 
         if(currentTopic === 'Connectivity'){
             if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
