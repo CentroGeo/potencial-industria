@@ -141,6 +141,7 @@ var colorArray = ["#eb126f","#8669aa","#e72230","#40ab4e","#b0358f",
                   "#90c85a","#f95765","#be0040","#a93491","#0f7721"];
 
 var regionColors = d3.scaleOrdinal().range(colorArray).domain([3,1,2,6,7,4,5]);
+const change_speed = 500;
 
 //limites del mapa
 var southWest = L.latLng(3.95, -74),
@@ -447,7 +448,7 @@ var nosede_icon = L.icon({
 
 $("#two-bullet-conect").hide();
 $("#three-bullet-ind-top").hide();
-$("#three-bullet-ind-bottom").hide();
+$("#two-bullet-ind-bottom").hide();
 
 function makercpis(){
     var q = d3.queue()
@@ -1293,7 +1294,7 @@ function parsecomplementaryData(rows){
             "Freight Transport":
             +d["Freight Transport"],
         }
-        if(+d["Grupo 8"]!=0) obj.Grupo8 = +d["Grupo 8"];
+        // if(+d["Grupo 8"]!=0) obj.Grupo8 = +d["Grupo 8"];
         if(+d["Chemical Industries"]!=0) obj.Chemical_Industries = +d["Chemical Industries"];
         if(+d["Domestic Appliance Manufacturing"]!=0){
          obj.Domestic_Appliance_Manufacturing = +d["Domestic Appliance Manufacturing"];
@@ -1321,7 +1322,7 @@ function parselogisticsData(rows){
     logisticsData = [];
     rows.forEach(function(d) {
         var obj={
-            id: d["region"], 
+            id: d["region"],
             region: d.region,
             "Industrial Parks":
             +d["Industrial Parks"],
@@ -1462,14 +1463,14 @@ function updateBulletConnectivity(){
         case 3:
             numbers = Array.from(document.getElementsByClassName("three-info-number"));
             title   = Array.from(document.getElementsByClassName("three-info-category"));
-            $("#two-bullet-conect").hide();
-            $("#three-bullet-conect").show();
+            $("#two-bullet-conect").hide(change_speed);
+            $("#three-bullet-conect").show(change_speed);
             break;
         case 2:
             numbers = Array.from(document.getElementsByClassName("two-info-number"));
             title   = Array.from(document.getElementsByClassName("two-info-category"));
-            $("#two-bullet-conect").show();
-            $("#three-bullet-conect").hide();
+            $("#two-bullet-conect").show(change_speed);
+            $("#three-bullet-conect").hide(change_speed);
             break;
     }
 
@@ -1480,10 +1481,11 @@ function updateBulletConnectivity(){
             index++;
         }
     });
-    
+
 }
 
 /*Function for update of industry*/
+// function for the four fixed bullets in industry
 function updateBulletIndustry(){
     var data = getdataBase();
     var keys = Object.keys(data[0]);
@@ -1502,45 +1504,46 @@ function updateBulletIndustry(){
     
 }
 /*Function for update of bullet of industry*/
+// funcition for the other non-fixed bullets in industry
 function updateBulletComplementary(){
     var data = getcomplementaryData();
-    var keys = Object.keys(data[0])
+    var keys = Object.keys(data[0]);
     var keysLength = keys.length-3;
     var middle = Math.ceil(keysLength/2);
     var index=0;
     var numbersRow1,titleRow1,numbersRow2,titleRow2;
 
     switch(keysLength) {
-        case 8:
-            numbersRow1 = Array.from(document.getElementsByClassName("four-top-number"));
-            titleRow1   = Array.from(document.getElementsByClassName("four-top-category"));
-            numbersRow2 = Array.from(document.getElementsByClassName("four-bottom-number"));
-            titleRow2   = Array.from(document.getElementsByClassName("four-bottom-category"));
-            $("#three-bullet-ind-bottom").hide();
-            $("#three-bullet-ind-top").hide();
-            $("#four-bullet-ind-bottom").show();
-            $("#four-bullet-ind-top").show();
-            break;
         case 7:
             numbersRow1 = Array.from(document.getElementsByClassName("four-top-number"));
             titleRow1   = Array.from(document.getElementsByClassName("four-top-category"));
             numbersRow2 = Array.from(document.getElementsByClassName("three-bottom-number"));
             titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category"));
-            $("#four-bullet-ind-bottom").hide();
-            $("#three-bullet-ind-top").hide();
-            $("#four-bullet-ind-top").show();
-            $("#three-bullet-ind-bottom").show();
-
+            $("#two-bullet-ind-bottom").hide(change_speed);
+            $("#three-bullet-ind-top").hide(change_speed);
+            $("#three-bullet-ind-bottom").show(change_speed);
+            $("#four-bullet-ind-top").show(change_speed);
             break;
         case 6:
             numbersRow1 = Array.from(document.getElementsByClassName("three-top-number"));
             titleRow1   = Array.from(document.getElementsByClassName("three-top-category"));
             numbersRow2 = Array.from(document.getElementsByClassName("three-bottom-number"));
-            titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category")) ;
-            $("#four-bullet-ind-bottom").hide();
-            $("#four-bullet-ind-top").hide();
-            $("#three-bullet-ind-bottom").show();
-            $("#three-bullet-ind-top").show();
+            titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category"));
+            $("#two-bullet-ind-bottom").hide(change_speed);
+            $("#four-bullet-ind-top").hide(change_speed);
+            $("#three-bullet-ind-top").show(change_speed);
+            $("#three-bullet-ind-bottom").show(change_speed);
+
+            break;
+        case 5:
+            numbersRow1 = Array.from(document.getElementsByClassName("three-top-number"));
+            titleRow1   = Array.from(document.getElementsByClassName("three-top-category"));
+            numbersRow2 = Array.from(document.getElementsByClassName("two-bottom-number"));
+            titleRow2   = Array.from(document.getElementsByClassName("two-bottom-category"));
+            $("#three-bullet-ind-bottom").hide(change_speed);
+            $("#four-bullet-ind-top").hide(change_speed);
+            $("#two-bullet-ind-bottom").show(change_speed);
+            $("#three-bullet-ind-top").show(change_speed);
             break;
     }
 

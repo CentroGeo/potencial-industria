@@ -515,14 +515,14 @@ li.bullet-popup-conacyt {
 }
 
 #four-fixed-bullet-ind {
-    margin-top: 5%;
-    margin-bottom: 10%;
+    margin-top: 3%;
+    margin-bottom: 6%;
 }
 
+#four-bullet-ind-top,
 #three-bullet-ind-top,
 #three-bullet-ind-bottom,
-#four-bullet-ind-top,
-#four-bullet-ind-bottom {
+#two-bullet-ind-bottom {
     margin-top: 6%;
     margin-bottom: 3%;
 }
@@ -544,8 +544,8 @@ li.bullet-popup-conacyt {
 }
 
 .info-container-big img {
-    width: 160px;
-    height: 160px;
+    width: 150px;
+    height: 150px;
     margin: auto;
     display: block;
 }
