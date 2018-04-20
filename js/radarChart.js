@@ -27,6 +27,7 @@ function radarChart(){
         updateData,
         doHighlight, 
         highlightValue;
+        colorsToUpdate = {};
 
     function chart(selection){
         const max = Math.max;
@@ -342,6 +343,7 @@ function radarChart(){
                           `translate(${legend.translateX},${legend.translateY + 20})`);
                 
                 // Create rectangles markers
+                colorsToUpdate = {}
                 radarLegend.selectAll('rect')
                     .data(names, function(d){return d;})
                     .enter()
@@ -350,7 +352,11 @@ function radarChart(){
                     .attr("y", function(d){return pos(d)-9;})
                     .attr("width", 10)
                     .attr("height", 10)
-                    .style("fill", (d,i) => color(d));
+                    .style("fill", function(d,i) {
+                        var color2 = color(d)
+                        colorsToUpdate[d] = color2
+                        return color2
+                    });;
                 
                 // Create labels
                 radarLegend.selectAll('text')
@@ -464,6 +470,7 @@ function radarChart(){
                 var names = formattedData.map(el => el.name);
                 pos.domain(names);
 
+
                 var radarLegendSquareUpdate = radarLegend.selectAll("rect")
                     .data(names, function(d){ return d;})
                     .attr("id", function(d,i){return i;})
@@ -484,6 +491,7 @@ function radarChart(){
                 var radarLegendSquareEnter = radarLegendSquareUpdate.enter();
                 var radarLegendTextEnter = radarLegendTextUpdate.enter();
 
+                colorsToUpdate = {}
                 var legendSquares = radarLegendSquareEnter.append("rect")
                     .transition(transitionTime)
                     .attr("id", function(d,i){return i;})
@@ -491,7 +499,12 @@ function radarChart(){
                     .attr("y", function(d){return pos(d)-9;})
                     .attr("width", 10)
                     .attr("height", 10)
-                    .style("fill", (d,i) => color(d));
+                    .style("fill", function(d,i) {
+                        var color2 = color(d)
+                        console.log(color2)
+                        colorsToUpdate[d] = color2
+                        return color2
+                    });
 
                 var legendTexts = radarLegendTextEnter.append("text")
                     .transition(transitionTime)
@@ -582,7 +595,10 @@ function radarChart(){
     };    
 
     chart.color = function(value) {
-        if (!arguments.length) return color;
+        if (!arguments.length) {
+            return color;
+
+        }
         color = value;
         return chart;
     };
@@ -618,6 +634,10 @@ function radarChart(){
         if (typeof doHighlight === 'function') doHighlight();
         return chart;
     };
+
+    chart.getLegendColors = function(){
+        return colorsToUpdate;
+    }
 
     return chart;
 }
