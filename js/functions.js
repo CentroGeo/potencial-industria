@@ -85,11 +85,11 @@ $(".topic-icon").on('click', function(){
             makerRegion();
         }
 
-        /*if(topic_name === 'Connectivity'){
-            updateBulletConnectivity();
+        if(topic_name === 'Connectivity'){
+            //updateBulletConnectivity();
             loadSelectedRailNet(currentRegion);
             loadSelectedHighNet(currentRegion);
-        }*/
+        }
 
         if(currentTopic === 'Doing Business'){
             updateCitiesColors(currentRegion);
