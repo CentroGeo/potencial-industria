@@ -65,7 +65,7 @@ $(".topic-icon").on('click', function(){
         $("#topic").html(topic_name + ":");
         if (topic_name === "Conacyt") {
             $("#title").html("Mexico");
-            changeBullets("default_bullet");
+            //changeBullets("default_bullet");
         }
 
         //parentContainer de los markers
@@ -80,11 +80,11 @@ $(".topic-icon").on('click', function(){
             makerRegion();
         }
 
-        if(topic_name === 'Connectivity'){
+        /*if(topic_name === 'Connectivity'){
             updateBulletConnectivity();
             loadSelectedRailNet(currentRegion);
             loadSelectedHighNet(currentRegion);
-        }
+        }*/
 
         // if on Skills and Talent topic, display market regions
         if (topic_name === "Skills and Talent") {
@@ -746,39 +746,6 @@ function layerClick(event){
         }
         
         $("#title").html(feature.properties.zona);
-        var zone = feature.properties.zona;
-
-        switch(zone) {
-            case "Megalopolis":
-                var bullet_name = "megalopolis_bullet";
-                break;
-            case "Northeast":
-                var bullet_name = "northeast_bullet";
-                break;
-            case "Center-west":
-                var bullet_name = "centerwest_bullet";
-                break;
-            case "Center-north":
-                var bullet_name = "centernorth_bullet";
-                break;
-            case "Yucatán peninsula":
-                var bullet_name = "yucatan_bullet";
-                break;
-            case "Northwest":
-                var bullet_name = "northwest_bullet";
-                break;
-            case "Gulf-east":
-                var bullet_name = "gulfeast_bullet";
-                break;
-            default:
-                var bullet_name = "default_bullet";
-                break;
-        }
-
-        changeBullets(bullet_name);
-        updateBulletComplementary();
-        updateBulletIndustry();
-        updateBulletConnectivity();
 
         var featBounds = feature.properties.bounds_calculated;
         map.flyToBounds(featBounds);
@@ -806,10 +773,6 @@ function layerClick(event){
         $(".icon-previous").addClass("text-muted");
         $(".icon-previous").addClass("icon-disabled");
 
-        changeBullets("default_bullet");
-        updateBulletComplementary();
-        updateBulletIndustry();
-        updateBulletConnectivity();
 
         mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
 
@@ -821,7 +784,36 @@ function layerClick(event){
     });
 }
 
-function changeBullets (bullet) {
+function changeBullets (zone) {
+    switch(zone) {
+        case 1:
+            var bullet = "northeast_bullet";
+            break;
+        case 2:
+            var bullet = "centerwest_bullet";
+            break;
+        case 3:
+            var bullet = "megalopolis_bullet";
+            break;
+        case 4:
+            var bullet = "northwest_bullet";
+            break;
+        case 5:
+            var bullet = "gulfeast_bullet";
+            break;
+        case 6:
+            var bullet = "centernorth_bullet";
+            break;
+        case 7:
+            var bullet = "yucatan_bullet";
+            break;
+        case 0:
+            var bullet = "default_bullet";
+            break;
+        default:
+            break;
+    }
+
     Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
         element.style.backgroundImage = "url('/img/" + bullet + ".png')";
         element.style.backgroundSize = "20px 20px";
@@ -859,9 +851,10 @@ $("#global").on('click', function(){
             updateChartData();
         });
 
+        /*
         updateBulletComplementary();
         updateBulletIndustry();
-        updateBulletConnectivity();
+        updateBulletConnectivity();*/
 
         mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
 
@@ -880,7 +873,6 @@ $("#global").on('click', function(){
         map.flyTo([23.75, -101.9], 5, { duration: 1});
     }
 
-    changeBullets("default_bullet");
 });
 
 $(".icon-next").on('click', function(){
@@ -918,13 +910,11 @@ $(".icon-next").on('click', function(){
                 updateChartData();
             });
 
-            changeBullets("default_bullet");
+
+
             if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
             if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
         }
-        updateBulletComplementary();
-        updateBulletIndustry();
-        updateBulletConnectivity();
     }
 });
 
@@ -964,13 +954,9 @@ $(".icon-previous").on('click', function(){
                 updateChartData();
             });
 
-            changeBullets("default_bullet");
             if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
             if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
         }
-        updateBulletComplementary();
-        updateBulletIndustry();
-        updateBulletConnectivity();
     }
 });
 
@@ -1372,6 +1358,10 @@ function updateChartData(){
     logroEBar.data(getLogroEData());
     ikaBar.data(getIkaData());
     hhRegionBar.highlight(idToName[currentRegion]);
+    changeBullets(currentRegion);
+    updateBulletComplementary();
+    updateBulletIndustry();
+    updateBulletConnectivity();
 }
 
 function loadSelectedRailNet(region){
@@ -1464,18 +1454,21 @@ function updateBulletConnectivity(){
     var numbers,title;
     var index = 0
 
+    $("#two-bullet-conect").hide(80);
+    $("#three-bullet-conect").hide(80);
+
     switch(keysLength){
         case 3:
             numbers = Array.from(document.getElementsByClassName("three-info-number"));
             title   = Array.from(document.getElementsByClassName("three-info-category"));
-            $("#two-bullet-conect").hide(change_speed);
+            //$("#two-bullet-conect").hide(change_speed);
             $("#three-bullet-conect").show(change_speed);
             break;
         case 2:
             numbers = Array.from(document.getElementsByClassName("two-info-number"));
             title   = Array.from(document.getElementsByClassName("two-info-category"));
             $("#two-bullet-conect").show(change_speed);
-            $("#three-bullet-conect").hide(change_speed);
+            //$("#three-bullet-conect").hide(change_speed);
             break;
         default:
             break;
@@ -1497,8 +1490,11 @@ function updateBulletIndustry(){
     var data = getdataBase();
     var keys = Object.keys(data[0]);
     var keysLength = keys.length-3;
+    $("#four-fixed-bullet-ind").hide(100);
+
     var numbers =Array.from(document.getElementsByClassName("four-fixed-number"));
     var title =Array.from(document.getElementsByClassName("four-fixed-category"));
+    $("#four-fixed-bullet-ind").show(change_speed);
     var index = 0
 
     keys.forEach(function(e) {
@@ -1520,6 +1516,11 @@ function updateBulletComplementary(){
     var index = 0;
     var numbersRow1,titleRow1,numbersRow2,titleRow2;
 
+    $("#two-bullet-ind-bottom").hide(100);
+    $("#three-bullet-ind-top").hide(100);
+    $("#three-bullet-ind-bottom").hide(100);
+    $("#four-bullet-ind-top").hide(100);
+
     switch(keysLength) {
         case 7:
             numbersRow1 = Array.from(document.getElementsByClassName("four-top-number"));
@@ -1527,11 +1528,8 @@ function updateBulletComplementary(){
             numbersRow2 = Array.from(document.getElementsByClassName("three-bottom-number"));
             titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category"));
 
-            $("#two-bullet-ind-bottom").hide(change_speed);
-            $("#three-bullet-ind-top").hide(change_speed);
             $("#three-bullet-ind-bottom").show(change_speed);
             $("#four-bullet-ind-top").show(change_speed);
-
             break;
         case 6:
             numbersRow1 = Array.from(document.getElementsByClassName("three-top-number"));
@@ -1539,11 +1537,8 @@ function updateBulletComplementary(){
             numbersRow2 = Array.from(document.getElementsByClassName("three-bottom-number"));
             titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category"));
 
-            $("#two-bullet-ind-bottom").hide(change_speed);
-            $("#four-bullet-ind-top").hide(change_speed);
             $("#three-bullet-ind-top").show(change_speed);
             $("#three-bullet-ind-bottom").show(change_speed);
-
             break;
         case 5:
             numbersRow1 = Array.from(document.getElementsByClassName("three-top-number"));
@@ -1551,11 +1546,8 @@ function updateBulletComplementary(){
             numbersRow2 = Array.from(document.getElementsByClassName("two-bottom-number"));
             titleRow2   = Array.from(document.getElementsByClassName("two-bottom-category"));
 
-            $("#three-bullet-ind-bottom").hide(change_speed);
-            $("#four-bullet-ind-top").hide(change_speed);
             $("#two-bullet-ind-bottom").show(change_speed);
             $("#three-bullet-ind-top").show(change_speed);
-
             break;
         default:
             break;
