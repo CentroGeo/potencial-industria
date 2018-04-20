@@ -1257,13 +1257,13 @@ function parsedataBase(rows){
             id: d["region"], 
             name: d.id, // lowercase
             region: d.region,
-            "Internet of things":
+            "Internet of Things and Cyberphysical Systems":
             +d["Internet of Things and Cyberphysical Systems"],
-            "Manufacturing":
+            "Additive Manufacturing, Augmented Reality and Simulation":
             +d["Additive Manufacturing, Augmented Reality, and Simulation"],
-            "Robotics":
+            "Collaborative Robotics":
             +d["Collaborative Robotics"],
-            "Big Data":
+            "Big Data and Cloud Computing":
             +d["Big Data and Cloud Computing"]
          });
     });

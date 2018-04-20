@@ -376,11 +376,27 @@ div.bullet-section {
     padding-top: 5%;
 }
 
+div.bullet-section-sm {
+    /*margin-top: 30%;*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 ul.no-bullet {
     list-style: none;
     text-align: left;
     padding: 0px;
     margin: 0px;
+}
+
+li.bullet-li-ml {
+    background: url("../img/default_bullet.png") no-repeat left top;
+    background-size: 20px 20px;
+    background-position: 0% top;
+    padding-left: 35px;
+    padding-bottom: 15%;
 }
 
 li.bullet-li {
@@ -572,10 +588,26 @@ li.bullet-popup-conacyt {
     transform: translate(-50%, -50%);
 }
 
+.info-text-ml {
+    position: absolute;
+    font-size: 14.5px;
+    top: 123%;
+    left: 20%;
+    transform: translate(-10%, -50%);
+}
+
 .info-text-lg {
     position: absolute;
     font-size: 14.5px;
     top: 133%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.info-text-xl {
+    position: absolute;
+    font-size: 14.5px;
+    top: 130%;
+    left: 20%;
+    transform: translate(-10%, -50%);
 }
