@@ -1,6 +1,11 @@
 // Try this to use hover on touch devices
 //$('body').bind('touchstart', function() {});
 
+
+var cities;
+var IMCO;
+var colors
+
 $(function() {
     setTimeout(function(){
         $('body').removeClass('fade-out'); 
@@ -86,6 +91,10 @@ $(".topic-icon").on('click', function(){
             loadSelectedHighNet(currentRegion);
         }*/
 
+        if(currentTopic === 'Doing Business'){
+            updateCitiesColors(currentRegion);
+        }
+
         // if on Skills and Talent topic, display market regions
         if (topic_name === "Skills and Talent") {
             mercadosLyr.addTo(map);
@@ -116,6 +125,7 @@ $("#menu").on('click', function(){
     if (map.hasLayer(mercadosLyr)) mercadosLyr.removeFrom(map);
     if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
     if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
+    if (map.hasLayer(currentIMCONetLyr)) currentIMCONetLyr.removeFrom(map);
     currentTopic = "";
 });
 
@@ -236,6 +246,8 @@ q.defer(d3.json, "data/regiones.geojson")
             // properties = [];
             var cityNames = [],
                 regionNames = [];
+
+            cities = ciudades;
             
             ciudades.features.forEach(function(e) {
                 cityNames.push(e.properties.nom_ciudad);
@@ -434,7 +446,8 @@ var currentRegion = 0,
     mercadosLyr,
     currentRailNetLyr,
     currentTopic,
-    currentHighNetLyr;
+    currentHighNetLyr,
+    currentIMCONetLyr;
 
 var sede_icon = L.icon({
     "iconUrl": "img/icon_rdi.png",
@@ -778,9 +791,13 @@ function layerClick(event){
 
         if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
         if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
+        if (map.hasLayer(currentIMCONetLyr)) currentIMCONetLyr.removeFrom(map);
     }
     map.once("moveend", function(){
         updateChartData();
+        if(currentTopic === 'Doing Business'){
+            updateCitiesColors(currentRegion)
+        }
     });
 }
 
@@ -858,10 +875,13 @@ $("#global").on('click', function(){
 
         mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
 
-
         if(currentTopic === 'Connectivity'){
             if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
             if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
+        } else {
+            if (currentTopic === 'Doing Business'){
+                if (map.hasLayer(currentIMCONetLyr)) currentIMCONetLyr.removeFrom(map);
+            }
         }
 
     }else if(cpisLayer!=undefined){
@@ -914,6 +934,7 @@ $(".icon-next").on('click', function(){
 
             if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
             if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
+            if (map.hasLayer(currentIMCONetLyr)) currentIMCONetLyr.removeFrom(map);
         }
     }
 });
@@ -956,6 +977,7 @@ $(".icon-previous").on('click', function(){
 
             if (map.hasLayer(currentRailNetLyr)) currentRailNetLyr.removeFrom(map);
             if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
+            if (map.hasLayer(currentIMCONetLyr)) currentIMCONetLyr.removeFrom(map);
         }
     }
 });
@@ -1129,7 +1151,7 @@ function parseImcoData(rows){
             return d.precur;
         }),
         "International Relationships": d3.mean(rows,function(d) {
-            return d.rela_inte;
+            return d.rela_inte;chart
         }),
         "Economic Innovation": d3.mean(rows,function(d) {
             return d.inno_eco;
@@ -1354,6 +1376,7 @@ function getZonesNames(rowsCh){
 function updateChartData(){
     connectivityBar.data(getBarData());
     imcoRadar.data(getRadarData());
+    colors = imcoRadar.getLegendColors();
     chRadar.data(getChRadarData()).highlight(currentRegion);
     logroEBar.data(getLogroEData());
     ikaBar.data(getIkaData());
@@ -1443,6 +1466,36 @@ function loadSelectedHighNet(region){
                 currentHighNetLyr = L.geoJson(data, {style: {"color": "#40AB4E"}}).addTo(map);
             });
             break;
+    }
+}
+
+function updateCitiesColors(region){
+    if (map.hasLayer(currentIMCONetLyr)) currentIMCONetLyr.removeFrom(map);
+    if(region > 0){
+        currentIMCONetLyr = L.geoJSON(cities, {
+            style: function(feature){
+                var ciudad = feature.properties.nom_ciudad;
+                if(colors[ciudad]){
+                    return {
+                        weight: 0.5,
+                        color: "#999",
+                        opacity: 0.1,
+                        fillOpacity: 0.8,
+                        fillColor: colors[ciudad]
+                    };
+                } else {
+                    return {
+                        weight: 1,
+                        color: "#AAAAAA",
+                        opacity: 0.1,
+                        fillColor: "#AAAAAA",
+                        fillOpacity: 0.1,
+                        className: 'regionStyle'
+                    };
+                }
+            },
+            interactive: false
+        }).addTo(map);   
     }
 }
 
