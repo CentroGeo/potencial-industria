@@ -1477,6 +1477,8 @@ function updateBulletConnectivity(){
             $("#two-bullet-conect").show(change_speed);
             $("#three-bullet-conect").hide(change_speed);
             break;
+        default:
+            break;
     }
 
     keys.forEach(function(e){
@@ -1499,7 +1501,7 @@ function updateBulletIndustry(){
     var title =Array.from(document.getElementsByClassName("four-fixed-category"));
     var index = 0
 
-    keys.forEach(function(e){
+    keys.forEach(function(e) {
         if(e!="region" && e!="id" && e!="name"){
             numbers[index].innerHTML  = data[0][e];
             title[index].innerHTML  = e.split("_").join(" ");
@@ -1515,7 +1517,7 @@ function updateBulletComplementary(){
     var keys = Object.keys(data[0]);
     var keysLength = keys.length-3;
     var middle = Math.ceil(keysLength/2);
-    var index=0;
+    var index = 0;
     var numbersRow1,titleRow1,numbersRow2,titleRow2;
 
     switch(keysLength) {
@@ -1524,16 +1526,19 @@ function updateBulletComplementary(){
             titleRow1   = Array.from(document.getElementsByClassName("four-top-category"));
             numbersRow2 = Array.from(document.getElementsByClassName("three-bottom-number"));
             titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category"));
+
             $("#two-bullet-ind-bottom").hide(change_speed);
             $("#three-bullet-ind-top").hide(change_speed);
             $("#three-bullet-ind-bottom").show(change_speed);
             $("#four-bullet-ind-top").show(change_speed);
+
             break;
         case 6:
             numbersRow1 = Array.from(document.getElementsByClassName("three-top-number"));
             titleRow1   = Array.from(document.getElementsByClassName("three-top-category"));
             numbersRow2 = Array.from(document.getElementsByClassName("three-bottom-number"));
             titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category"));
+
             $("#two-bullet-ind-bottom").hide(change_speed);
             $("#four-bullet-ind-top").hide(change_speed);
             $("#three-bullet-ind-top").show(change_speed);
@@ -1545,22 +1550,39 @@ function updateBulletComplementary(){
             titleRow1   = Array.from(document.getElementsByClassName("three-top-category"));
             numbersRow2 = Array.from(document.getElementsByClassName("two-bottom-number"));
             titleRow2   = Array.from(document.getElementsByClassName("two-bottom-category"));
+
             $("#three-bullet-ind-bottom").hide(change_speed);
             $("#four-bullet-ind-top").hide(change_speed);
             $("#two-bullet-ind-bottom").show(change_speed);
             $("#three-bullet-ind-top").show(change_speed);
+
+            break;
+        default:
             break;
     }
 
-    keys.forEach(function(e){
-        if(e!="region" && e!="id" && e!="name"){
+    keys.forEach(function(e) {
+        if ( e!= "region" && e != "id" && e != "name") {
+            var number_section, category_section;
+            var category = e.split("_").join(" ");
+
             if(index < middle){
-                numbersRow1[index].innerHTML  = data[0][e];
-                titleRow1[index].innerHTML  = e.split("_").join(" ");
+                number_section = numbersRow1[index];
+                category_section = titleRow1[index];
             }else{
-                numbersRow2[index-middle].innerHTML  = data[0][e];
-                titleRow2[index-middle].innerHTML  = e.split("_").join(" ");
+                number_section = numbersRow2[index-middle];
+                category_section = titleRow2[index-middle];
             }
+
+            number_section.innerHTML  = data[0][e];
+            category_section.innerHTML = category;
+
+            if (category.length < 36) {
+                category_section.parentNode.className = 'info-text';
+            } else {
+                category_section.parentNode.className = 'info-text-lg';
+            }
+
             index++;
         }
     });
