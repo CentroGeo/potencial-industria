@@ -12,10 +12,31 @@ $(function() {
     }, 500);
 });
 
+function whichAnimationEvent(){
+  var t,
+      el = document.createElement("fakeelement");
+
+  var animations = {
+    "animation"      : "animationend",
+    "OAnimation"     : "oAnimationEnd",
+    "MozAnimation"   : "animationend",
+    "WebkitAnimation": "webkitAnimationEnd"
+  }
+
+  for (t in animations){
+    if (el.style[t] !== undefined){
+      return animations[t];
+    }
+  }
+}
+
+var animationEvent = whichAnimationEvent();
+
 // Change initial icons to carousel on click
 $(".topic-icon").on('click', function(){
     var parentContainer = this.parentElement.id;
-    $("#"+parentContainer).bind("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd", function(){
+    $("#"+parentContainer).addClass("iconZoom");
+    $("#"+parentContainer).one(animationEvent, function(event){
         var topic = "#" + parentContainer.split("-")[0] + "_carouselContent";
         $(".topic-icon").each(function(){
             if (this.parentElement.id != parentContainer){
@@ -65,6 +86,7 @@ $(".topic-icon").on('click', function(){
         }
 
         if(topic_name === 'Connectivity'){
+            updateBulletConnectivity();
             loadSelectedRailNet(currentRegion);
             loadSelectedHighNet(currentRegion);
         }
@@ -77,12 +99,17 @@ $(".topic-icon").on('click', function(){
         if (topic_name === "Skills and Talent") {
             mercadosLyr.addTo(map);
         }
+
+        if(topic_name === "Industries"){
+            updateBulletComplementary();
+            updateBulletIndustry();
+        }
     
         $("#choose").css('display', 'none'); 
         $("#graphs").fadeIn("slow", "linear");
         $(topic).fadeIn( "slow", "linear" );
-        $(this).removeClass("iconZoom");
-    }).addClass("iconZoom");
+        $("#"+parentContainer).removeClass("iconZoom");
+    });
 });
 
 // Change carousel back to initial icons when on click
@@ -124,6 +151,7 @@ var colorArray = ["#eb126f","#8669aa","#e72230","#40ab4e","#b0358f",
                   "#90c85a","#f95765","#be0040","#a93491","#0f7721"];
 
 var regionColors = d3.scaleOrdinal().range(colorArray).domain([3,1,2,6,7,4,5]);
+const change_speed = 500;
 
 //limites del mapa
 var southWest = L.latLng(3.95, -74),
@@ -187,7 +215,10 @@ var properties, // properties for each city
     ikaBar,
     hhData,
     hhBar,
-    consortiaData;
+    consortiaData,
+    dataBase,
+    complementaryData,
+    logisticsData;
 
 // Load data
 var q = d3.queue();
@@ -201,9 +232,14 @@ q.defer(d3.json, "data/regiones.geojson")
     .defer(d3.csv, "data/tamanomercado.csv")
     .defer(d3.csv, "data/hh_region.csv")
     .defer(d3.csv, "data/hh_ika.csv")
+    .defer(d3.csv, "data/empresas_base_resumen.csv")
+    .defer(d3.csv, "data/empresas_complementarias_resumen.csv")
+    .defer(d3.csv, "data/datos_logistica.csv")
+
     
     .await(function(error, regiones, ciudades, cpis, mercados, variables,
-                    varsChZonas, varsLogroE, varsIKA, varsRegionHH, varsIkaHH) {
+                    varsChZonas, varsLogroE, varsIKA, varsRegionHH, varsIkaHH,
+                    bases, complementary, logistics) {
         if (error) {
             console.error('Oh dear, something went wrong: ' + error);
         } else {
@@ -226,6 +262,11 @@ q.defer(d3.json, "data/regiones.geojson")
             logroEData = parseLogroEData(varsLogroE);
             // Read IKA data
             ikaData = parseIkaData(varsIKA);
+
+            dataBase = parsedataBase(bases);
+            complementaryData = parsecomplementaryData(complementary);
+            logisticsData = parselogisticsData(logistics);
+
             // Read zone names
             regionNames = getZonesNames(varsChZonas);
 
@@ -260,8 +301,8 @@ q.defer(d3.json, "data/regiones.geojson")
                 .height(250)
                 .margin({top: 30, right: 50, bottom: 100, left:60})
                 .stackColors(["#eb126f","#8669aa"])
-                .lineColors(d3.scaleLinear().range(colorArray).domain([0,1]))
-                .pointColors(d3.scaleLinear().range(colorArray).domain([0,1]))
+                .lineColors(d3.scaleLinear().range(["#f7a1be","#c2a8cd"]).domain([0,1]))
+                .pointColors(d3.scaleLinear().range(["#f7a1be","#c2a8cd"]).domain([0,1]))
                 .stackVariables(["Pop with bachelor",
                                  "Pop with grad"])
                 .lineVariables(["Percentage bachelor", "Percentage grad"])
@@ -418,6 +459,10 @@ var nosede_icon = L.icon({
     "iconSize": [10,10]
 });
 
+$("#two-bullet-conect").hide();
+$("#three-bullet-ind-top").hide();
+$("#two-bullet-ind-bottom").hide();
+
 function makercpis(){
     var q = d3.queue()
     q.defer(d3.json, "data/cpis_en.geojson")
@@ -505,6 +550,8 @@ function makerRegion(){
                 cpisLayer=undefined;
             }
             if(ciudadesLyr == undefined && regionesLyr == undefined){
+                currentRegion = 0;
+                updateChartData()
                 $(".buttonleft").css('display', 'block');
                 $(".buttonright").css('display', 'block');
                 makeMap(regiones,ciudades);
@@ -742,6 +789,9 @@ function layerClick(event){
         }
 
         changeBullets(bullet_name);
+        updateBulletComplementary();
+        updateBulletIndustry();
+        updateBulletConnectivity();
 
         var featBounds = feature.properties.bounds_calculated;
         map.flyToBounds(featBounds);
@@ -770,6 +820,9 @@ function layerClick(event){
         $(".icon-previous").addClass("icon-disabled");
 
         changeBullets("default_bullet");
+        updateBulletComplementary();
+        updateBulletIndustry();
+        updateBulletConnectivity();
 
         mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
 
@@ -789,6 +842,15 @@ function changeBullets (bullet) {
     Array.from(document.getElementsByClassName("bullet-li")).forEach(function(element) {
         element.style.backgroundImage = "url('/img/" + bullet + ".png')";
         element.style.backgroundSize = "20px 20px";
+    });
+
+    Array.from(document.getElementsByClassName("bullet-li-skills")).forEach(function(element) {
+        element.style.backgroundImage = "url('/img/" + bullet + ".png')";
+        element.style.backgroundSize = "20px 20px";
+    });
+
+    Array.from(document.getElementsByClassName("bullet-img")).forEach(function(element) {
+        element.src = "/img/" + bullet + ".png";
     });
 }
 
@@ -813,6 +875,10 @@ $("#global").on('click', function(){
         map.once("moveend", function(){
             updateChartData();
         });
+
+        updateBulletComplementary();
+        updateBulletIndustry();
+        updateBulletConnectivity();
 
         mercadosLyr.eachLayer(function(l){mercadosLyr.resetStyle(l);})
 
@@ -877,6 +943,9 @@ $(".icon-next").on('click', function(){
             if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
             if (map.hasLayer(currentIMCONetLyr)) currentIMCONetLyr.removeFrom(map);
         }
+        updateBulletComplementary();
+        updateBulletIndustry();
+        updateBulletConnectivity();
     }
 });
 
@@ -921,6 +990,9 @@ $(".icon-previous").on('click', function(){
             if (map.hasLayer(currentHighNetLyr)) currentHighNetLyr.removeFrom(map);
             if (map.hasLayer(currentIMCONetLyr)) currentIMCONetLyr.removeFrom(map);
         }
+        updateBulletComplementary();
+        updateBulletIndustry();
+        updateBulletConnectivity();
     }
 });
 
@@ -1191,6 +1263,120 @@ function getIkaData() {
     return chartData;
 }
 
+
+function parsedataBase(rows){
+    dataBase = [];
+    rows.forEach(function(d) {
+        dataBase.push({
+            id: d["region"], 
+            name: d.id, // lowercase
+            region: d.region,
+            "Internet of things":
+            +d["Internet of Things and Cyberphysical Systems"],
+            "Manufacturing":
+            +d["Additive Manufacturing, Augmented Reality, and Simulation"],
+            "Robotics":
+            +d["Collaborative Robotics"],
+            "Big Data":
+            +d["Big Data and Cloud Computing"]
+         });
+    });
+    return dataBase;
+}
+
+// update logro educativo data
+function getdataBase(){
+    if (currentRegion == 0){
+        var chartData = dataBase.filter(function(el){
+            return el.region === "National";
+        });
+    } else {
+        var chartData = dataBase.filter(function(el){
+            return el.region === idToName[currentRegion];
+        });
+    }
+    return chartData;
+}
+
+function parsecomplementaryData(rows){
+    complementaryData = [];
+    rows.forEach(function(d) {
+        var obj={
+            id: d["region"], 
+            name: d.id, // lowercase
+            region: d.region,
+            "Electrical Equipment and Accessories":
+            +d["Electrical Equipment and Accessories"],
+            "Printing Industries":
+            +d["Printing Industries"],
+            "Equipment and Machinery Manufacturing":
+            +d["Equipment and Machinery Manufacturing"],
+            "Transportation Equipment Manufacturing":
+            +d["Transportation Equipment Manufacturing"],
+            "Freight Transport":
+            +d["Freight Transport"],
+        }
+        // if(+d["Grupo 8"]!=0) obj.Grupo8 = +d["Grupo 8"];
+        if(+d["Chemical Industries"]!=0) obj.Chemical_Industries = +d["Chemical Industries"];
+        if(+d["Domestic Appliance Manufacturing"]!=0){
+         obj.Domestic_Appliance_Manufacturing = +d["Domestic Appliance Manufacturing"];
+        }
+        complementaryData.push(obj);
+    });
+    return complementaryData;
+}
+
+// update logro educativo data
+function getcomplementaryData(){
+    if (currentRegion == 0){
+        var chartData = complementaryData.filter(function(el){
+            return el.region === "National";
+        });
+    } else {
+        var chartData = complementaryData.filter(function(el){
+            return el.region === idToName[currentRegion];
+        });
+    }
+    return chartData;
+}
+
+function parselogisticsData(rows){
+    logisticsData = [];
+    rows.forEach(function(d) {
+        var obj={
+            id: d["region"],
+            region: d.region
+        }
+        if(+d["Ports"]!=0){
+            +d["Ports"]!=1 ? obj.Ports = +d["Ports"] : obj.Port = +d["Ports"];
+        }
+        if(+d["Industrial Parks"]!=0){
+            +d["Industrial Parks"]!=1 ? obj.Industrial_Parks = +d["Industrial Parks"]:
+            obj.Industrial_Park = +d["Industrial Parks"];
+        }
+        if(+d["Carousel Train Terminals"]!=0){
+           +d["Carousel Train Terminals"]!=1 ? obj.Carousel_Train_Terminals = +d["Carousel Train Terminals"]:
+           obj.Carousel_Train_Terminal = +d["Carousel Train Terminals"];
+        }
+        logisticsData.push(obj);
+    });
+    return logisticsData;
+}
+
+// update logro educativo data
+function getlogisticsData(){
+    if (currentRegion == 0){
+        var chartData = logisticsData.filter(function(el){
+            return el.region === "National";
+        });
+    } else {
+        var chartData = logisticsData.filter(function(el){
+            return el.region === idToName[currentRegion];
+        });
+    }
+    return chartData;
+}
+
 // Get all zones names
 // Parse zone names (in english) from human capital data
 function getZonesNames(rowsCh){
@@ -1321,4 +1507,136 @@ function updateCitiesColors(region){
             interactive: false
         }).addTo(map);   
     }
+}
+
+/*Function for update of connectivity*/
+function updateBulletConnectivity(){
+    var data = getlogisticsData();
+    var keys = Object.keys(data[0]);
+    var keysLength = keys.length-2;
+    var numbers,title;
+    var index = 0
+
+    switch(keysLength){
+        case 3:
+            numbers = Array.from(document.getElementsByClassName("three-info-number"));
+            title   = Array.from(document.getElementsByClassName("three-info-category"));
+            $("#two-bullet-conect").hide(change_speed);
+            $("#three-bullet-conect").show(change_speed);
+            break;
+        case 2:
+            numbers = Array.from(document.getElementsByClassName("two-info-number"));
+            title   = Array.from(document.getElementsByClassName("two-info-category"));
+            $("#two-bullet-conect").show(change_speed);
+            $("#three-bullet-conect").hide(change_speed);
+            break;
+        default:
+            break;
+    }
+
+    keys.forEach(function(e){
+        if(e!="region" && e!="id" && e!="name"){
+            numbers[index].innerHTML  = data[0][e];
+            title[index].innerHTML  = e.split("_").join(" ");
+            index++;
+        }
+    });
+
+}
+
+/*Function for update of industry*/
+// function for the four fixed bullets in industry
+function updateBulletIndustry(){
+    var data = getdataBase();
+    var keys = Object.keys(data[0]);
+    var keysLength = keys.length-3;
+    var numbers =Array.from(document.getElementsByClassName("four-fixed-number"));
+    var title =Array.from(document.getElementsByClassName("four-fixed-category"));
+    var index = 0
+
+    keys.forEach(function(e) {
+        if(e!="region" && e!="id" && e!="name"){
+            numbers[index].innerHTML  = data[0][e];
+            title[index].innerHTML  = e.split("_").join(" ");
+            index++;
+        }
+    });
+    
+}
+/*Function for update of bullet of industry*/
+// funcition for the other non-fixed bullets in industry
+function updateBulletComplementary(){
+    var data = getcomplementaryData();
+    var keys = Object.keys(data[0]);
+    var keysLength = keys.length-3;
+    var middle = Math.ceil(keysLength/2);
+    var index = 0;
+    var numbersRow1,titleRow1,numbersRow2,titleRow2;
+
+    switch(keysLength) {
+        case 7:
+            numbersRow1 = Array.from(document.getElementsByClassName("four-top-number"));
+            titleRow1   = Array.from(document.getElementsByClassName("four-top-category"));
+            numbersRow2 = Array.from(document.getElementsByClassName("three-bottom-number"));
+            titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category"));
+
+            $("#two-bullet-ind-bottom").hide(change_speed);
+            $("#three-bullet-ind-top").hide(change_speed);
+            $("#three-bullet-ind-bottom").show(change_speed);
+            $("#four-bullet-ind-top").show(change_speed);
+
+            break;
+        case 6:
+            numbersRow1 = Array.from(document.getElementsByClassName("three-top-number"));
+            titleRow1   = Array.from(document.getElementsByClassName("three-top-category"));
+            numbersRow2 = Array.from(document.getElementsByClassName("three-bottom-number"));
+            titleRow2   = Array.from(document.getElementsByClassName("three-bottom-category"));
+
+            $("#two-bullet-ind-bottom").hide(change_speed);
+            $("#four-bullet-ind-top").hide(change_speed);
+            $("#three-bullet-ind-top").show(change_speed);
+            $("#three-bullet-ind-bottom").show(change_speed);
+
+            break;
+        case 5:
+            numbersRow1 = Array.from(document.getElementsByClassName("three-top-number"));
+            titleRow1   = Array.from(document.getElementsByClassName("three-top-category"));
+            numbersRow2 = Array.from(document.getElementsByClassName("two-bottom-number"));
+            titleRow2   = Array.from(document.getElementsByClassName("two-bottom-category"));
+
+            $("#three-bullet-ind-bottom").hide(change_speed);
+            $("#four-bullet-ind-top").hide(change_speed);
+            $("#two-bullet-ind-bottom").show(change_speed);
+            $("#three-bullet-ind-top").show(change_speed);
+
+            break;
+        default:
+            break;
+    }
+
+    keys.forEach(function(e) {
+        if ( e!= "region" && e != "id" && e != "name") {
+            var number_section, category_section;
+            var category = e.split("_").join(" ");
+
+            if(index < middle){
+                number_section = numbersRow1[index];
+                category_section = titleRow1[index];
+            }else{
+                number_section = numbersRow2[index-middle];
+                category_section = titleRow2[index-middle];
+            }
+
+            number_section.innerHTML  = data[0][e];
+            category_section.innerHTML = category;
+
+            if (category.length < 36) {
+                category_section.parentNode.className = 'info-text';
+            } else {
+                category_section.parentNode.className = 'info-text-lg';
+            }
+
+            index++;
+        }
+    });
 }

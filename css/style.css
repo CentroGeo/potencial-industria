@@ -357,6 +357,8 @@ img.grayscale:hover {
 
 .legend {
     font-size: 11px;
+    position absolute;
+    margin-top: 50px;
 }
 .legend text {
     fill: var(--main-text-color);
@@ -386,6 +388,14 @@ li.bullet-li {
     background-size: 20px 20px;
     background-position: 24% top;
     padding-left: 140px;
+    padding-bottom: 10px;
+}
+
+li.bullet-li-skills {
+    background: url("../img/default_bullet.png") no-repeat left top;
+    background-size: 20px 20px;
+    background-position: 37% top;
+    padding-left: 380px;
     padding-bottom: 10px;
 }
 
@@ -502,4 +512,70 @@ li.bullet-popup-conacyt {
   /*margin: 0;*/
   margin-left: 20px;
   margin-right: 5px;
+}
+
+#four-fixed-bullet-ind {
+    margin-top: 5%;
+    margin-bottom: 10%;
+}
+
+#four-bullet-ind-top,
+#three-bullet-ind-top,
+#three-bullet-ind-bottom,
+#two-bullet-ind-bottom {
+    margin-top: 6%;
+    margin-bottom: 3%;
+}
+
+#three-bullet-conect {
+    margin-top: 50px;
+}
+
+#two-bullet-conect {
+    margin-top: 50px;
+}
+
+.info-container-lg,
+.info-container {
+    padding-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.info-container-lg img {
+    width: 150px;
+    height: 150px;
+    margin: auto;
+    display: block;
+}
+
+.info-container img {
+    width: 110px;
+    height: 110px;
+    margin: auto;
+    display: block;
+}
+
+.info-number {
+    position: absolute;
+    font-size: 25px;
+    top: 53%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.info-text {
+    position: absolute;
+    font-size: 15px;
+    top: 123%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.info-text-lg {
+    position: absolute;
+    font-size: 14.5px;
+    top: 133%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
