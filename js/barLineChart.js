@@ -10,8 +10,8 @@ function barLineChart(){
         transitionTime = 500,
         //color = d3.scaleOrdinal(d3.schemeCategory10),	//Color function,
         barColor = d3.scaleOrdinal(d3.schemeCategory10), //bar Color function
-        lineColor = "#e72230",
-        pointColor = "#e72230",
+        lineColor = "#f7a1be",
+        pointColor = "#f7a1be",
         barAxisLabel = "",
         lineAxisLabel = "",
         barAxisXLabelPos = "-2em",

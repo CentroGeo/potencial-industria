@@ -289,8 +289,8 @@ q.defer(d3.json, "data/regiones.geojson")
                 .height(250)
                 .margin({top: 30, right: 50, bottom: 100, left:60})
                 .stackColors(["#eb126f","#8669aa"])
-                .lineColors(d3.scaleLinear().range(colorArray).domain([0,1]))
-                .pointColors(d3.scaleLinear().range(colorArray).domain([0,1]))
+                .lineColors(d3.scaleLinear().range(["#f7a1be","#c2a8cd"]).domain([0,1]))
+                .pointColors(d3.scaleLinear().range(["#f7a1be","#c2a8cd"]).domain([0,1]))
                 .stackVariables(["Pop with bachelor",
                                  "Pop with grad"])
                 .lineVariables(["Percentage bachelor", "Percentage grad"])
@@ -1323,13 +1323,18 @@ function parselogisticsData(rows){
     rows.forEach(function(d) {
         var obj={
             id: d["region"],
-            region: d.region,
-            "Industrial Parks":
-            +d["Industrial Parks"],
+            region: d.region
         }
-        if(+d["Ports"]!=0) obj.Ports = +d["Ports"];
+        if(+d["Ports"]!=0){
+            +d["Ports"]!=1 ? obj.Ports = +d["Ports"] : obj.Port = +d["Ports"];
+        }
+        if(+d["Industrial Parks"]!=0){
+            +d["Industrial Parks"]!=1 ? obj.Industrial_Parks = +d["Industrial Parks"]:
+            obj.Industrial_Park = +d["Industrial Parks"];
+        }
         if(+d["Carousel Train Terminals"]!=0){
-         obj.Carousel_Train_Terminals = +d["Carousel Train Terminals"];
+           +d["Carousel Train Terminals"]!=1 ? obj.Carousel_Train_Terminals = +d["Carousel Train Terminals"]:
+           obj.Carousel_Train_Terminal = +d["Carousel Train Terminals"];
         }
         logisticsData.push(obj);
     });
