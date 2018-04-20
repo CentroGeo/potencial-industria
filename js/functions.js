@@ -536,6 +536,8 @@ function makerRegion(){
                 cpisLayer=undefined;
             }
             if(ciudadesLyr == undefined && regionesLyr == undefined){
+                currentRegion = 0;
+                updateChartData()
                 $(".buttonleft").css('display', 'block');
                 $(".buttonright").css('display', 'block');
                 makeMap(regiones,ciudades);
