@@ -501,7 +501,7 @@ function radarChart(){
                     .attr("height", 10)
                     .style("fill", function(d,i) {
                         var color2 = color(d)
-                        console.log(color2)
+                        //console.log(color2)
                         colorsToUpdate[d] = color2
                         return color2
                     });
