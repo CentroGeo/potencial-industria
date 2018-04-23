@@ -1,0 +1,805 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="../css/leaflet-1.3.1.css" />
+    <link rel="stylesheet" href="../css/fontawesome-5.0.9.css" />
+    <link rel="stylesheet" href="../css/fa-solid-5.0.9.css" />
+    <link rel="stylesheet" href="../css/bootstrap-4.0.0.min.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body class="fade-out">
+  <div class="container-fluid">
+    <div class="row justify-content-center align-items-center" id="header">
+        <div class="col-7 text-center">
+          <h1>Industrial Potential In Selected Mexican Urban Regions</h1>
+        </div>
+      </div>
+      <div class="row" id="middle">
+        <div class="col" id="mapdiv"></div>
+
+        <div class="buttonleft"> 
+          <a class="icon-previous float-left" role="button">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </a>
+        </div>
+        <div class="buttonright">
+          <a class="icon-next float-right" role="button">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </a>
+        </div>
+
+        <div id="probe"></div>
+        <div class="col" id="overlaydiv"> </div>
+        <div class="col" id="story">
+            <div class="menu">
+                <!--<span class="menu-button" id="global">Global <i class="fas fa-reply"></i></span><span class="menu-button" id="menu">Menu <i class="fas fa-bars"></i></span>-->
+                <span class="menu-button" id="menu"><i class="fas fa-reply"></i>&nbsp;Menu</span><span class="menu-button" id="global"><i class="fas fa-globe"></i>&nbsp;Global</span>
+            </div>
+            <!-- start initial selection table> initialy shown, hides on click -->
+            <div class="container" id="choose">
+              <div class="row iconos" align="center">
+              <div class="col" >
+                <div id="connectivity-div">
+                  Connectivity<br/>
+                  <img src="../img/icon_conectividadn.png" class="topic-icon"/>
+                </div>
+              </div>
+              <div class="col">
+                <div id="ch-div">
+                  Skills and Talent<br/>
+                  <img src="../img/icon_chn.png" class="topic-icon"/>
+                </div>
+              </div>
+              </div>
+            <div class="row iconos" align="center">
+              <div class="col">
+                <div id="conacyt-div">
+                  R&D+I Consortia<br/>
+                  <img src="../img/icon_consortiumsn.png" class="topic-icon">
+                </div>
+              </div>
+            </div>
+            <div class="row iconos" align="center">
+              <div class="col">
+                <div id="business-div">
+                  Doing Business<br/>
+                   <img src="../img/icon_indicadoresn.png" class="topic-icon"/>
+                </div>
+              </div>
+              <div class="col">
+                <div id="industries-div">
+                  Industries<br/>
+                  <img src="../img/icon_empresasn.png" class="topic-icon"/>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end initial selection table -->
+          <!-- start title and navigation table: initially hidden, shows on click-->
+          <div id="graphs">
+              <table class="table my-0">
+                <thead>
+                  <tr>
+                    <th scope="col" colspan="2" class="border-0">
+                      <h1>
+                        <!-- <span class="icon-previous float-left text-muted icon-disabled"> < </span> -->
+                        <span id="topic"> Connectivity: </span>
+                        <span id="title"> Mexico </span>
+                        <!-- <span class="icon-next float-right"> > </span> -->
+                      </h1>
+                    </th>
+                  </tr>
+                </thead>
+                </table>
+            <!-- end title and navigation table -->
+                <!-- start connectivity carousel -->
+                <div id="connectivity_carouselContent" class="carousel slide" data-interval="false">
+                  <div class="carousel-inner" role="listbox">
+                    <div class="carousel-item active text-center p-0">
+                      <div class="row">
+                        <div class="col-12">
+                          <div class="row border-top">
+                            <div class="col-12">
+
+                              <div class="chart-title text-center">
+                                Connectivity
+                                <div id="barConectividad" class="overflow-hidden"></div>
+                              </div>
+
+                            </div>
+                            <div class="col-12">
+                              <!--Seccion bullets connectivity-->
+                              <!--Seccion de tres bullets-->
+                              <div id="three-bullet-conect" class="row">
+                                <div class="col-4 info-container-lg">
+                                  <div class="row">
+                                    <div class="col-10 offset-1">
+                                      <img src="../img/default_bullet.png" class="bullet-img"/>
+                                      <div class="info-number">
+                                        <span class="three-info-number">239</span><br>
+                                      </div>
+                                      <div class="info-text">
+                                        <span class="three-info-category">Industrial Parks</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-4 info-container-lg">
+                                  <div class="row">
+                                    <div class="col-10 offset-1">
+                                      <img src="../img/default_bullet.png" class="bullet-img"/>
+                                      <div class="info-number">
+                                        <span class="three-info-number">48</span><br>
+                                      </div>
+                                      <div class="info-text">
+                                        <span class="three-info-category">Ports</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-4 info-container-lg">
+                                  <div class="row">
+                                    <div class="col-10 offset-1">
+                                      <img src="../img/default_bullet.png" class="bullet-img"/>
+                                      <div class="info-number">
+                                        <span class="three-info-number">16</span><br>
+                                      </div>
+                                      <div class="info-text">
+                                        <span class="three-info-category">Carousel Train Terminals</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <!--Termina seccion de tres bullets-->
+                              <!--Seccion de cuatro bullets-->
+                              <div id="two-bullet-conect" class="row">
+                                <div class="col-6 info-container-lg">
+                                  <div class="row">
+                                    <div class="col-10 offset-1">
+                                      <img src="../img/default_bullet.png" class="bullet-img"/>
+                                      <div class="info-number">
+                                        <span class="two-info-number">1</span><br>
+                                      </div>
+                                      <div class="info-text">
+                                        <span class="two-info-category">Industrial Parks</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-6 info-container-lg">
+                                  <div class="row">
+                                    <div class="col-10 offset-1">
+                                      <img src="../img/default_bullet.png" class="bullet-img"/>
+                                      <div class="info-number">
+                                        <span class="two-info-number">2</span><br>
+                                      </div>
+                                      <div class="info-text">
+                                        <span class="two-info-category">Ports</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <!--Temina seccion de cuatro bullets-->
+                              <!--Termina seccion bullets connectivity-->
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+                <!-- end connectivity carousel -->
+                <!-- start skills and talent carousel -->
+                <div id="ch_carouselContent" class="carousel slide" data-interval="false">
+                    <div class="carousel-inner" role="listbox">
+                        <div class="carousel-item active text-center p-0 page" id="page1">
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+                                <div class="col-6">
+
+                                  <div class="chart-title text-center">
+                                    Education
+                                    <div id="logroEBar" class="overflow-hidden"></div>
+                                  </div>
+
+                                </div>
+                                <div class="col-6">
+
+                                  <div class="row">
+                                    <svg width="350" height="200" class="legend">
+                                      <g id="logroEBar-legendZone">
+                                        <text class="title" transform="translate(-70,0)" x="160" y="100" font-size="20px" fill="#737373">Educational Achievement</text>
+                                        <g id="logroEBar-barLegend" class="legend" height="100" width="200" transform="translate(-70,5)">
+                                          <rect x="185" y="112" width="10" height="10" fill="#eb126f"></rect>
+                                          <rect x="185" y="132" width="10" height="10" fill="#8669aa"></rect>
+                                          <text x="200" y="110" font-size="18px" fill="#737373" dy=".75em" text-anchor="start">Population with bachelor's degree</text>
+                                          <text x="200" y="130" font-size="18px" fill="#737373" dy=".75em" text-anchor="start">Population with graduate degree</text>
+                                          <path d="m 185 157 l 10 0" stroke="#f7a1be"></path>
+                                          <path d="m 185 177 l 10 0" stroke="#c2a8cd"></path>
+                                          <circle cx="190" cy="157" r="2.5" x="225" y="100" fill="#f7a1be"></circle>
+                                          <circle cx="190" cy="177" r="2.5" x="225" y="120" fill="#c2a8cd"></circle>
+                                          <text x="200" y="150" font-size="18px" fill="#737373" dy=".75em" text-anchor="start">Percentage of graduates</text>
+                                          <text x="200" y="170" font-size="18px" fill="#737373" dy=".75em" text-anchor="start">Percentage of bachelors</text>
+                                        </g>
+                                      </g>
+                                    </svg>
+                                  </div>
+                                  
+                                </div>
+                                <div class="col-6 border-top border-right ">
+
+                                  <div class="bullet-section-sm">
+                                    <ul class="no-bullet">
+                                      <li class="bullet-li-ml">
+                                        <span style="color:#8dd3c7;">Primary markets</span>
+                                      </li>
+                                      <li class="bullet-li-ml">
+                                        <span style="color:#ffffb3;">Secondary markets</span>
+                                      </li>
+                                      <li class="bullet-li-ml">
+                                        <span style="color:#bebada">Terciary markets</span>
+                                      </li>
+                                    </ul>
+                                  </div>
+
+                                </div>
+                                <div class="col-6 border-top">
+
+                                  <div class="chart-title text-center">
+                                    Knowledge-Intensive Occupations
+                                    <div id="radarCH" class="overflow-hidden"></div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="carousel-item text-center p-0 page" id="page2">
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+                                <div class="col-6">
+
+                                  <div class="chart-title text-center">
+                                    Labor markets
+                                    <div id="ikaBar" class="overflow-hidden"></div>
+                                  </div>
+
+                                </div>
+                                <div class="col-6">
+
+                                  <div class="row">
+                                    <svg width="350" height="150" class="legend">
+                                      <g id="ikaBar-ikaBarLegend">
+                                        <g id="ikaBar-barLegend" class="legend" height="100" width="200" transform="translate(-70,5)">
+                                          <rect x="235" y="73" width="10" height="10" fill="#8669aa"></rect>
+                                          <rect x="235" y="93" width="10" height="10" fill="#eb126f"></rect>
+                                          <text x="250" y="70" font-size="18px" fill="#737373" dy=".75em" text-anchor="start">Labor Market Size</text>
+                                          <text x="250" y="90" font-size="18px" fill="#737373" dy=".75em" text-anchor="start">Knowledge Intensive Activities Market</text>
+                                          <path d="m 235 118 l 10 0" stroke="#f7a1be"></path>
+                                          <circle cx="240" cy="118" r="2.5" x="195" y="110" fill="#f7a1be"></circle>
+                                          <text x="250" y="110" font-size="18px" fill="#737373" dy=".75em" text-anchor="start">Knowledge Intensive Activities Percentage</text>
+                                        </g>
+                                      </g>
+                                    </svg>
+                                  </div>
+
+                                </div>
+                                <div class="col-6 border-top border-right">
+                                  
+                                  <div class="bullet-section">
+                                    <h5 class="bullet-title"></h5>
+                                        
+                                    <ul class="no-bullet">
+                                      <li class="bullet-li">
+                                        Top graph shows knowledge-intenisve applications as a share of global labor market.
+                                      </li>
+                                      <li class="bullet-li">
+                                        Right graph shows concentration of labor markets by region.
+                                      </li>
+                                      <li class="bullet-li">
+                                        Larger values indicate higher concentration.
+                                      </li>
+                                      <li class="bullet-li">
+                                        Lower values indicate higher diversification. 
+                                      </li>
+                                    </ul>
+                                  </div>
+
+                                </div>
+                                <div class="col-6 border-top">
+
+                                  <div class="chart-title text-center">
+                                    Specialization Index by Region
+                                    <div id="hhRegionBar" class="overflow-hidden"></div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="carousel-item text-center p-0 page" id="page3">
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+
+                                <div class="col-12">
+                                  <div class="chart-title text-center">
+                                    Specialization Index by Activity
+                                    <div id="hhIkaBar" class="overflow-hidden"></div>
+                                  </div>
+                                </div>
+
+                                <div class="col-12 border-top">
+                                  <div class="bullet-section">
+                                    <h5 class="bullet-title"></h5>
+
+                                    <ul class="no-bullet">
+									<li class="bullet-li-skills">
+                                        Top graph shows concentration of labor markets by region.
+                                      </li>
+                                      <li class="bullet-li-skills">
+                                        Larger values indicate higher concentration.
+                                      </li>
+                                      <li class="bullet-li-skills">
+                                        Lower values indicate higher diversification. 
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!--<a class="carousel-control-prev" href="#ch_carouselContent" role="button" data-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#ch_carouselContent" role="button" data-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span class="sr-only">Next</span>
+                        </a>
+                        -->
+                    </div>
+                </div>
+                <!-- end skills and talent carousel -->
+                <!-- start business carousel -->
+                <div id="business_carouselContent" class="carousel slide" data-interval="false">
+                    <div class="carousel-inner" role="listbox">
+                        <div class="carousel-item active text-center p-0">
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+
+                                <div class="col-12">
+
+                                  <div class="chart-title text-center">
+                                    Doing Business Indicators - World Bank
+                                    <div id="radarImco" class="overflow-hidden"></div>
+                                  </div>
+
+                                </div>
+                                <div class="border-top border-right col-6">
+                                  
+                                  <div class="bullet-section">
+                                    <h5 class="bullet-title"></h5>
+                                        
+                                    <ul class="no-bullet">
+                                      <li class="bullet-li">
+                                        Objective and Trustful Legal System
+                                      </li>
+                                      <li class="bullet-li">
+                                        Sustainable Environmental Management
+                                      </li>
+                                      <li class="bullet-li">
+                                        Inclusive, Prepared and Healthy Society
+                                      </li>
+                                      <li class="bullet-li">
+                                        Stable and Functional Political System
+                                      </li>
+                                      <li class="bullet-li">
+                                        Effective and Efficient Government
+                                      </li>
+                                    </ul>
+                                  </div>
+
+                                </div>
+                                <div class="border-top col-6">
+                                  
+                                  <div class="bullet-section">
+                                    <h5 class="bullet-title"></h5>
+                                        
+                                    <ul class="no-bullet">
+                                      <li class="bullet-li">
+                                        Stable Economy
+                                      </li>
+                                      <li class="bullet-li">
+                                        Efficient Factor Market
+                                      </li>
+                                      <li class="bullet-li">
+                                        World Class Supply Sectors
+                                      </li>
+                                      <li class="bullet-li">
+                                        Exploitation of International Relatiosnships
+                                      </li>
+                                      <li class="bullet-li">
+                                        Economic Innovation
+                                      </li>
+                                    </ul>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end imco carousel -->
+                <!-- start industries carousel -->
+                <div id="industries_carouselContent" class="carousel slide" data-interval="false">
+                    <div class="carousel-inner" role="listbox">
+                        <div class="carousel-item active text-center p-0">
+                          <div class="row">
+                            <div class="col-12">
+                              <!--Seccion bullets grandes industries-->
+                              <div class="row border-top">
+                                <div class="col-12">
+                                  <div id="four-fixed-bullet-ind" class="row">
+                                    <div class="col-3 info-container-lg">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="four-fixed-number">239</span><br>
+                                          </div>
+                                          <div class="info-text-ml">
+                                            <span class="four-fixed-category">Internet of Things</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-3 info-container-lg">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="four-fixed-number">239</span><br>
+                                          </div>
+                                          <div class="info-text-xl">
+                                            <span class="four-fixed-category">Additive Manufacturing</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-3 info-container-lg">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="four-fixed-number">239</span><br>
+                                          </div>
+                                          <div class="info-text">
+                                            <span class="four-fixed-category">Collaborative Robotics</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-3 info-container-lg">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="four-fixed-number">239</span><br>
+                                          </div>
+                                          <div class="info-text-ml">
+                                            <span class="four-fixed-category">Big Data</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <!--Termina seccion bullets grandes industries-->
+                              <!--Seccion bullets pequeños arriba-->
+                              <div class="row border-top">
+                                <div class="col-12">
+                                  <!--Seccion cuatro bullets arriba-->
+                                  <div id="four-bullet-ind-top" class="row">
+                                    <div class="col-3 info-container">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="four-top-number">301</span><br>
+                                          </div>
+                                          <div class="info-text">
+                                            <span class="four-top-category">Electrical Equipment and Accessories</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-3 info-container">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="four-top-number">553</span><br>
+                                          </div>
+                                          <div class="info-text">
+                                            <span class="four-top-category">Printing Industries</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-3 info-container">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="four-top-number">1454</span><br>
+                                          </div>
+                                          <div class="info-text">
+                                            <span class="four-top-category">Equipment and Machinery Manufacturing</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-3 info-container">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="four-top-number">1986</span><br>
+                                          </div>
+                                          <div class="info-text">
+                                            <span class="four-top-category">Transportation Equipment Manufacturing</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <!--Termina seccion cuatro bullets arriba-->
+                                  <!--Seccion tres bullets arriba-->
+                                  <div id="three-bullet-ind-top" class="row">
+                                    <div class="col-4 info-container">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="three-top-number">239</span><br>
+                                          </div>
+                                          <div class="info-text">
+                                            <span class="three-top-category">Industrial Parks</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-4 info-container">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="three-top-number">239</span><br>
+                                          </div>
+                                          <div class="info-text">
+                                            <span class="three-top-category">Industrial Parks</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-4 info-container">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="three-top-number">239</span><br>
+                                          </div>
+                                          <div class="info-text">
+                                            <span class="three-top-category">Industrial Parks</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <!--Termina seccion tres bullets arriba-->
+                                </div>
+                                <!--Termina seccion bullets pequeños arriba-->
+                                <!--Seccion bullets pequeños abajo-->
+                                <div class="col-12">
+                                  <!--Seccion tres bullets abajo-->
+                                  <div id="three-bullet-ind-bottom" class="row">
+                                    <div class="col-4 info-container">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="three-bottom-number">239</span><br>
+                                          </div>
+                                          <div class="info-text">
+                                            <span class="three-bottom-category">Industrial Parks</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-4 info-container">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="three-bottom-number">239</span><br>
+                                          </div>
+                                          <div class="info-text">
+                                            <span class="three-bottom-category">Industrial Parks</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-4 info-container">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="three-bottom-number">239</span><br>
+                                          </div>
+                                          <div class="info-text">
+                                            <span class="three-bottom-category">Industrial Parks</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <!--Termina seccion de tres bullets abajo-->
+                                  <!--Seccion dos bullets abajo-->
+                                  <div id="two-bullet-ind-bottom" class="row">
+                                    <div class="col-6 info-container">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="two-bottom-number">239</span><br>
+                                          </div>
+                                          <div class="info-text">
+                                            <span class="two-bottom-category">Industrial Parks</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-6 info-container">
+                                      <div class="row">
+                                        <div class="col-10 offset-1">
+                                          <img src="../img/default_bullet.png" class="bullet-img"/>
+                                          <div class="info-number">
+                                            <span class="two-bottom-number">239</span><br>
+                                          </div>
+                                          <div class="info-text">
+                                            <span class="two-bottom-category">Industrial Parks</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <!--Termina seccion de dos bullets abajo-->
+                                </div>
+                                <!--Termina seccion bullets pequeños abajo-->
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end industries carousel -->
+                <!-- start conacyt carousel -->
+                <div id="conacyt_carouselContent" class="carousel slide" data-interval="false">
+                    <div class="carousel-inner" role="listbox">
+                        <div class="carousel-item active text-center p-0">
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="row border-top">
+                                <div class="border-right col-6">
+                                  <div class="bullet-section">
+                                      <h5 class="bullet-title">&nbsp;</h5>
+                                      
+                                        <ul class="no-bullet">
+                                          <li class="bullet-conacyt">
+                                            <span class="consortium-0">Agri-food</span>
+                                          </li>
+                                          <li class="bullet-conacyt">
+                                            <span class="consortium-1">Aeronautics</span>
+                                          </li>
+                                          <li class="bullet-conacyt">
+                                            <span class="consortium-2">Metropolitan areas</span>
+                                          </li>
+                                          <li class="bullet-conacyt">
+                                            <span class="consortium-3">Automotive</span>
+                                          </li>
+                                          <li class="bullet-conacyt">
+                                            <span class="consortium-4">Applied Optics</span>
+                                          </li>
+                                        </ul>
+                                  </div>
+
+                                </div>
+                                <div class="col-6">
+                                  
+                                  <div class="bullet-section">
+                                    <h5 class="bullet-title">&nbsp;</h5>
+                                        
+                                    <ul class="no-bullet">
+                                      <li class="bullet-conacyt">
+                                        <span class="consortium-5">Hydrocarbons</span>
+                                      </li>
+                                      <li class="bullet-conacyt">
+                                        <span class="consortium-6">Renewable energy</span>
+                                      </li>
+                                      <li class="bullet-conacyt">
+                                        <span class="consortium-7">Smart Solutions</span>
+                                      </li>
+                                      <li class="bullet-conacyt">
+                                        <span class="consortium-8">Metal-Mechanical Industry (MTH)</span>
+                                      </li>
+                                    </ul>
+                                  </div>
+
+                                </div>
+                                <div class="border-right col-6">
+                                  <div class="bullet-section">
+                                    <h5 class="bullet-title">Research lines</h5>
+                                    <span id="consortium-lines"></span>
+                                  </div>
+
+                                </div>
+                                <div class="col-6">
+                                  <div class="bullet-section">
+                                    <h5 class="bullet-title">Contact and Involved Centers</h5>
+                                    <span id="consortium-contact"></span>
+                                    <span id="consortium-centers"></span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end conacyt carousel -->
+            </div>
+            <!-- end navigation table -->
+        </div>
+      </div>
+    <div class="row align-items-center" id="footer">
+        <div class="col">
+            <span id="logo-conacyt"><a href="http://www.conacyt.gob.mx" target="_blank"><img src="../img/conacyt3.png" height="70" class="grayscale"></a></span>
+        </div>
+        <div class="col">
+            <span id="logo-cg"><a href="http://www.centrogeo.org.mx" target="_blank"><img src="../img/centrogeo.png" height="70" class="grayscale"></a></span>
+        </div>
+        <div class="col">
+            <span id="logo-geoint"><a href="http://geoint.mx/" target="_blank"><img src="../img/geoint.png" height="70" class="grayscale"></span>
+        </div>
+    </div>
+  </div>
+   
+    <script src="../js/d3.v4.13.0.min.js"></script>
+    <script src="../js/d3-queue-3.0.7.min.js"></script>
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/popper-1.12.9.min.js"></script>
+    <script src="../js/bootstrap-4.0.0.min.js"></script>
+    <script src="../js/leaflet-1.3.1.min.js"></script>
+    <script src="../js/Leaflet.Sync.js"></script>
+    <script src="../js/stackedBars.js"></script>
+    <script src="../js/radarChart.js"></script>
+    <script src="../js/barLineChart.js"></script>
+    <script src="../js/horizontalBars.js"></script>
+    <script src="../js/automaticFunctions.js"></script>
+  </body>
+</html>
